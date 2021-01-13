@@ -29,6 +29,7 @@ public class JoinEvent implements Listener {
         player.setHealthScale(2);
         player.setFlying(false);
         player.setLevel(0);
+
         player.getInventory().setItem(0, new ItemBuilder(Material.FIREWORK_ROCKET).setAmount(1).setDisplayName("§8◗§7◗ §b§lTeleporter").build());
         player.getInventory().setItem(1, new ItemBuilder(Material.COMPASS).setAmount(1).setDisplayName("§8◗§7◗ §b§lLoot Compass").build());
         player.getInventory().setItem(2, new ItemBuilder(Material.NAME_TAG).setAmount(1).setDisplayName("§8◗§7◗ §b§lNick").build());
