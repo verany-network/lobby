@@ -12,7 +12,7 @@ import net.verany.hubsystem.events.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-@VeranyModule(name = "HubSystem", prefix = "HubSystem", version = "0.1", authors = {"NicoVRNY", "tylix"}, user = "NicoVRNY", host = "159.69.63.105", password = "8Vu0T5MFd9KGTE1t", databases = {"players_hub"})
+@VeranyModule(name = "HubSystem", prefix = "HubSystem", version = "1.1", authors = {"NicoVRNY", "tylix"}, user = "NicoVRNY", host = "159.69.63.105", password = "8Vu0T5MFd9KGTE1t", databases = {"players_hub"})
 public class HubSystem extends VeranyProject {
 
     public static HubSystem INSTANCE;
