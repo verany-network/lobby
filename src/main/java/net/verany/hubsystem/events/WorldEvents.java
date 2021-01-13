@@ -1,5 +1,7 @@
 package net.verany.hubsystem.events;
 
+import lombok.Getter;
+import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -45,6 +47,19 @@ public class WorldEvents implements Listener {
         event.setCancelled(true);
         event.setDropItems(false);
         event.setExpToDrop(0);
+    }
+
+    @EventHandler
+    public void onItemSwap(PlayerSwapHandItemsEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onItemSwap(ProjectileLaunchEvent event) {
+        if(event.getEntity() instanceof Trident) {
+            System.out.println("trident");
+            event.setCancelled(true);
+        }
     }
 
 }
