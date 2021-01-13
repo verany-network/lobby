@@ -60,7 +60,7 @@ public class TeleporterInventory {
                     } else {
                         player.teleport(flagWarsArea);
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                        playerInfo.addActionbar(new DefaultActionbar("§7§lDu wurdest zu FlagWars teleportert§8.", 2000));
+                        playerInfo.addActionbar(new DefaultActionbar("§f§l§oDu wurdest zu §b§l§oFlagWars §f§l§oteleportert", 2000));
                     }
                 }
 
@@ -77,7 +77,7 @@ public class TeleporterInventory {
                     } else {
                         player.teleport(snowWarsArea);
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zu SnowWars teleportert§8.");
+                        playerInfo.addActionbar(new DefaultActionbar("§f§l§oDu wurdest zu §b§l§oSnowWars §f§l§oteleportert", 2000));
                     }
                 }
 
@@ -94,7 +94,7 @@ public class TeleporterInventory {
                     } else {
                         player.teleport(spawnLocation);
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zu RPG teleportert§8.");
+                        playerInfo.addActionbar(new DefaultActionbar("§f§l§oDu wurdest zu §b§l§oRPG §f§l§oteleportert", 2000));
                     }
                 }
 
@@ -114,7 +114,7 @@ public class TeleporterInventory {
                 if (event.isRightClick()) {
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
                     player.teleport(spawnLocation);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zum Spawn teleportert§8.");
+                    playerInfo.addActionbar(new DefaultActionbar("§f§l§oDu wurdest zum §b§l§oSpawn §f§l§oteleportert", 2000));
                 }
             }
 
@@ -126,7 +126,7 @@ public class TeleporterInventory {
                     } else {
                         player.teleport(spawnLocation);
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zu Survival teleportert§8.");
+                        playerInfo.addActionbar(new DefaultActionbar("§f§l§oDu wurdest zu §b§l§oSurvival §f§l§oteleportert", 2000));
                     }
                 }
 
@@ -143,7 +143,7 @@ public class TeleporterInventory {
                     } else {
                         player.teleport(spawnLocation);
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zu Duels teleportert§8.");
+                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zu §b§l§oDuels §f§l§oteleportert\", 2000));");
                     }
                 }
 
@@ -160,7 +160,7 @@ public class TeleporterInventory {
                     } else {
                         player.teleport(creativeLocation);
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zu Creative teleportert§8.");
+                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zu §b§l§oCreative §f§l§oteleportert\", 2000));");
                     }
                 }
 
@@ -174,7 +174,7 @@ public class TeleporterInventory {
                 if (event.isLeftClick()) {
                     player.teleport(teamHallLocation);
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zur Team Halle teleportert§8.");
+                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zur §b§l§oTeam Halle §f§l§oteleportert\", 2000));");
                 }
 
             }
@@ -184,7 +184,7 @@ public class TeleporterInventory {
                 if (event.isLeftClick()) {
                     player.teleport(lootBoxesLocation);
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zu Loot Boxes teleportert§8.");
+                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zu den §b§l§oLoot Boxen §f§l§oteleportert\", 2000));");
                 }
 
             }
@@ -194,7 +194,7 @@ public class TeleporterInventory {
                 if (event.isLeftClick()) {
                     player.teleport(hallOfPainLocation);
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zu Hall of Pain teleportert§8.");
+                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zur §b§l§oHall of Pain §f§l§oteleportert\", 2000));");
                 }
             }
 
@@ -203,7 +203,7 @@ public class TeleporterInventory {
                 if (event.isLeftClick()) {
                     player.teleport(dailyRewardLocation);
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zu Daily Reward teleportert§8.");
+                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zu der §b§l§otäglichen Belohnung §f§l§oteleportert\", 2000));");
                 }
             }
 
@@ -212,7 +212,7 @@ public class TeleporterInventory {
                 if (event.isLeftClick()) {
                     player.teleport(elytraLocation);
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zu Elytra teleportert§8.");
+                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zur §b§l§oElytra §f§l§oteleportert\", 2000));");
                 }
             }
 
@@ -221,7 +221,7 @@ public class TeleporterInventory {
                 if (event.isLeftClick()) {
                     player.teleport(infinityJumpAndRunLocation);
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zu Infinity Jump and Run teleportert§8.");
+                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zum §b§l§oJump and Run §f§l§oteleportert\", 2000));");
                 }
             }
 
