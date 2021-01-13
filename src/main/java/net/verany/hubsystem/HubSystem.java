@@ -5,6 +5,9 @@ import net.verany.api.config.IngameConfig;
 import net.verany.api.inventory.InventoryBuilder;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
+import net.verany.hubsystem.commands.BuildServerCommand;
+import net.verany.hubsystem.commands.SetupCommand;
+import net.verany.hubsystem.commands.ToggleRankCommand;
 import net.verany.hubsystem.events.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,6 +25,7 @@ public class HubSystem extends VeranyProject {
     public void onEnable() {
         Verany.loadModule(this);
 
+        IngameConfig.TAB_LIST.setValue(true);
         IngameConfig.PLAYER_COLLISION.setValue(false);
         IngameConfig.TAB_LIST_FORMAT.setValue("{0}{1} §8▏ §7"); // 0 ist die Farbe, 1 ist der Rang und zwei ist
         IngameConfig.CHAT_FORMAT.setValue("§8◗§7◗ {0}{1} §8▏ §7{2} §8• §f{3}"); // 0 ist die Farbe, 1 ist der Rang, 2 ist der Name und 3 ist die Nachricht
@@ -38,8 +42,9 @@ public class HubSystem extends VeranyProject {
     }
 
     private void registerCommands() {
-
-
+        getCommand("setup").setExecutor(new SetupCommand(this));
+        getCommand("togglerank").setExecutor(new ToggleRankCommand(this));
+        getCommand("build").setExecutor(new BuildServerCommand(this));
     }
 
     private void registerEvents() {
