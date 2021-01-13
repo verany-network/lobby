@@ -108,7 +108,7 @@ public class TeleporterInventory {
                 if (event.isLeftClick()) {
                     player.teleport(spawnLocation);
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wurdest zum Spawn teleportert§8.");
+                    playerInfo.addActionbar(new DefaultActionbar("§f§l§oDu wurdest zum §b§l§oSpawn §f§l§oteleportert", 2000));
                 }
 
                 if (event.isRightClick()) {
@@ -241,7 +241,7 @@ public class TeleporterInventory {
         inventory.setItem(49, new ItemBuilder(Material.NETHER_STAR).setDisplayName(Verany.getPrefix("Hall of Pain", playerInfo.getPrefixPattern())).build());
         inventory.setItem(50, new ItemBuilder(Material.EXPERIENCE_BOTTLE).setDisplayName(Verany.getPrefix("Daily Reward", playerInfo.getPrefixPattern())).build());
         inventory.setItem(51, new ItemBuilder(Material.ELYTRA).setDisplayName(Verany.getPrefix("Elytra", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(52, new ItemBuilder(Material.GOLDEN_BOOTS).setDisplayName(Verany.getPrefix("Infinity Jump and Run", playerInfo.getPrefixPattern())).build());
+        inventory.setItem(52, new ItemBuilder(Material.GOLDEN_BOOTS).setDisplayName(Verany.getPrefix(" Jump and Run", playerInfo.getPrefixPattern())).build());
 
 
     }
