@@ -19,6 +19,8 @@ public class JoinEvent implements Listener {
         Location spawnLocation = new Location(Bukkit.getWorld("world"), 6, 67, 13);
         Player player = event.getPlayer();
 
+        player.getInventory().clear();
+        player.getInventory().setArmorContents(null);
         player.setExp(0);
         player.setGameMode(GameMode.ADVENTURE);
         player.teleport(spawnLocation);
