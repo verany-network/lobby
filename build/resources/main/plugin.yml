@@ -1,0 +1,11 @@
+name: Verany-HubSystem
+author: Nico Kempe, Maximilian Wiegmann
+version: 1.0
+api-version: 1.16
+main: net.verany.hubsystem.HubSystem
+
+loadBefore:
+  - MC-Core-Executor
+
+depend:
+  - MC-Core-Executor
