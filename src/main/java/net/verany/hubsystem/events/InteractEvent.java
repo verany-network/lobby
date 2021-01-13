@@ -1,6 +1,7 @@
 package net.verany.hubsystem.events;
 
 import net.verany.api.inventory.InventoryBuilder;
+import net.verany.hubsystem.utils.inventories.NewTeleporterInventory;
 import net.verany.hubsystem.utils.inventories.TeleporterInventory;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,10 +19,11 @@ public class InteractEvent implements Listener {
         event.setCancelled(true);
         Player player = event.getPlayer();
 
+
         if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
             switch (player.getInventory().getItemInMainHand().getType()){
                 case FIREWORK_ROCKET:
-                    new TeleporterInventory(player).setItems();
+                    new NewTeleporterInventory(player).setItems(NewTeleporterInventory.TeleporterCategory.GAMES);
                     break;
                 case STONE:
 
