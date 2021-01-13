@@ -33,6 +33,13 @@ public class SetupCommand implements CommandExecutor {
             } else {
                 player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§cDazu hast du keine Berechtigung§8.");
             }
+        } else if(args.length == 1) {
+            String name = args[0];
+
+        } else if(args.length == 2) {
+            String name = args[0];
+            String nochmalName = args[1];
+
         }
         return false;
     }
