@@ -25,7 +25,6 @@ public class HubSystem extends VeranyProject {
     public void onEnable() {
         Verany.loadModule(this);
 
-        IngameConfig.TAB_LIST.setValue(true);
         IngameConfig.PLAYER_COLLISION.setValue(false);
         IngameConfig.TAB_LIST_FORMAT.setValue("{0}{1} §8▏ §7"); // 0 ist die Farbe, 1 ist der Rang und zwei ist
         IngameConfig.CHAT_FORMAT.setValue("§8◗§7◗ {0}{1} §8▏ §7{2} §8• §f{3}"); // 0 ist die Farbe, 1 ist der Rang, 2 ist der Name und 3 ist die Nachricht
