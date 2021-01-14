@@ -84,12 +84,18 @@ public class NewTeleporterInventory {
         SPAWN(Material.BEACON, null, Bukkit.getWorld("world").getSpawnLocation()),
         FLAG_WARS(Material.BLUE_BANNER, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 113.5, 64.2, -58.5, -137, 0)),
         SNOW_WARS(Material.SNOWBALL, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
-        SURVIVAL(Material.SNOWBALL, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
-        RPG(Material.SNOWBALL, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
-        DUELS(Material.SNOWBALL, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
-        ARCADE(Material.SNOWBALL, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
-        ELYTRA(Material.ELYTRA, TeleporterCategory.LOBBY_GAMES, new Location(Bukkit.getWorld("world"), 19.5, 66.2, 16.5, -71, 0)),
-        JUMP_AND_RUN(Material.SNOWBALL, TeleporterCategory.LOBBY_GAMES, new Location(Bukkit.getWorld("world"), 19.5, 66.2, 16.5, -71, 0));
+        SURVIVAL(Material.CROSSBOW, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
+        RPG(Material.TOTEM_OF_UNDYING, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
+        DUELS(Material.STICK, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
+        ARCADE(Material.MINECART, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
+        HALL_OF_PAIN(Material.OAK_SIGN, TeleporterCategory.LOBBY_LOCATIONS, new Location(Bukkit.getWorld("world"), -31.5, 47.2, -33.5, -16, 0)),
+        TEAM_HALL(Material.DIAMOND, TeleporterCategory.LOBBY_LOCATIONS, new Location(Bukkit.getWorld("world"), 85.5, 53.2, 110.5, -5, 0)),
+        DAILY_REWARD(Material.GOLD_INGOT, TeleporterCategory.LOBBY_LOCATIONS, new Location(Bukkit.getWorld("world"), 6.5, 66.2, 1.5, -145, 0)),
+        LOOT_BOXES(Material.BLUE_SHULKER_BOX, TeleporterCategory.LOBBY_LOCATIONS, new Location(Bukkit.getWorld("world"), 44.5, 63.2, 21.5, -45, 0)),
+        JUKEBOX(Material.JUKEBOX, TeleporterCategory.LOBBY_LOCATIONS, new Location(Bukkit.getWorld("world"), 19.5, 66.2, 16.5, -71, 0)),
+        ELYTRA(Material.ELYTRA, TeleporterCategory.LOBBY_GAMES, new Location(Bukkit.getWorld("world"), 20.5, 66.2, 6.5, -71, 0)),
+        TIC_TAC_TOE(Material.NOTE_BLOCK, TeleporterCategory.LOBBY_GAMES, new Location(Bukkit.getWorld("world"), 19.5, 66.2, 16.5, -71, 0)),
+        JUMP_AND_RUN(Material.GOLDEN_BOOTS, TeleporterCategory.LOBBY_GAMES, new Location(Bukkit.getWorld("world"), 19.5, 66.2, 16.5, -71, 0));
         
 
         /*
