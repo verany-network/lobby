@@ -1,6 +1,9 @@
 package net.verany.hubsystem.events;
 
+import net.verany.api.Verany;
 import net.verany.api.itembuilder.ItemBuilder;
+import net.verany.api.player.IPlayerInfo;
+import net.verany.api.skull.SkullBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -13,7 +16,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class JoinEvent implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         event.setJoinMessage(null);
         Location spawnLocation = new Location(Bukkit.getWorld("world"), 6, 67, 13);
@@ -30,13 +33,16 @@ public class JoinEvent implements Listener {
         player.setFlying(false);
         player.setLevel(0);
 
+        IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
+
         player.getInventory().setItem(0, new ItemBuilder(Material.FIREWORK_ROCKET).setAmount(1).setDisplayName("§8◗§7◗ §b§lTeleporter").build());
         player.getInventory().setItem(1, new ItemBuilder(Material.COMPASS).setAmount(1).setDisplayName("§8◗§7◗ §b§lLoot Compass").build());
         player.getInventory().setItem(2, new ItemBuilder(Material.NAME_TAG).setAmount(1).setDisplayName("§8◗§7◗ §b§lNick").build());
         player.getInventory().setItem(4, new ItemBuilder(Material.TRIDENT).setAmount(1).setDisplayName("§8◗§7◗ §b§lTrident").build());
         player.getInventory().setItem(6, new ItemBuilder(Material.BOOK).setAmount(1).setDisplayName("§8◗§7◗ §b§lInbox").build());
         player.getInventory().setItem(7, new ItemBuilder(Material.CLOCK).setAmount(1).setDisplayName("§8◗§7◗ §b§lHub Switcher").build());
-        player.getInventory().setItem(8, new ItemBuilder(Material.COMPARATOR).setAmount(1).setDisplayName("§8◗§7◗ §b§lProfile").build());
+        player.getInventory().setItem(0, new SkullBuilder(playerInfo.getSkinData()).setDisplayName("§8◗§7◗ §b§lProfile").build());
+        //player.getInventory().setItem(8, new ItemBuilder(Material.COMPARATOR).setAmount(1).setDisplayName("§8◗§7◗ §b§lProfile").build());
 
     }
 }
