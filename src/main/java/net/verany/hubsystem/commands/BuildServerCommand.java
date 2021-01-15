@@ -20,7 +20,7 @@ public class BuildServerCommand implements CommandExecutor {
         Player player = (Player) sender;
         IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
 
-        playerInfo.playRiptideAnimation();
+        // playerInfo.playRiptideAnimation();
 
         if(player.hasPermission("verany.hub.buildserver")) {
             if(args.length == 0) {
