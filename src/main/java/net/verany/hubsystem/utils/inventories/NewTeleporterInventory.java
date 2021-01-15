@@ -8,6 +8,7 @@ import net.verany.api.enumhelper.EnumHelper;
 import net.verany.api.enumhelper.VeranyEnum;
 import net.verany.api.inventory.InventoryBuilder;
 import net.verany.api.itembuilder.ItemBuilder;
+import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.prefix.PrefixPattern;
 import org.bukkit.Bukkit;
@@ -18,19 +19,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @AllArgsConstructor
 public class NewTeleporterInventory {
 
     private final Player player;
-    private final Integer[] locationSlots = {10, 11, 12, 13, 14, 15, 16};
-    private final Integer[] categorySlots = {30, 31, 32};
+    private final Integer[] locationSlots = {10, 11, 15, 16, 20, 22, 24};
+    private final Integer[] categorySlots = {46, 50, 57};
 
     public void setItems(TeleporterCategory category) {
         IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
 
-        Inventory inventory = InventoryBuilder.builder().size(9 * 4).title("§bTeleporter").event(event -> {
+        Inventory inventory = InventoryBuilder.builder().size(9 * 6).title("§8◗§7◗ §bTeleporter").event(event -> {
             event.setCancelled(true);
 
             TeleporterCategory teleporterCategory = EnumHelper.INSTANCE.valueOf(event.getCurrentItem().getType(), TeleporterCategory.values());
@@ -44,9 +46,10 @@ public class NewTeleporterInventory {
             if (locations != null) {
                 player.teleport(locations.getLocation());
                 player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
-                playerInfo.setActionbar(new DefaultActionbar("§f§l§oDu wurdest zu §b§l§o" + getName(locations.name()).substring(8) + " §f§l§oteleportert", 2000));
+                String actionbar = playerInfo.getKey("hub.teleporter.actionbar", new Placeholder("%locationName%", getName(locations.name()).substring(8)));
+                playerInfo.setActionbar(new DefaultActionbar(actionbar, 2000));
             }
-        }).build().fillInventory(new ItemBuilder(Material.LIGHT_BLUE_STAINED_GLASS_PANE).setNoName().build()).fillInventory(null, locationSlots).buildAndOpen(player);
+        }).build().fillInventory(new ItemBuilder(Material.valueOf(playerInfo.getPrefixColor().name() + "_STAINED_GLASS_PANE")).setNoName().build()).fillInventory(null, locationSlots).buildAndOpen(player);
 
         for (int i = 0; i < getLocations(category).size(); i++) {
             TeleportLocations locations = getLocations(category).get(i);
@@ -84,7 +87,7 @@ public class NewTeleporterInventory {
         SPAWN(Material.BEACON, null, Bukkit.getWorld("world").getSpawnLocation()),
         FLAG_WARS(Material.BLUE_BANNER, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 113.5, 64.2, -58.5, -137, 0)),
         SNOW_WARS(Material.SNOWBALL, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
-        SURVIVAL(Material.CROSSBOW, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
+        SURVIVAL(Material.ENCHANTING_TABLE, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
         RPG(Material.TOTEM_OF_UNDYING, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
         DUELS(Material.STICK, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
         ARCADE(Material.MINECART, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
