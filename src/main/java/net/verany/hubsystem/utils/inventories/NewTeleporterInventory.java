@@ -11,6 +11,7 @@ import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.prefix.PrefixPattern;
+import net.verany.hubsystem.HubSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +28,7 @@ public class NewTeleporterInventory {
 
     private final Player player;
     private final Integer[] locationSlots = {10, 11, 15, 16, 20, 22, 24};
-    private final Integer[] categorySlots = {46, 50, 57};
+    private final Integer[] categorySlots = {46, 50, 51};
 
     public void setItems(TeleporterCategory category) {
         IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
@@ -44,7 +45,11 @@ public class NewTeleporterInventory {
 
             TeleportLocations locations = EnumHelper.INSTANCE.valueOf(event.getCurrentItem().getType(), TeleportLocations.values());
             if (locations != null) {
-                player.teleport(locations.getLocation());
+                boolean exist = HubSystem.INSTANCE.getLocationManager().existLocation(locations.getLocationName());
+                if (!exist)
+                    player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation("spawn"));
+                else
+                    player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation(locations.getLocationName()));
                 player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
                 String actionbar = playerInfo.getKey("hub.teleporter.actionbar", new Placeholder("%locationName%", getName(locations.name()).substring(8)));
                 playerInfo.setActionbar(new DefaultActionbar(actionbar, 2000));
@@ -84,40 +89,26 @@ public class NewTeleporterInventory {
     @AllArgsConstructor
     @Getter
     public enum TeleportLocations implements VeranyEnum {
-        SPAWN(Material.BEACON, null, Bukkit.getWorld("world").getSpawnLocation()),
-        FLAG_WARS(Material.BLUE_BANNER, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 113.5, 64.2, -58.5, -137, 0)),
-        SNOW_WARS(Material.SNOWBALL, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
-        SURVIVAL(Material.ENCHANTING_TABLE, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
-        RPG(Material.TOTEM_OF_UNDYING, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
-        DUELS(Material.STICK, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
-        ARCADE(Material.MINECART, TeleporterCategory.GAMES, new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0)),
-        HALL_OF_PAIN(Material.OAK_SIGN, TeleporterCategory.LOBBY_LOCATIONS, new Location(Bukkit.getWorld("world"), -31.5, 47.2, -33.5, -16, 0)),
-        TEAM_HALL(Material.DIAMOND, TeleporterCategory.LOBBY_LOCATIONS, new Location(Bukkit.getWorld("world"), 85.5, 53.2, 110.5, -5, 0)),
-        DAILY_REWARD(Material.GOLD_INGOT, TeleporterCategory.LOBBY_LOCATIONS, new Location(Bukkit.getWorld("world"), 6.5, 66.2, 1.5, -145, 0)),
-        LOOT_BOXES(Material.BLUE_SHULKER_BOX, TeleporterCategory.LOBBY_LOCATIONS, new Location(Bukkit.getWorld("world"), 44.5, 63.2, 21.5, -45, 0)),
-        JUKEBOX(Material.JUKEBOX, TeleporterCategory.LOBBY_LOCATIONS, new Location(Bukkit.getWorld("world"), 19.5, 66.2, 16.5, -71, 0)),
-        ELYTRA(Material.ELYTRA, TeleporterCategory.LOBBY_GAMES, new Location(Bukkit.getWorld("world"), 20.5, 66.2, 6.5, -71, 0)),
-        TIC_TAC_TOE(Material.NOTE_BLOCK, TeleporterCategory.LOBBY_GAMES, new Location(Bukkit.getWorld("world"), 19.5, 66.2, 16.5, -71, 0)),
-        JUMP_AND_RUN(Material.GOLDEN_BOOTS, TeleporterCategory.LOBBY_GAMES, new Location(Bukkit.getWorld("world"), 19.5, 66.2, 16.5, -71, 0));
-        
+        SPAWN(Material.BEACON, null, "spawn"),
+        FLAG_WARS(Material.BLUE_BANNER, TeleporterCategory.GAMES, "flagwars"),
+        SNOW_WARS(Material.SNOWBALL, TeleporterCategory.GAMES, "snowwars"),
+        SURVIVAL(Material.ENCHANTING_TABLE, TeleporterCategory.GAMES, "survival"),
+        RPG(Material.TOTEM_OF_UNDYING, TeleporterCategory.GAMES, "rpg"),
+        DUELS(Material.STICK, TeleporterCategory.GAMES, "duels"),
+        ARCADE(Material.MINECART, TeleporterCategory.GAMES, "arcade"),
+        HALL_OF_PAIN(Material.OAK_SIGN, TeleporterCategory.LOBBY_LOCATIONS, "hall_of_pain"),
+        TEAM_HALL(Material.DIAMOND, TeleporterCategory.LOBBY_LOCATIONS, "team_hall"),
+        DAILY_REWARD(Material.GOLD_INGOT, TeleporterCategory.LOBBY_LOCATIONS, "daily_reward"),
+        LOOT_BOXES(Material.BLUE_SHULKER_BOX, TeleporterCategory.LOBBY_LOCATIONS, "loot_boxes"),
+        JUKEBOX(Material.JUKEBOX, TeleporterCategory.LOBBY_LOCATIONS, "jukebox"),
+        ELYTRA(Material.ELYTRA, TeleporterCategory.LOBBY_GAMES, "elytra"),
+        TIC_TAC_TOE(Material.NOTE_BLOCK, TeleporterCategory.LOBBY_GAMES, "tic_tac_toe"),
+        JUMP_AND_RUN(Material.GOLDEN_BOOTS, TeleporterCategory.LOBBY_GAMES, "jump_and_run");
 
-        /*
-        Location spawnLocation = new Location(Bukkit.getWorld("world"), 6, 67, 13, 0, 0);
-        Location flagWarsArea = new Location(Bukkit.getWorld("world"), 113.5, 64.2, -58.5, -137, 0);
-        Location snowWarsArea = new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0);
-        Location duelsArea = new Location(Bukkit.getWorld("world"), 143.5, 66.2, -11.5, -87, 88);
-        Location creativeLocation = new Location(Bukkit.getWorld("world"), -24.5, 65.2, 9.5, 160, 0);
-        Location teamHallLocation = new Location(Bukkit.getWorld("world"), 85.5, 53.2, 110.5, -5, 0);
-        Location dailyRewardLocation = new Location(Bukkit.getWorld("world"), 6.5, 66.2, 1.5, -145, 0);
-        Location lootBoxesLocation = new Location(Bukkit.getWorld("world"), 44.5, 63.2, 21.5, -45, 0);
-        Location hallOfPainLocation = new Location(Bukkit.getWorld("world"), -31.5, 47.2, -33.5, -16, 0);
-        Location elytraLocation = new Location(Bukkit.getWorld("world"), 20.5, 66.2, 6.5, -71, 0);
-        Location infinityJumpAndRunLocation = new Location(Bukkit.getWorld("world"), 19.5, 66.2, 16.5, -71, 0);
-        */
 
         private final Material material;
         private final TeleporterCategory category;
-        private final Location location;
+        private final String locationName;
     }
 
     private List<TeleportLocations> getLocations(TeleporterCategory category) {

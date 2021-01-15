@@ -25,7 +25,6 @@ public class SetupCommand implements CommandExecutor {
                 player.sendMessage(" §8× §b/setup §8• §7Zeigt diese Liste");
                 player.sendMessage(" §8× §b/setup build §8• §7Bringt dich in den Baumodus");
                 player.sendMessage(" §8× §b/setup addbees §8• §7Fügt ein Bienen-Nest hinzu");
-                player.sendMessage(" §8× §b/setup addfishs §8• §7Fügt einen Fisch-Spawn hinzu");
                 player.sendMessage(" §8× §b/setup setnpc [NPC] §8• §7Setzt einen NPC");
                 player.sendMessage(" §8× §b/setup setspawn §8• §7Setzt den Spawnpunkt");
                 player.sendMessage(" §8× §b/setup setloc [Location] §8• §7Setzt eine Location");
@@ -35,11 +34,18 @@ public class SetupCommand implements CommandExecutor {
             }
         } else if(args.length == 1) {
             String name = args[0];
-
+            switch (name.toLowerCase()) {
+                case "setspawn":
+                    HubSystem.INSTANCE.getLocationManager().createLocation("spawn", player.getLocation());
+                    player.sendMessage("spawn ist gesetzt bro");
+                    break;
+            }
         } else if(args.length == 2) {
-            String name = args[0];
-            String nochmalName = args[1];
-
+            if (args[0].equalsIgnoreCase("setloc")) {
+                String name = args[1];
+                HubSystem.INSTANCE.getLocationManager().createLocation(name, player.getLocation());
+                player.sendMessage(name + " ist gesetzt bro");
+            }
         }
         return false;
     }
