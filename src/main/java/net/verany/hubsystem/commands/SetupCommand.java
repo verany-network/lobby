@@ -1,15 +1,25 @@
 package net.verany.hubsystem.commands;
 
+import com.google.common.collect.Lists;
 import net.verany.api.Verany;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.hubsystem.HubSystem;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import redis.clients.jedis.BinaryClient;
 
-public class SetupCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SetupCommand implements CommandExecutor, TabCompleter {
     public SetupCommand(HubSystem hubSystem) {
 
     }
@@ -41,14 +51,37 @@ public class SetupCommand implements CommandExecutor {
                     HubSystem.INSTANCE.getLocationManager().createLocation("spawn", player.getLocation());
                     player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "Der §bSpawn §7wurde gesetzt§8.");
                     break;
+                case "addbees":
+                    Block targetBlock = player.getTargetBlock(5);
+                    if (!targetBlock.getType().equals(Material.BEE_NEST)) {
+                        return false;
+                    }
+                    String nestName = "beenest_" + targetBlock.getX() + "_" + targetBlock.getZ();
+                    if (HubSystem.INSTANCE.getLocationManager().existLocation(nestName)) {
+                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§cDieses Bienennest wurde bereits gesetzt§8.");
+                        return false;
+                    }
+                    HubSystem.INSTANCE.getLocationManager().createLocation(nestName, targetBlock.getLocation());
+                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du hast das §bBienennest §7erfolgreich gesetzt§8.");
+                    break;
             }
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("setloc")) {
+            if (args[0].equalsIgnoreCase("setloc") || args[0].equalsIgnoreCase("setnpc")) {
                 String name = args[1];
                 HubSystem.INSTANCE.getLocationManager().createLocation(name, player.getLocation());
                 player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "Die Location §b" + name + " §7wurde gesetzt§.");
             }
         }
         return false;
+    }
+
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        if (strings.length == 1) {
+            List<String> arguments = Lists.newArrayList("build", "addbees");
+            return StringUtil.copyPartialMatches(strings[0], arguments, new ArrayList<>(arguments.size()));
+        }
+        return new ArrayList<>();
     }
 }
