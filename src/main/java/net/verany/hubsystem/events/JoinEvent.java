@@ -41,7 +41,7 @@ public class JoinEvent implements Listener {
         player.getInventory().setItem(4, new ItemBuilder(Material.TRIDENT).setAmount(1).setDisplayName("§8◗§7◗ §b§lTrident").build());
         player.getInventory().setItem(6, new ItemBuilder(Material.BOOK).setAmount(1).setDisplayName("§8◗§7◗ §b§lInbox").build());
         player.getInventory().setItem(7, new ItemBuilder(Material.CLOCK).setAmount(1).setDisplayName("§8◗§7◗ §b§lHub Switcher").build());
-        player.getInventory().setItem(0, new SkullBuilder(playerInfo.getSkinData()).setDisplayName("§8◗§7◗ §b§lProfile").build());
+        player.getInventory().setItem(8, new SkullBuilder(playerInfo.getSkinData()).setDisplayName("§8◗§7◗ §b§lProfile").build());
         //player.getInventory().setItem(8, new ItemBuilder(Material.COMPARATOR).setAmount(1).setDisplayName("§8◗§7◗ §b§lProfile").build());
 
     }
