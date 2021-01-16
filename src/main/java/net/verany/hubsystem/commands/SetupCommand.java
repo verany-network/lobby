@@ -54,6 +54,7 @@ public class SetupCommand implements CommandExecutor, TabCompleter {
                 case "addbees":
                     Block targetBlock = player.getTargetBlock(5);
                     if (!targetBlock.getType().equals(Material.BEE_NEST)) {
+                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§cBitte markiere ein Bienennest indem du es direkt ansiehst§8.");
                         return false;
                     }
                     String nestName = "beenest_" + targetBlock.getX() + "_" + targetBlock.getZ();
@@ -79,7 +80,7 @@ public class SetupCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (strings.length == 1) {
-            List<String> arguments = Lists.newArrayList("build", "addbees");
+            List<String> arguments = Lists.newArrayList("build", "addbees", "setnpc", "setspawn", "setloc");
             return StringUtil.copyPartialMatches(strings[0], arguments, new ArrayList<>(arguments.size()));
         }
         return new ArrayList<>();
