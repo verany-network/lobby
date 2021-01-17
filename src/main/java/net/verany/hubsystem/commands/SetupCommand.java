@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.verany.api.Verany;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.hubsystem.HubSystem;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -14,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import redis.clients.jedis.BinaryClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +40,9 @@ public class SetupCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(" §8× §b/setup §8• §7Zeigt diese Liste");
             player.sendMessage(" §8× §b/setup build §8• §7Bringt dich in den Baumodus");
             player.sendMessage(" §8× §b/setup addbees §8• §7Fügt ein Bienen-Nest hinzu");
-            player.sendMessage(" §8× §b/setup setnpc [NPC] §8• §7Setzt einen NPC");
             player.sendMessage(" §8× §b/setup setspawn §8• §7Setzt den Spawnpunkt");
-            player.sendMessage(" §8× §b/setup setloc [Location] §8• §7Setzt eine Location");
+            player.sendMessage(" §8× §b/setup setnpc [NPC] §8• §7Setzt einen NPC");
+            player.sendMessage(" §8× §b/setup setloc [Location] §8• §7Setzt eine Position");
             player.sendMessage("§b");
         } else if (args.length == 1) {
             String name = args[0];
@@ -51,6 +51,21 @@ public class SetupCommand implements CommandExecutor, TabCompleter {
                     HubSystem.INSTANCE.getLocationManager().createLocation("spawn", player.getLocation());
                     player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "Der §bSpawn §7wurde gesetzt§8.");
                     break;
+
+                case "build":
+                    if(player.getGameMode().equals(GameMode.CREATIVE)) {
+                        player.setGameMode(GameMode.ADVENTURE);
+                        player.setFlying(false);
+                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "Du bist nun im §bBaumodus§8.");
+                    } else {
+                        if(!player.getGameMode().equals(GameMode.CREATIVE)) {
+                            player.setGameMode(GameMode.CREATIVE);
+                            player.setFlying(true);
+                            player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "Du bist nun im §bnormalen Modus§8.");
+                        }
+                    }
+                    break;
+
                 case "addbees":
                     Block targetBlock = player.getTargetBlock(5);
                     if (!targetBlock.getType().equals(Material.BEE_NEST)) {
