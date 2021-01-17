@@ -1,6 +1,7 @@
 package net.verany.hubsystem.events;
 
 import net.verany.api.Verany;
+import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.utils.config.HubConfig;
 import net.verany.hubsystem.utils.location.HubLocation;
 import net.verany.hubsystem.utils.player.HubPlayer;
@@ -18,6 +19,8 @@ public class QuitEvent implements Listener {
         Player player = event.getPlayer();
 
         event.setQuitMessage(null);
+
+        HubSystem.INSTANCE.getScoreboardTask().removePlayer(player);
 
         HubPlayer hubPlayer =Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class);
         hubPlayer.getData(HubPlayer.PlayerData.class).setLastLocation(HubLocation.toHubLocation(player.getLocation()));
