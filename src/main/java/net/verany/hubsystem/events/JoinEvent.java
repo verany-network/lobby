@@ -7,6 +7,7 @@ import net.verany.api.skull.SkullBuilder;
 import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.utils.config.HubConfig;
 import net.verany.hubsystem.utils.player.HubPlayer;
+import net.verany.hubsystem.utils.scoreboard.HubScoreboard;
 import net.verany.hubsystem.utils.settings.HubSetting;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -51,5 +52,7 @@ public class JoinEvent implements Listener {
         player.setFlying(false);
         player.setLevel(0);
 
+        new HubScoreboard(player);
+        HubSystem.INSTANCE.getScoreboardTask().addPlayer(player);
     }
 }
