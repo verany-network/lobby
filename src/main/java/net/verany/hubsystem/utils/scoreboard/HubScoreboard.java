@@ -41,7 +41,7 @@ public class HubScoreboard {
         scoreboardBuilder.setTitle(displayName[currentSlot]);
         HubSystem.INSTANCE.setMetadata(player, "displayNamePosition", currentSlot);
 
-        String[] scores = playerInfo.getKeyArray("hub_scoreboard_scores", "~", new Placeholder("%rank%", playerInfo.getGroupWithColor()));
+        String[] scores = playerInfo.getKeyArray("hub_scoreboard_scores", "~", new Placeholder("%rank%", playerInfo.getGroupWithColor()), new Placeholder("%credits%", playerInfo.getCreditsObject().getCreditsAsDecimal()));
         int id = scores.length;
         for (int i = 0; i < scores.length; i++) {
             scoreboardBuilder.setSlot(i, scores[id - 1]);
