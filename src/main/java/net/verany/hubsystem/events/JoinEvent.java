@@ -5,6 +5,7 @@ import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.skull.SkullBuilder;
 import net.verany.hubsystem.HubSystem;
+import net.verany.hubsystem.utils.config.HubConfig;
 import net.verany.hubsystem.utils.player.HubPlayer;
 import net.verany.hubsystem.utils.settings.HubSetting;
 import org.bukkit.Bukkit;
@@ -40,6 +41,9 @@ public class JoinEvent implements Listener {
             player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation("spawn"));
 
         hubPlayer.setItems();
+
+        HubConfig.BEES_SPAWNED.setValue(true);
+        boolean is = HubConfig.BEES_SPAWNED.getValue();
 
         player.setFoodLevel(20);
         player.setHealth(20);
