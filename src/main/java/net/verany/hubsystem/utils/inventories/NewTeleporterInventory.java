@@ -33,7 +33,7 @@ public class NewTeleporterInventory {
     public void setItems(TeleporterCategory category) {
         IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
 
-        Inventory inventory = InventoryBuilder.builder().size(9 * 6).title("§8◗§7◗ §bTeleporter").event(event -> {
+        Inventory inventory = InventoryBuilder.builder().size(9 * 6).title("§8◗§7◗ §b§lTeleporter").event(event -> {
             event.setCancelled(true);
 
             TeleporterCategory teleporterCategory = EnumHelper.INSTANCE.valueOf(event.getCurrentItem().getType(), TeleporterCategory.values());
@@ -89,12 +89,12 @@ public class NewTeleporterInventory {
     @AllArgsConstructor
     @Getter
     public enum TeleportLocations implements VeranyEnum {
-        SPAWN(Material.BEACON, null, "spawn"),
         FLAG_WARS(Material.BLUE_BANNER, TeleporterCategory.GAMES, "flagwars"),
         SNOW_WARS(Material.SNOWBALL, TeleporterCategory.GAMES, "snowwars"),
         SURVIVAL(Material.ENCHANTING_TABLE, TeleporterCategory.GAMES, "survival"),
         RPG(Material.TOTEM_OF_UNDYING, TeleporterCategory.GAMES, "rpg"),
         DUELS(Material.STICK, TeleporterCategory.GAMES, "duels"),
+        SPAWN(Material.BEACON, null, "spawn"),
         ARCADE(Material.MINECART, TeleporterCategory.GAMES, "arcade"),
         HALL_OF_PAIN(Material.OAK_SIGN, TeleporterCategory.LOBBY_LOCATIONS, "hall_of_pain"),
         TEAM_HALL(Material.DIAMOND, TeleporterCategory.LOBBY_LOCATIONS, "team_hall"),
