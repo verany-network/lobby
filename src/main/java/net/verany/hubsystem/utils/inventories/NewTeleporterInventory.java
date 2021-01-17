@@ -2,20 +2,19 @@ package net.verany.hubsystem.utils.inventories;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.minecraft.server.v1_16_R3.Particles;
 import net.verany.api.Verany;
 import net.verany.api.actionbar.DefaultActionbar;
 import net.verany.api.enumhelper.EnumHelper;
 import net.verany.api.enumhelper.VeranyEnum;
 import net.verany.api.inventory.InventoryBuilder;
 import net.verany.api.itembuilder.ItemBuilder;
+import net.verany.api.particle.ParticleManager;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.prefix.PrefixPattern;
 import net.verany.hubsystem.HubSystem;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -53,6 +52,9 @@ public class NewTeleporterInventory {
                 player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
                 String actionbar = playerInfo.getKey("hub.teleporter.actionbar", new Placeholder("%locationName%", getName(locations.name()).substring(8)));
                 playerInfo.setActionbar(new DefaultActionbar(actionbar, 2000));
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    onlinePlayer.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, 1);
+                }
             }
         }).build().fillInventory(new ItemBuilder(Material.valueOf(playerInfo.getPrefixColor().name() + "_STAINED_GLASS_PANE")).setNoName().build()).fillInventory(null, locationSlots).buildAndOpen(player);
 
