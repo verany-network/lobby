@@ -46,6 +46,7 @@ public class InteractEvent implements Listener {
 
                 case TRIDENT:
                     playerInfo.addActionbar(new DefaultActionbar("§cDer Trident ist derzeit deaktiviert§8.", 1000));
+                    event.setCancelled(false);
                     break;
 
                 case BOOK:
