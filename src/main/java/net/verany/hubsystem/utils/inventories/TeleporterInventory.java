@@ -1,248 +1,132 @@
 package net.verany.hubsystem.utils.inventories;
 
 import lombok.AllArgsConstructor;
-import lombok.Generated;
 import lombok.Getter;
+import net.minecraft.server.v1_16_R3.Particles;
 import net.verany.api.Verany;
 import net.verany.api.actionbar.DefaultActionbar;
 import net.verany.api.enumhelper.EnumHelper;
 import net.verany.api.enumhelper.VeranyEnum;
-import net.verany.api.inventory.IInventoryBuilder;
 import net.verany.api.inventory.InventoryBuilder;
 import net.verany.api.itembuilder.ItemBuilder;
+import net.verany.api.particle.ParticleManager;
+import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.api.prefix.PrefixPattern;
 import net.verany.hubsystem.HubSystem;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.entity.EntityType;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @AllArgsConstructor
 public class TeleporterInventory {
 
     private final Player player;
+    private final Integer[] locationSlots = {10, 11, 15, 16, 20, 22, 24};
+    private final Integer[] categorySlots = {37, 49, 43};
 
-    private final Integer[] itemSlots = {10, 11, 12, 13};
-
-    public void setItems() {
+    public void setItems(TeleporterCategory category) {
         IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
 
-        Inventory inventory = InventoryBuilder.builder().size(9 * 6).title("§bTeleporter").event(event -> {
+        Inventory inventory = InventoryBuilder.builder().size(9 * 6).title("§8◗§7◗ §b§lTeleporter").event(event -> {
             event.setCancelled(true);
 
-            Location spawnLocation = new Location(Bukkit.getWorld("world"), 6, 67, 13, 0, 0);
-            Location flagWarsArea = new Location(Bukkit.getWorld("world"), 113.5, 64.2, -58.5, -137, 0);
-            Location snowWarsArea = new Location(Bukkit.getWorld("world"), 143.5, 66.2, 11.5, -90, 0);
-            Location duelsArea = new Location(Bukkit.getWorld("world"), 143.5, 66.2, -11.5, -87, 88);
-            Location creativeLocation = new Location(Bukkit.getWorld("world"), -24.5, 65.2, 9.5, 160, 0);
-            Location teamHallLocation = new Location(Bukkit.getWorld("world"), 85.5, 53.2, 110.5, -5, 0);
-            Location dailyRewardLocation = new Location(Bukkit.getWorld("world"), 6.5, 66.2, 1.5, -145, 0);
-            Location lootBoxesLocation = new Location(Bukkit.getWorld("world"), 44.5, 63.2, 21.5, -45, 0);
-            Location hallOfPainLocation = new Location(Bukkit.getWorld("world"), -31.5, 47.2, -33.5, -16, 0);
-            Location elytraLocation = new Location(Bukkit.getWorld("world"), 20.5, 66.2, 6.5, -71, 0);
-            Location infinityJumpAndRunLocation = new Location(Bukkit.getWorld("world"), 19.5, 66.2, 16.5, -71, 0);
-
-            if (event.getClickedInventory().getType().equals(InventoryType.PLAYER)) return;
-
-            // FlagWars
-            if (event.getCurrentItem().getType().equals(Material.BLUE_BANNER)) {
-                if (event.isLeftClick()) {
-                    if (event.isShiftClick()) {
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Eine Erklärung zu FlagWars findest du unter vrny.link/fwdesc§8.");
-                    } else {
-                        player.teleport(flagWarsArea);
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                        playerInfo.addActionbar(new DefaultActionbar("§f§l§oDu wurdest zu §b§l§oFlagWars §f§l§oteleportert", 2000));
-                    }
-                }
-
-                if (event.isRightClick()) {
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Finde Server§8...");
-                }
+            TeleporterCategory teleporterCategory = EnumHelper.INSTANCE.valueOf(event.getCurrentItem().getType(), TeleporterCategory.values());
+            if (teleporterCategory != null) {
+                setItems(teleporterCategory);
+                player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+                return;
             }
 
-            // SnowWars
-            if (event.getCurrentItem().getType().equals(Material.SNOWBALL)) {
-                if (event.isLeftClick()) {
-                    if (event.isShiftClick()) {
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Eine Erklärung zu SnowWars findest du unter vrny.link/swdesc§8.");
-                    } else {
-                        player.teleport(snowWarsArea);
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                        playerInfo.addActionbar(new DefaultActionbar("§f§l§oDu wurdest zu §b§l§oSnowWars §f§l§oteleportert", 2000));
-                    }
-                }
-
-                if (event.isRightClick()) {
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Finde Server§8...");
+            TeleportLocations locations = EnumHelper.INSTANCE.valueOf(event.getCurrentItem().getType(), TeleportLocations.values());
+            if (locations != null) {
+                boolean exist = HubSystem.INSTANCE.getLocationManager().existLocation(locations.getLocationName());
+                if (!exist)
+                    player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation("spawn"));
+                else
+                    player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation(locations.getLocationName()));
+                player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+                String actionbar = playerInfo.getKey("hub.teleporter.actionbar", new Placeholder("%locationName%", getName(locations.name()).substring(8)));
+                playerInfo.setActionbar(new DefaultActionbar(actionbar, 2000));
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    onlinePlayer.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, 1);
                 }
             }
+        }).build().fillInventory(new ItemBuilder(Material.valueOf(playerInfo.getFirstColor().name() + "_STAINED_GLASS_PANE")).setNoName().build()).fillInventory(null, locationSlots).buildAndOpen(player);
 
-            // RPG
-            if (event.getCurrentItem().getType().equals(Material.TOTEM_OF_UNDYING)) {
-                if (event.isLeftClick()) {
-                    if (event.isShiftClick()) {
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Eine Erklärung zu RPG findest du unter vrny.link/rpgdesc§8.");
-                    } else {
-                        player.teleport(spawnLocation);
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                        playerInfo.addActionbar(new DefaultActionbar("§f§l§oDu wurdest zu §b§l§oRPG §f§l§oteleportert", 2000));
-                    }
-                }
+        for (int i = 0; i < getLocations(category).size(); i++) {
+            TeleportLocations locations = getLocations(category).get(i);
 
-                if (event.isRightClick()) {
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Finde Server§8...");
-                }
-            }
+            String[] lore = playerInfo.getKeyArray("hub.teleporter.lore." + locations.getLocationName().toLowerCase(), "~", new Placeholder("%online%", 0), new Placeholder("%rating%", "★★★★☆"));
 
-            // Spawn
-            if (event.getCurrentItem().getType().equals(Material.BEACON)) {
-                if (event.isLeftClick()) {
-                    player.teleport(spawnLocation);
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    playerInfo.addActionbar(new DefaultActionbar("§f§l§oDu wurdest zum §b§l§oSpawn §f§l§oteleportert", 2000));
-                }
+            inventory.setItem(locationSlots[i], new ItemBuilder(locations.getMaterial()).addLoreArray(lore).setDisplayName(getName(locations.name())).build());
+        }
 
-                if (event.isRightClick()) {
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.teleport(spawnLocation);
-                    playerInfo.addActionbar(new DefaultActionbar("§f§l§oDu wurdest zum §b§l§oSpawn §f§l§oteleportert", 2000));
-                }
-            }
-
-            // Survival
-            if (event.getCurrentItem().getType().equals(Material.CROSSBOW)) {
-                if (event.isLeftClick()) {
-                    if (event.isShiftClick()) {
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Eine Erklärung zu Survival findest du unter vrny.link/sudesc§8.");
-                    } else {
-                        player.teleport(spawnLocation);
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                        playerInfo.addActionbar(new DefaultActionbar("§f§l§oDu wurdest zu §b§l§oSurvival §f§l§oteleportert", 2000));
-                    }
-                }
-
-                if (event.isRightClick()) {
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Finde Server§8...");
-                }
-            }
-
-            // Duels
-            if (event.getCurrentItem().getType().equals(Material.STICK)) {
-                if (event.isLeftClick()) {
-                    if (event.isShiftClick()) {
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Eine Erklärung zu Duels findest du unter vrny.link/dudesc§8.");
-                    } else {
-                        player.teleport(spawnLocation);
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zu §b§l§oDuels §f§l§oteleportert\", 2000));");
-                    }
-                }
-
-                if (event.isRightClick()) {
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Finde Server§8...");
-                }
-            }
-
-            // Creative
-            if (event.getCurrentItem().getType().equals(Material.NETHERITE_AXE)) {
-                if (event.isLeftClick()) {
-                    if (event.isShiftClick()) {
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Eine Erklärung zu Creative findest du unter vrny.link/crdesc§8.");
-                    } else {
-                        player.teleport(creativeLocation);
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zu §b§l§oCreative §f§l§oteleportert\", 2000));");
-                    }
-                }
-
-                if (event.isRightClick()) {
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Finde Server§8...");
-                }
-            }
-
-            // Team Hall
-            if (event.getCurrentItem().getType().equals(Material.DIAMOND)) {
-                if (event.isLeftClick()) {
-                    player.teleport(teamHallLocation);
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zur §b§l§oTeam Halle §f§l§oteleportert\", 2000));");
-                }
-
-            }
-
-            // Loot Boxes
-            if (event.getCurrentItem().getType().equals(Material.END_PORTAL_FRAME)) {
-                if (event.isLeftClick()) {
-                    player.teleport(lootBoxesLocation);
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zu den §b§l§oLoot Boxen §f§l§oteleportert\", 2000));");
-                }
-
-            }
-
-            // Hall of Pain
-            if (event.getCurrentItem().getType().equals(Material.NETHER_STAR)) {
-                if (event.isLeftClick()) {
-                    player.teleport(hallOfPainLocation);
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zur §b§l§oHall of Pain §f§l§oteleportert\", 2000));");
-                }
-            }
-
-            // Daily Reward
-            if (event.getCurrentItem().getType().equals(Material.EXPERIENCE_BOTTLE)) {
-                if (event.isLeftClick()) {
-                    player.teleport(dailyRewardLocation);
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zu der §b§l§otäglichen Belohnung §f§l§oteleportert\", 2000));");
-                }
-            }
-
-            // Elytra
-            if (event.getCurrentItem().getType().equals(Material.ELYTRA)) {
-                if (event.isLeftClick()) {
-                    player.teleport(elytraLocation);
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zur §b§l§oElytra §f§l§oteleportert\", 2000));");
-                }
-            }
-
-            // Infinity Jump and Run
-            if (event.getCurrentItem().getType().equals(Material.GOLDEN_BOOTS)) {
-                if (event.isLeftClick()) {
-                    player.teleport(infinityJumpAndRunLocation);
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "playerInfo.addActionbar(new DefaultActionbar(\"§f§l§oDu wurdest zum §b§l§oJump and Run §f§l§oteleportert\", 2000));");
-                }
-            }
-
-
-        }).build().fillInventory(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setNoName().build()).buildAndOpen(player);
-
-        inventory.setItem(11, new ItemBuilder(Material.BLUE_BANNER).setDisplayName(Verany.getPrefix("FlagWars", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(15, new ItemBuilder(Material.SNOWBALL).setDisplayName(Verany.getPrefix("SnowWars", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(19, new ItemBuilder(Material.TOTEM_OF_UNDYING).setDisplayName(Verany.getPrefix("RPG", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(22, new ItemBuilder(Material.BEACON).setDisplayName(Verany.getPrefix("Spawn", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(25, new ItemBuilder(Material.CROSSBOW).setDisplayName(Verany.getPrefix("Survival", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(29, new ItemBuilder(Material.STICK).setDisplayName(Verany.getPrefix("Duels", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(33, new ItemBuilder(Material.LADDER).setDisplayName(Verany.getPrefix("Arcade", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(46, new ItemBuilder(Material.NETHERITE_AXE).setDisplayName(Verany.getPrefix("Creative", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(47, new ItemBuilder(Material.DIAMOND).setDisplayName(Verany.getPrefix("Team Hall", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(48, new ItemBuilder(Material.END_PORTAL_FRAME).setDisplayName(Verany.getPrefix("Loot Boxes", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(49, new ItemBuilder(Material.NETHER_STAR).setDisplayName(Verany.getPrefix("Hall of Pain", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(50, new ItemBuilder(Material.EXPERIENCE_BOTTLE).setDisplayName(Verany.getPrefix("Daily Reward", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(51, new ItemBuilder(Material.ELYTRA).setDisplayName(Verany.getPrefix("Elytra", playerInfo.getPrefixPattern())).build());
-        inventory.setItem(52, new ItemBuilder(Material.GOLDEN_BOOTS).setDisplayName(Verany.getPrefix(" Jump and Run", playerInfo.getPrefixPattern())).build());
-
-
+        for (int i = 0; i < TeleporterCategory.values().length; i++) {
+            TeleporterCategory categories = TeleporterCategory.values()[i];
+            inventory.setItem(categorySlots[i], new ItemBuilder(categories.getMaterial()).setGlow(categories.equals(category)).setDisplayName(getName(categories.name())).build());
+        }
     }
+
+    private String getName(String enumName) {
+        IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
+        String categoryName = Verany.getNameOfEnum(enumName, "");
+        categoryName = categoryName.substring(0, categoryName.length() - 1);
+        String name = Verany.getPrefix(categoryName, playerInfo.getPrefixPattern());
+        name = name.substring(0, name.length() - 7);
+        return name;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public enum TeleporterCategory implements VeranyEnum {
+        GAMES(Material.CROSSBOW),
+        LOBBY_GAMES(Material.WOODEN_AXE),
+        LOBBY_LOCATIONS(Material.NETHER_STAR);
+
+        private final Material material;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public enum TeleportLocations implements VeranyEnum {
+        FLAG_WARS(Material.BLUE_BANNER, TeleporterCategory.GAMES, "flagwars"),
+        SNOW_WARS(Material.SNOWBALL, TeleporterCategory.GAMES, "snowwars"),
+        SURVIVAL(Material.ENCHANTING_TABLE, TeleporterCategory.GAMES, "survival"),
+        RPG(Material.TOTEM_OF_UNDYING, TeleporterCategory.GAMES, "rpg"),
+        DUELS(Material.STICK, TeleporterCategory.GAMES, "duels"),
+        SPAWN(Material.BEACON, TeleporterCategory.GAMES, "spawn"),
+        ARCADE(Material.MINECART, TeleporterCategory.GAMES, "arcade"),
+        HALL_OF_PAIN(Material.OAK_SIGN, TeleporterCategory.LOBBY_LOCATIONS, "hall_of_pain"),
+        TEAM_HALL(Material.DIAMOND, TeleporterCategory.LOBBY_LOCATIONS, "team_hall"),
+        DAILY_REWARD(Material.GOLD_INGOT, TeleporterCategory.LOBBY_LOCATIONS, "daily_reward"),
+        LOOT_BOXES(Material.BLUE_SHULKER_BOX, TeleporterCategory.LOBBY_LOCATIONS, "loot_boxes"),
+        JUKEBOX(Material.JUKEBOX, TeleporterCategory.LOBBY_LOCATIONS, "jukebox"),
+        SPAWN_(Material.BEACON, TeleporterCategory.LOBBY_LOCATIONS, "spawn"),
+        COMING_SOON4(Material.BARRIER, TeleporterCategory.LOBBY_LOCATIONS, "spawn"),
+        ELYTRA(Material.ELYTRA, TeleporterCategory.LOBBY_GAMES, "elytra"),
+        TIC_TAC_TOE(Material.NOTE_BLOCK, TeleporterCategory.LOBBY_GAMES, "tic_tac_toe"),
+        JUMP_AND_RUN(Material.GOLDEN_BOOTS, TeleporterCategory.LOBBY_GAMES, "jump_and_run"),
+        COMING_SOON1(Material.BARRIER, TeleporterCategory.LOBBY_GAMES, "spawn"),
+        COMING_SOON2(Material.BARRIER, TeleporterCategory.LOBBY_GAMES, "spawn"),
+        SPAWN__(Material.BEACON, TeleporterCategory.LOBBY_GAMES, "spawn"),
+        COMING_SOON3(Material.BARRIER, TeleporterCategory.LOBBY_GAMES, "spawn");
+
+        private final Material material;
+        private final TeleporterCategory category;
+        private final String locationName;
+    }
+
+    private List<TeleportLocations> getLocations(TeleporterCategory category) {
+        List<TeleportLocations> toReturn = new ArrayList<>();
+        for (TeleportLocations value : TeleportLocations.values())
+            if (value.getCategory() == null || value.getCategory().equals(category))
+                toReturn.add(value);
+        return toReturn;
+    }
+
 }
