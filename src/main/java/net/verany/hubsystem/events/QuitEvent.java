@@ -20,9 +20,7 @@ public class QuitEvent implements Listener {
 
         event.setQuitMessage(null);
 
-        HubSystem.INSTANCE.getScoreboardTask().removePlayer(player);
-
-        HubPlayer hubPlayer =Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class);
+        HubPlayer hubPlayer = Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class);
         hubPlayer.getData(HubPlayer.PlayerData.class).setLastLocation(HubLocation.toHubLocation(player.getLocation()));
         hubPlayer.update();
         Verany.removePlayer(player.getUniqueId().toString(), HubPlayer.class);
