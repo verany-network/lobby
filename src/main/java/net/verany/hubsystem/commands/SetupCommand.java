@@ -6,6 +6,7 @@ import net.verany.api.player.IPlayerInfo;
 import net.verany.hubsystem.HubSystem;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -49,19 +50,22 @@ public class SetupCommand implements CommandExecutor, TabCompleter {
             switch (name.toLowerCase()) {
                 case "setspawn":
                     HubSystem.INSTANCE.getLocationManager().createLocation("spawn", player.getLocation());
-                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "Der §bSpawn §7wurde gesetzt§8.");
+                    player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Der §bSpawn §7wurde gesetzt§8.");
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
                     break;
 
                 case "build":
                     if(player.getGameMode().equals(GameMode.CREATIVE)) {
                         player.setGameMode(GameMode.ADVENTURE);
                         player.setFlying(false);
-                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "Du bist nun im §bBaumodus§8.");
+                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du bist nun im §bBaumodus§8.");
+                        player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Der §bSpawn §7wurde gesetzt§8.");
                     } else {
                         if(!player.getGameMode().equals(GameMode.CREATIVE)) {
                             player.setGameMode(GameMode.CREATIVE);
                             player.setFlying(true);
-                            player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "Du bist nun im §bnormalen Modus§8.");
+                            player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du bist nun im §bnormalen Modus§8.");
+                            player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Der §bSpawn §7wurde gesetzt§8.");
                         }
                     }
                     break;
@@ -70,22 +74,26 @@ public class SetupCommand implements CommandExecutor, TabCompleter {
                     Block targetBlock = player.getTargetBlock(5);
                     if (!targetBlock.getType().equals(Material.BEE_NEST)) {
                         player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§cBitte markiere ein Bienennest indem du es direkt ansiehst§8.");
+                        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2F, 2F);
                         return false;
                     }
                     String nestName = "beenest_" + targetBlock.getX() + "_" + targetBlock.getZ();
                     if (HubSystem.INSTANCE.getLocationManager().existLocation(nestName)) {
                         player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§cDieses Bienennest wurde bereits gesetzt§8.");
+                        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2F, 2F);
                         return false;
                     }
                     HubSystem.INSTANCE.getLocationManager().createLocation(nestName, targetBlock.getLocation());
                     player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du hast das §bBienennest §7erfolgreich gesetzt§8.");
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
                     break;
             }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("setloc") || args[0].equalsIgnoreCase("setnpc")) {
                 String name = args[1];
                 HubSystem.INSTANCE.getLocationManager().createLocation(name, player.getLocation());
-                player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "Die Location §b" + name + " §7wurde gesetzt§.");
+                player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Die Location §b" + name + " §7wurde gesetzt§.");
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
             }
         }
         return false;
