@@ -61,6 +61,7 @@ public class TeleporterInventory {
         for (int i = 0; i < getLocations(category).size(); i++) {
             TeleportLocations locations = getLocations(category).get(i);
 
+
             String[] lore = playerInfo.getKeyArray("hub.teleporter.lore." + locations.getLocationName().toLowerCase(), "~", new Placeholder("%online%", 0), new Placeholder("%rating%", "★★★★☆"));
 
             inventory.setItem(locationSlots[i], new ItemBuilder(locations.getMaterial()).addLoreArray(lore).setDisplayName(getName(locations.name())).build());

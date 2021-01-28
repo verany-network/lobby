@@ -2,6 +2,8 @@ package net.verany.hubsystem.events;
 
 import lombok.Getter;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
@@ -10,6 +12,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.util.Vector;
 
 public class WorldEvents implements Listener {
 
@@ -67,6 +70,30 @@ public class WorldEvents implements Listener {
         if (event.getEntity() instanceof Trident) {
             System.out.println("trident");
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onDoubleJump(PlayerToggleFlightEvent event) {
+        Player player = event.getPlayer();
+        if(player.getGameMode() == GameMode.ADVENTURE) {
+            event.setCancelled(true);
+            player.setAllowFlight(false);
+            player.setFlying(false);
+            Vector vector = player.getLocation().getDirection().multiply(1.3).setY(1);
+            player.playSound(player.getLocation(), Sound.ENTITY_CAT_HISS, 3, 1);
+            player.setVelocity(vector);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        if(player.getGameMode() == GameMode.ADVENTURE) {
+            if(player.getLocation().add(0,-1,0).getBlock().getType() != Material.AIR) {
+                player.setAllowFlight(true);
+                player.setFlying(false);
+            }
         }
     }
 
