@@ -49,10 +49,10 @@ public class JoinEvent implements Listener {
         player.setFoodLevel(20);
         player.setHealth(20);
         player.setHealthScale(2);
-        player.setFlying(false);
         player.setLevel(0);
+        player.setAllowFlight(true);
+        player.setFlying(false);
 
         new HubScoreboard(player);
-        HubSystem.INSTANCE.getScoreboardTask().addPlayer(player);
     }
 }
