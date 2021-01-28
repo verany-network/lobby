@@ -9,6 +9,8 @@ import net.verany.api.scoreboard.ScoreboardBuilder;
 import net.verany.hubsystem.HubSystem;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.TimeUnit;
+
 public class HubScoreboard {
 
     private final String[] displayName = {"§b§lVerany", "§3§lV§b§lerany", "§b§lV§3§le§b§lrany", "§b§lVe§3§lr§b§lany", "§b§lVer§3§la§b§lny", "§b§lVera§3§ln§b§ly", "§b§lVeran§3§ly"};
@@ -41,7 +43,19 @@ public class HubScoreboard {
         scoreboardBuilder.setTitle(displayName[currentSlot]);
         HubSystem.INSTANCE.setMetadata(player, "displayNamePosition", currentSlot);
 
-        String[] scores = playerInfo.getKeyArray("hub_scoreboard_scores", "~", new Placeholder("%rank%", playerInfo.getGroupWithColor()), new Placeholder("%credits%", playerInfo.getCreditsObject().getCreditsAsDecimal()));
+        String playedTime = "";
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(playerInfo.getPlayTime());
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(playerInfo.getPlayTime());
+        long hours = TimeUnit.MILLISECONDS.toHours(playerInfo.getPlayTime());
+        if (hours == 0)
+            if (minutes == 0)
+                playedTime = seconds + "s";
+            else
+                playedTime = minutes + "m";
+        else
+            playedTime = hours + "h";
+
+        String[] scores = playerInfo.getKeyArray("hub_scoreboard_scores", "~", new Placeholder("%rank%", playerInfo.getGroupWithColor()), new Placeholder("%credits%", playerInfo.getCreditsObject().getCreditsAsDecimal()), new Placeholder("%playtime%", playedTime), new Placeholder("%global_rank%", Verany.asDecimal(playerInfo.getGlobalRank())));
         int id = scores.length;
         for (int i = 0; i < scores.length; i++) {
             scoreboardBuilder.setSlot(i, scores[id - 1]);
@@ -49,5 +63,7 @@ public class HubScoreboard {
         }
 
     }
+
+
 
 }
