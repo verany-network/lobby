@@ -23,4 +23,20 @@ public class ScoreboardTask extends AbstractTask {
         }
     }
 
+    public static class ScoreboardDisplayNameTask extends AbstractTask {
+
+        public ScoreboardDisplayNameTask(long waitTime) {
+            super(waitTime);
+        }
+
+        @Override
+        public void run() {
+            for (IPlayerInfo player : Verany.getOnlinePlayers()) {
+                if (player.getPlayer() == null || !player.getPlayer().hasMetadata("scoreboard")) continue;
+                HubScoreboard scoreboard = (HubScoreboard) player.getPlayer().getMetadata("scoreboard").get(0).value();
+                scoreboard.setDisplayName();
+            }
+        }
+    }
+
 }

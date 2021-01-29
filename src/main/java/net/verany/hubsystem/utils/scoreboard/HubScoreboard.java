@@ -13,7 +13,9 @@ import java.util.concurrent.TimeUnit;
 
 public class HubScoreboard {
 
-    private final String[] displayName = {"§b§lVerany", "§3§lV§b§lerany", "§b§lV§3§le§b§lrany", "§b§lVe§3§lr§b§lany", "§b§lVer§3§la§b§lny", "§b§lVera§3§ln§b§ly", "§b§lVeran§3§ly"};
+    // Hellblau für 5sek, dann verläuft es Türkis ganz schnell von links nach rechts und bleibt türkis, dann blinkt es ein mal hellblau, dann blinkt es türkis, dann wieder für 5sek hellblau
+    // private final String[] displayName = {"§b§lVerany", "§3§lV§b§lerany", "§b§lV§3§le§b§lrany", "§b§lVe§3§lr§b§lany", "§b§lVer§3§la§b§lny", "§b§lVera§3§ln§b§ly", "§b§lVeran§3§ly"};
+    private final String[] displayName = {"§b§lVerany", "§b§lVerany", "§b§lVerany", "§b§lVerany", "§b§lVerany", "§b§lVerany", "§b§lVerany", "§b§lVerany", "§b§lVerany", "§b§lVerany", "§b§lVerany", "§3§lV§b§lerany", "§3§lVe§b§lrany", "§3§lVer§b§lany", "§3§lVera§b§lny", "§3§lVeran§b§ly", "§3§lVerany", "§3§lVerany", "§3§lVerany", "§b§lVerany","§b§lVerany",  "§3§lVerany", "§3§lVerany", "§b§lVerany","§b§lVerany",  "§3§lVerany", "§3§lVerany"};
     private final Player player;
     private final IPlayerInfo playerInfo;
     private IScoreboardBuilder scoreboardBuilder;
@@ -36,12 +38,6 @@ public class HubScoreboard {
     }
 
     private void setScores() {
-        int currentSlot = player.getMetadata("displayNamePosition").get(0).asInt();
-        currentSlot++;
-        if (currentSlot >= displayName.length)
-            currentSlot = 0;
-        scoreboardBuilder.setTitle(displayName[currentSlot]);
-        HubSystem.INSTANCE.setMetadata(player, "displayNamePosition", currentSlot);
 
         String playedTime = "";
         long seconds = TimeUnit.MILLISECONDS.toSeconds(playerInfo.getPlayTime());
@@ -64,6 +60,13 @@ public class HubScoreboard {
 
     }
 
-
+    public void setDisplayName() {
+        int currentSlot = player.getMetadata("displayNamePosition").get(0).asInt();
+        currentSlot++;
+        if (currentSlot >= displayName.length)
+            currentSlot = 0;
+        scoreboardBuilder.setTitle(displayName[currentSlot]);
+        HubSystem.INSTANCE.setMetadata(player, "displayNamePosition", currentSlot);
+    }
 
 }
