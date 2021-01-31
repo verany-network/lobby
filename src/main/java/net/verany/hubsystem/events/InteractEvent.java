@@ -25,32 +25,19 @@ public class InteractEvent implements Listener {
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
             IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
             switch (player.getInventory().getItemInMainHand().getType()) {
-
-                case FIREWORK_ROCKET:
-                    new TeleporterInventory(player).setItems(TeleporterInventory.TeleporterCategory.GAMES);
-                    break;
-
                 case COMPASS:
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2F, 2F);
                     break;
-
                 case NAME_TAG:
                     new NickInventory(player);
                     break;
-
                 case TRIDENT:
                     event.setCancelled(event.getClickedBlock() != null && !event.getClickedBlock().isLiquid());
                     break;
-
                 case BOOK:
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2F, 2F);
                     break;
-
                 case CLOCK:
-                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2F, 2F);
-                    break;
-
-                case PLAYER_HEAD:
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2F, 2F);
                     break;
             }

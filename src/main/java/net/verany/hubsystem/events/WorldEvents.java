@@ -1,6 +1,9 @@
 package net.verany.hubsystem.events;
 
 import lombok.Getter;
+import net.verany.api.Verany;
+import net.verany.api.player.IPlayerInfo;
+import net.verany.hubsystem.utils.player.HubPlayer;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -10,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.util.Vector;
@@ -76,7 +80,7 @@ public class WorldEvents implements Listener {
     @EventHandler
     public void onDoubleJump(PlayerToggleFlightEvent event) {
         Player player = event.getPlayer();
-        if(player.getGameMode() == GameMode.ADVENTURE) {
+        if (player.getGameMode() == GameMode.ADVENTURE) {
             event.setCancelled(true);
             player.setAllowFlight(false);
             player.setFlying(false);
@@ -89,11 +93,21 @@ public class WorldEvents implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if(player.getGameMode() == GameMode.ADVENTURE) {
-            if(player.getLocation().add(0,-1,0).getBlock().getType() != Material.AIR) {
+        if (player.getGameMode() == GameMode.ADVENTURE) {
+            if (player.getLocation().add(0, -1, 0).getBlock().getType() != Material.AIR) {
                 player.setAllowFlight(true);
                 player.setFlying(false);
             }
+        }
+    }
+
+    @EventHandler
+    public void handleClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+        IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
+        if (player.getOpenInventory().getTitle().equals(playerInfo.getKey("profile.title"))) {
+            player.getInventory().clear();
+            Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
         }
     }
 

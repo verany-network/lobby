@@ -21,7 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-@VeranyModule(name = "HubSystem", prefix = "HubSystem", version = "1.1", authors = {"NicoVRNY", "tylix"}, user = "NicoVRNY", host = "159.69.63.105", password = "8Vu0T5MFd9KGTE1t", databases = {"hubsystem"})
+@VeranyModule(name = "HubSystem", prefix = "HubSystem", version = "1.1", authors = {"NicoVRNY", "tylix"}, user = "NicoVRNY", host = "159.69.63.105", password = "", databases = {"hubsystem"})
 public class HubSystem extends VeranyProject {
 
     public static HubSystem INSTANCE;
@@ -46,6 +46,7 @@ public class HubSystem extends VeranyProject {
         // §8◗§7◗ §b§lVerany§3§lCloud §8▏ §7
 
         init();
+
     }
 
     @Override

@@ -43,9 +43,6 @@ public class JoinEvent implements Listener {
 
         hubPlayer.setItems();
 
-        HubConfig.BEES_SPAWNED.setValue(true);
-        boolean is = HubConfig.BEES_SPAWNED.getValue();
-
         player.setFoodLevel(20);
         player.setHealth(20);
         player.setHealthScale(2);
