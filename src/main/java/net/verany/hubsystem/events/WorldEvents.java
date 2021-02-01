@@ -2,6 +2,8 @@ package net.verany.hubsystem.events;
 
 import lombok.Getter;
 import net.verany.api.Verany;
+import net.verany.api.event.events.PlayerLanguageUpdateEvent;
+import net.verany.api.event.events.PlayerPrefixUpdateEvent;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.hubsystem.utils.player.HubPlayer;
 import org.bukkit.GameMode;
@@ -109,6 +111,18 @@ public class WorldEvents implements Listener {
             player.getInventory().clear();
             Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
         }
+    }
+
+    @EventHandler
+    public void handleLanguageUpdate(PlayerLanguageUpdateEvent event) {
+        Player player = event.getPlayer();
+        Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
+    }
+
+    @EventHandler
+    public void handlePrefixUpdate(PlayerPrefixUpdateEvent event) {
+        Player player = event.getPlayer();
+        Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
     }
 
 }
