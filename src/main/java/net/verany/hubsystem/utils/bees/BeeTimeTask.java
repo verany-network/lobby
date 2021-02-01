@@ -43,6 +43,8 @@ public class BeeTimeTask implements Runnable {
         World world = HubSystem.INSTANCE.getLocationManager().getLocation("spawn").getWorld();
         world.setTime(getWorldTime());
 
+        beeList.forEach(entity -> entity.setTicksLived(1));
+
         if (Bukkit.getOnlinePlayers().size() != 0) {
             if (!HubConfig.BEES_SPAWNED.getValue() && world.isDayTime()) {
                 HubConfig.BEES_SPAWNED.setValue(true);
@@ -52,6 +54,7 @@ public class BeeTimeTask implements Runnable {
                     for (int i = 0; i < bees; i++) {
                         Bee bee = beehive.getWorld().spawn(beehive.clone().add(Verany.getRandomNumberBetween(-3, 3), -2, Verany.getRandomNumberBetween(-3, 3)), Bee.class);
                         beeList.add(bee);
+                        bee.setBaby();
                         bee.setHive(beehive);
                     }
                 }
