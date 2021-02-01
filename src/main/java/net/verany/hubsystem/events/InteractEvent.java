@@ -44,7 +44,7 @@ public class InteractEvent implements Listener {
 
         }
 
-        Block targetBlock = player.getTargetBlock(5);
+        /*Block targetBlock = player.getTargetBlock(5);
         if (targetBlock.getType().equals(Material.END_PORTAL_FRAME)) {
             if (targetBlock.getLocation().getBlockX() == 47) {
                 if (targetBlock.getLocation().getBlockZ() == 24) {
@@ -55,7 +55,7 @@ public class InteractEvent implements Listener {
                     targetBlock.setType(Material.END_PORTAL_FRAME, true);
                 }
             }
-        }
+        }*/
     }
 
     @EventHandler
