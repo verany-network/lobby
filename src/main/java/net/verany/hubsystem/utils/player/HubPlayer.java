@@ -57,11 +57,26 @@ public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
                     new TeleporterInventory(player).setItems(TeleporterInventory.TeleporterCategory.GAMES);
             }
         });
-        player.getInventory().setItem(1, new ItemBuilder(Material.COMPASS).setDisplayName("§8◗§7◗ §b§lLoot Compass").build());
-        player.getInventory().setItem(2, new ItemBuilder(Material.NAME_TAG).setDisplayName("§8◗§7◗ §b§lNick").build());
-        player.getInventory().setItem(4, new ItemBuilder(Material.TRIDENT).setDisplayName("§8◗§7◗ §b§lTrident").addEnchantment(Enchantment.RIPTIDE, 3).setUnbreakable(true).build());
-        player.getInventory().setItem(6, new ItemBuilder(Material.BOOK).setDisplayName("§8◗§7◗ §b§lInbox").build());
-        player.getInventory().setItem(7, new ItemBuilder(Material.CLOCK).setDisplayName("§8◗§7◗ §b§lHub Switcher").build());
+        playerInfo.setItem(1, new HotbarItem(new ItemBuilder(Material.COMPASS).setDisplayName(playerInfo.getKey("hub.item.lootcompass")), player) {
+            @Override
+            public void onInteract(PlayerInteractEvent event) {}
+        });
+        playerInfo.setItem(2, new HotbarItem(new ItemBuilder(Material.NAME_TAG).setDisplayName(playerInfo.getKey("hub.item.nick")), player) {
+            @Override
+            public void onInteract(PlayerInteractEvent event) {}
+        });
+        playerInfo.setItem(4, new HotbarItem(new ItemBuilder(Material.TRIDENT).setDisplayName(playerInfo.getKey("hub.item.trident")).addEnchantment(Enchantment.RIPTIDE, 3).setUnbreakable(true), player) {
+            @Override
+            public void onInteract(PlayerInteractEvent event) {}
+        });
+        playerInfo.setItem(6, new HotbarItem(new ItemBuilder(Material.BOOK).setDisplayName(playerInfo.getKey("hub.item.inbox")), player) {
+            @Override
+            public void onInteract(PlayerInteractEvent event) {}
+        });
+        playerInfo.setItem(7, new HotbarItem(new ItemBuilder(Material.CLOCK).setDisplayName(playerInfo.getKey("hub.item.hubswitcher")), player) {
+            @Override
+            public void onInteract(PlayerInteractEvent event) {}
+        });
         playerInfo.setItem(8, new HotbarItem(new SkullBuilder(playerInfo.getSkinData()).setDisplayName(playerInfo.getKey("hub.item.profile")), player) {
             @Override
             public void onInteract(PlayerInteractEvent event) {
