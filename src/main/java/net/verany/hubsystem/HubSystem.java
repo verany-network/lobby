@@ -4,18 +4,30 @@ import lombok.Getter;
 import net.verany.api.Verany;
 import net.verany.api.config.IngameConfig;
 import net.verany.api.inventory.InventoryBuilder;
+import net.verany.api.locationmanager.AbstractLocationManager;
+import net.verany.api.locationmanager.LocationManager;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
+import net.verany.api.setting.Settings;
+import net.verany.api.settings.AbstractSetting;
+import net.verany.api.skull.SkullBuilder;
 import net.verany.hubsystem.commands.BuildServerCommand;
 import net.verany.hubsystem.commands.SetupCommand;
 import net.verany.hubsystem.commands.ToggleRankCommand;
 import net.verany.hubsystem.events.*;
 import net.verany.hubsystem.utils.bees.BeeTimeTask;
-import net.verany.hubsystem.utils.location.LocationManager;
+import net.verany.hubsystem.utils.bees.OrbTask;
 import net.verany.hubsystem.utils.player.LevelTask;
 import net.verany.hubsystem.utils.scoreboard.ScoreboardTask;
+import net.verany.hubsystem.utils.settings.HubSetting;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Bee;
+import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.concurrent.TimeUnit;
@@ -26,7 +38,7 @@ public class HubSystem extends VeranyProject {
 
     public static HubSystem INSTANCE;
 
-    private LocationManager locationManager;
+    private AbstractLocationManager locationManager;
 
     public HubSystem() {
         INSTANCE = this;
@@ -52,14 +64,35 @@ public class HubSystem extends VeranyProject {
     @Override
     public void init() {
         super.init();
+
         registerCommands();
         registerEvents();
 
-        locationManager = new LocationManager(this);
+        locationManager = new LocationManager(this, "locations", "hubsystem");
+
+        spawnArmorStands();
 
         Bukkit.getScheduler().runTaskTimer(this, new BeeTimeTask(), 0, 15);
+        Bukkit.getScheduler().runTaskTimer(this, new OrbTask(), 0, 5);
+
+        for (AbstractSetting<?> value : Settings.VALUES)
+            if (!value.getCategory().equals("hubsystem"))
+                HubSetting.toHubSetting(value).getKey();
 
         Verany.addTask(new LevelTask(10 * 1000), new ScoreboardTask(1000), new ScoreboardTask.ScoreboardDisplayNameTask(100));
+    }
+
+    private void spawnArmorStands() {
+        if (locationManager.existLocation("elytra_start")) {
+            Location location = locationManager.getLocation("elytra_start");
+
+            location.setPitch(0);
+            ArmorStand itemArmorStand = location.getWorld().spawn(location.clone().subtract(0, 1.2, 0), ArmorStand.class);
+            itemArmorStand.setMetadata("elytra_start", new FixedMetadataValue(this, true));
+            itemArmorStand.getEquipment().setHelmet(Items.RED_ORB.clone());
+            itemArmorStand.setVisible(false);
+            itemArmorStand.setGravity(false);
+        }
     }
 
     @Override
@@ -68,9 +101,9 @@ public class HubSystem extends VeranyProject {
     }
 
     private void registerCommands() {
-        getCommand("setup").setExecutor(new SetupCommand(this));
-        getCommand("togglerank").setExecutor(new ToggleRankCommand(this));
-        getCommand("build").setExecutor(new BuildServerCommand(this));
+        getCommand("setup").setExecutor(new SetupCommand());
+        getCommand("togglerank").setExecutor(new ToggleRankCommand());
+        getCommand("build").setExecutor(new BuildServerCommand());
     }
 
     private void registerEvents() {
@@ -82,5 +115,9 @@ public class HubSystem extends VeranyProject {
         Bukkit.getPluginManager().registerEvents(new WorldEvents(), this);
     }
 
+
+    public static class Items {
+        public static ItemStack RED_ORB =new SkullBuilder("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTVkNTNlZjQyOGIzNjlmZDVjY2U5NGNlMjA1ZDBkMmQ3YjA5NWZhZDY3NmE5YjM4Mzk3MWVlMTA0OWUzNjdhZCJ9fX0=").build();
+    }
 
 }

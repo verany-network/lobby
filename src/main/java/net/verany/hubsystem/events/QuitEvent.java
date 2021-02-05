@@ -1,9 +1,7 @@
 package net.verany.hubsystem.events;
 
 import net.verany.api.Verany;
-import net.verany.hubsystem.HubSystem;
-import net.verany.hubsystem.utils.config.HubConfig;
-import net.verany.hubsystem.utils.location.HubLocation;
+import net.verany.api.locationmanager.VeranyLocation;
 import net.verany.hubsystem.utils.player.HubPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -21,7 +19,7 @@ public class QuitEvent implements Listener {
         event.setQuitMessage(null);
 
         HubPlayer hubPlayer = Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class);
-        hubPlayer.getData(HubPlayer.PlayerData.class).setLastLocation(HubLocation.toHubLocation(player.getLocation()));
+        hubPlayer.getData(HubPlayer.PlayerData.class).setLastLocation(VeranyLocation.toVeranyLocation(player.getLocation()));
         hubPlayer.update();
         Verany.removePlayer(player.getUniqueId().toString(), HubPlayer.class);
 

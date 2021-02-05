@@ -8,21 +8,25 @@ import net.verany.api.interfaces.IDefault;
 import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.loader.database.DatabaseLoader;
+import net.verany.api.locationmanager.VeranyLocation;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.skull.SkullBuilder;
 import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.utils.inventories.ProfileInventory;
 import net.verany.hubsystem.utils.inventories.TeleporterInventory;
-import net.verany.hubsystem.utils.location.HubLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
@@ -41,7 +45,7 @@ public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
         player = Bukkit.getPlayer(uuid);
         playerInfo = Verany.PROFILE_OBJECT.getPlayer(uuid).get();
 
-        load(new LoadInfo<>("user_hub", PlayerData.class, new PlayerData(uuid, HubLocation.toHubLocation(HubSystem.INSTANCE.getLocationManager().getLocation("spawn")))));
+        load(new LoadInfo<>("user_hub", PlayerData.class, new PlayerData(uuid, VeranyLocation.toVeranyLocation(HubSystem.INSTANCE.getLocationManager().getLocation("spawn")))));
     }
 
     @Override
@@ -59,23 +63,25 @@ public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
         });
         playerInfo.setItem(1, new HotbarItem(new ItemBuilder(Material.COMPASS).setDisplayName(playerInfo.getKey("hub.item.lootcompass")), player) {
             @Override
-            public void onInteract(PlayerInteractEvent event) {}
+            public void onInteract(PlayerInteractEvent event) {
+            }
         });
         playerInfo.setItem(2, new HotbarItem(new ItemBuilder(Material.NAME_TAG).setDisplayName(playerInfo.getKey("hub.item.nick")), player) {
             @Override
-            public void onInteract(PlayerInteractEvent event) {}
+            public void onInteract(PlayerInteractEvent event) {
+            }
         });
-        playerInfo.setItem(4, new HotbarItem(new ItemBuilder(Material.TRIDENT).setDisplayName(playerInfo.getKey("hub.item.trident")).addEnchantment(Enchantment.RIPTIDE, 3).setUnbreakable(true), player) {
+        playerInfo.setItem(4, new HotbarItem(new ItemBuilder(Material.TRIDENT).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.item.trident")).addEnchantment(Enchantment.RIPTIDE, 3).setUnbreakable(true), player) {
             @Override
-            public void onInteract(PlayerInteractEvent event) {}
+            public void onInteract(PlayerInteractEvent event) {
+            }
         });
         playerInfo.setItem(6, new HotbarItem(new ItemBuilder(Material.BOOK).setDisplayName(playerInfo.getKey("hub.item.inbox")), player) {
             @Override
-            public void onInteract(PlayerInteractEvent event) {}
+            public void onInteract(PlayerInteractEvent event) {
+            }
         });
         playerInfo.setItem(7, new HotbarItem(new ItemBuilder(Material.CLOCK).setDisplayName(playerInfo.getKey("hub.item.hubswitcher")), player) {
-            @Override
-            public void onInteract(PlayerInteractEvent event) {}
         });
         playerInfo.setItem(8, new HotbarItem(new SkullBuilder(playerInfo.getSkinData()).setDisplayName(playerInfo.getKey("hub.item.profile")), player) {
             @Override
@@ -89,13 +95,50 @@ public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
         });
     }
 
+    public void startElytra() {
+        player.getInventory().clear();
+        HubSystem.INSTANCE.setMetadata(player, "elytra", System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(2));
+        HubSystem.INSTANCE.setMetadata(player, "jumping", true);
+        player.getInventory().setChestplate(new ItemBuilder(Material.ELYTRA).setUnbreakable(true).setNoName().build());
+        player.getInventory().setHeldItemSlot(4);
+        player.teleport(player.getLocation().add(0, 70, 0));
+
+        Bukkit.getScheduler().runTaskLater(HubSystem.INSTANCE, () -> player.setGliding(true), 3);
+
+        setFirework(true);
+    }
+
+    public void resetElytra() {
+        player.getInventory().setChestplate(null);
+        setItems();
+        HubSystem.INSTANCE.removeMetadata(player, "elytra");
+        HubSystem.INSTANCE.removeMetadata(player, "jumping");
+    }
+
+    public void setFirework(boolean first) {
+        if (!first) {
+            player.getInventory().setItem(4, new ItemBuilder(Material.FIREWORK_STAR).setDisplayName(playerInfo.getKey("hub.item.wait")).build());
+            Bukkit.getScheduler().runTaskLater(HubSystem.INSTANCE, () -> {
+                if (player.hasMetadata("elytra"))
+                    setFirework(true);
+            }, 20);
+            return;
+        }
+        ItemStack firework = new ItemStack(Material.FIREWORK_ROCKET);
+        FireworkMeta fireworkMeta = (FireworkMeta) firework.getItemMeta();
+        fireworkMeta.setPower(3);
+        firework.setItemMeta(fireworkMeta);
+        player.getInventory().setItem(4, new ItemBuilder(firework).setDisplayName(playerInfo.getKey("hub.item.power")).addItemFlag(ItemFlag.values()).build());
+    }
+
+
     @Getter
     @Setter
     public static class PlayerData extends DatabaseLoadObject {
 
-        private HubLocation lastLocation;
+        private VeranyLocation lastLocation;
 
-        public PlayerData(UUID uuid, HubLocation lastLocation) {
+        public PlayerData(UUID uuid, VeranyLocation lastLocation) {
             super(uuid.toString());
             this.lastLocation = lastLocation;
         }

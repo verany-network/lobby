@@ -2,10 +2,13 @@ package net.verany.hubsystem.events;
 
 import net.verany.api.Verany;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.utils.inventories.NickInventory;
 import net.verany.hubsystem.utils.inventories.TeleporterInventory;
+import net.verany.hubsystem.utils.player.HubPlayer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,6 +24,12 @@ public class InteractEvent implements Listener {
         event.setCancelled(true);
         Player player = event.getPlayer();
 
+        if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_AIR))
+            if (event.getItem() != null && player.hasMetadata("elytra") && event.getItem().getType().equals(Material.FIREWORK_ROCKET)) {
+                Bukkit.getScheduler().runTaskLater(HubSystem.INSTANCE, () -> Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setFirework(false), 2);
+                event.setCancelled(false);
+                return;
+            }
 
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
             IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
@@ -61,6 +70,11 @@ public class InteractEvent implements Listener {
     @EventHandler
     public void onEntityInteract(PlayerInteractAtEntityEvent event) {
         event.setCancelled(true);
+        if (event.getRightClicked() instanceof ArmorStand) {
+            if (event.getRightClicked().hasMetadata("elytra_start") || (event.getRightClicked().getCustomName() != null && event.getRightClicked().getCustomName().contains("Eltytra"))) {
+                Verany.getPlayer(event.getPlayer().getUniqueId().toString(), HubPlayer.class).startElytra();
+            }
+        }
     }
 
     @EventHandler

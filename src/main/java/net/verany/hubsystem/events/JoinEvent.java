@@ -1,6 +1,7 @@
 package net.verany.hubsystem.events;
 
 import net.verany.api.Verany;
+import net.verany.api.gamemode.VeranyGameMode;
 import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.skull.SkullBuilder;

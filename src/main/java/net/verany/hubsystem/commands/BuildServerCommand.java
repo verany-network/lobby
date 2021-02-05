@@ -12,15 +12,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class BuildServerCommand implements CommandExecutor {
-    public BuildServerCommand(HubSystem hubSystem) {
-    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         Player player = (Player) sender;
         IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
-
-        // playerInfo.playRiptideAnimation();
 
         if(player.hasPermission("verany.hub.buildserver")) {
             if(args.length == 0) {

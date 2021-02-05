@@ -3,11 +3,12 @@ package net.verany.hubsystem.utils.bees;
 import com.google.gson.Gson;
 import de.dytanic.cloudnet.ext.bridge.BridgePlayerManager;
 import net.verany.api.Verany;
+import net.verany.api.locationmanager.AbstractLocationManager;
+import net.verany.api.locationmanager.VeranyLocation;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.task.AbstractTask;
 import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.utils.config.HubConfig;
-import net.verany.hubsystem.utils.location.LocationManager;
 import net.verany.hubsystem.utils.settings.HubSetting;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -30,7 +31,7 @@ public class BeeTimeTask implements Runnable {
     private final List<Entity> beeList = new ArrayList<>();
 
     public BeeTimeTask() {
-        HubSystem.INSTANCE.getLocationManager().getData(LocationManager.HubLocations.class).getLocations().forEach((s, hubLocation) -> {
+        HubSystem.INSTANCE.getLocationManager().getData(AbstractLocationManager.VeranyLocations.class).getLocations().forEach((s, hubLocation) -> {
             if (s.contains("beenest")) {
                 beehives.add(hubLocation.toLocation());
             }

@@ -56,7 +56,7 @@ public class TeleporterInventory {
                     onlinePlayer.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, 1);
                 }
             }
-        }).build().fillInventory(new ItemBuilder(Material.valueOf(playerInfo.getFirstColor().name() + "_STAINED_GLASS_PANE")).setNoName().build()).fillInventory(null, locationSlots).buildAndOpen(player);
+        }).build().fillInventory(new ItemBuilder(Material.valueOf(Verany.toDyeColor(playerInfo.getPrefixPattern().getColor().getFirstColor()) + "_STAINED_GLASS_PANE")).setNoName().build()).fillInventory(null, locationSlots).buildAndOpen(player);
 
         for (int i = 0; i < getLocations(category).size(); i++) {
             TeleportLocations locations = getLocations(category).get(i);

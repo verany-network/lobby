@@ -5,7 +5,9 @@ import net.verany.api.Verany;
 import net.verany.api.event.events.PlayerLanguageUpdateEvent;
 import net.verany.api.event.events.PlayerPrefixUpdateEvent;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.utils.player.HubPlayer;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -82,7 +84,7 @@ public class WorldEvents implements Listener {
     @EventHandler
     public void onDoubleJump(PlayerToggleFlightEvent event) {
         Player player = event.getPlayer();
-        if (player.getGameMode() == GameMode.ADVENTURE) {
+        if (player.getGameMode().equals(GameMode.ADVENTURE)) {
             event.setCancelled(true);
             player.setAllowFlight(false);
             player.setFlying(false);
@@ -95,34 +97,48 @@ public class WorldEvents implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (player.getGameMode() == GameMode.ADVENTURE) {
+        if (player.getGameMode().equals(GameMode.ADVENTURE)) {
             if (player.getLocation().add(0, -1, 0).getBlock().getType() != Material.AIR) {
                 player.setAllowFlight(true);
                 player.setFlying(false);
             }
         }
+
+        if (player.hasMetadata("elytra") && (System.currentTimeMillis() > player.getMetadata("elytra").get(0).asLong()))
+            if (player.isOnGround()) {
+                Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).resetElytra();
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1.5F);
+            }
+
+        if (player.hasMetadata("jumping"))
+            if (player.isOnGround()) {
+                HubSystem.INSTANCE.removeMetadata(player, "jumping");
+                player.setAllowFlight(true);
+            }
     }
 
     @EventHandler
     public void handleClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
-        IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
-        if (player.getOpenInventory().getTitle().equals(playerInfo.getKey("profile.title"))) {
+        if (player.hasMetadata("profile.category.")) {
             player.getInventory().clear();
             Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
+            HubSystem.INSTANCE.removeMetadata(player, "profile.category.");
         }
     }
 
     @EventHandler
     public void handleLanguageUpdate(PlayerLanguageUpdateEvent event) {
         Player player = event.getPlayer();
-        Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
+        if (!player.hasMetadata("profile.category"))
+            Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
     }
 
     @EventHandler
     public void handlePrefixUpdate(PlayerPrefixUpdateEvent event) {
         Player player = event.getPlayer();
-        Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
+        if (!player.hasMetadata("profile.category"))
+            Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
     }
 
 }
