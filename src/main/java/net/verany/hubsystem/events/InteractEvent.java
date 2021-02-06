@@ -24,7 +24,7 @@ public class InteractEvent implements Listener {
         event.setCancelled(true);
         Player player = event.getPlayer();
 
-        if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_AIR))
+        if (event.getAction().equals(Action.RIGHT_CLICK_AIR))
             if (event.getItem() != null && player.hasMetadata("elytra") && event.getItem().getType().equals(Material.FIREWORK_ROCKET)) {
                 Bukkit.getScheduler().runTaskLater(HubSystem.INSTANCE, () -> Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setFirework(false), 2);
                 event.setCancelled(false);
@@ -40,9 +40,6 @@ public class InteractEvent implements Listener {
                 case NAME_TAG:
                     new NickInventory(player);
                     break;
-                case TRIDENT:
-                    event.setCancelled(event.getClickedBlock() != null && !event.getClickedBlock().isLiquid());
-                    break;
                 case BOOK:
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2F, 2F);
                     break;
@@ -50,6 +47,8 @@ public class InteractEvent implements Listener {
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2F, 2F);
                     break;
             }
+            if(event.getAction().equals(Action.RIGHT_CLICK_AIR) && player.getInventory().getItemInMainHand().getType().equals(Material.TRIDENT))
+                event.setCancelled(false);
 
         }
 
@@ -71,7 +70,7 @@ public class InteractEvent implements Listener {
     public void onEntityInteract(PlayerInteractAtEntityEvent event) {
         event.setCancelled(true);
         if (event.getRightClicked() instanceof ArmorStand) {
-            if (event.getRightClicked().hasMetadata("elytra_start") || (event.getRightClicked().getCustomName() != null && event.getRightClicked().getCustomName().contains("Eltytra"))) {
+            if (event.getRightClicked().getLocation().distance(HubSystem.INSTANCE.getLocationManager().getLocation("elytra_start")) <= 1.5) {
                 Verany.getPlayer(event.getPlayer().getUniqueId().toString(), HubPlayer.class).startElytra();
             }
         }

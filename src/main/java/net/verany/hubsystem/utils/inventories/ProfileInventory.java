@@ -13,10 +13,15 @@ import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.prefix.PrefixPattern;
+import net.verany.api.setting.Settings;
 import net.verany.api.settings.AbstractSetting;
 import net.verany.api.skull.SkullBuilder;
+import net.verany.api.sound.VeranySound;
 import net.verany.hubsystem.HubSystem;
+import net.verany.hubsystem.utils.player.HubPlayer;
 import net.verany.hubsystem.utils.settings.HubSetting;
+import net.verany.hubsystem.utils.settings.HubSound;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -24,6 +29,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 public class ProfileInventory {
@@ -42,6 +50,7 @@ public class ProfileInventory {
         this.playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
         this.builder = InventoryBuilder.builder().size(9 * 6).title(playerInfo.getKey("hub.profile.title")).event(this::onClick).build();
         this.inventory = this.builder.buildAndOpen(player);
+        playerInfo.playSound(VeranySound.INVENTORY_OPEN);
     }
 
     public void setCategoryItems() {
@@ -56,6 +65,7 @@ public class ProfileInventory {
                 @Override
                 public void onClick(InventoryClickEvent event) {
                     setItems(category).setCategoryItems();
+                    playerInfo.playSound(VeranySound.INVENTORY_NAVIGATION);
                 }
             });
         }
@@ -109,11 +119,14 @@ public class ProfileInventory {
     private void onClick(InventoryClickEvent event) {
         if (clickInfo.equals("setting_categories")) {
             ProfileCategory.SettingCategory clickedCategory = EnumHelper.INSTANCE.valueOf(event.getCurrentItem().getType(), ProfileCategory.SettingCategory.values());
-            if (clickedCategory != null)
+            if (clickedCategory != null) {
                 setItems().setSettingItems(clickedCategory).setCategoryItems();
+                playerInfo.playSound(VeranySound.INVENTORY_NAVIGATION);
+            }
         } else if (clickInfo.startsWith("settings")) {
             if (event.getCurrentItem().getType().equals(Material.CLAY_BALL)) {
                 setItems(ProfileCategory.SETTINGS).setCategoryItems();
+                playerInfo.playSound(VeranySound.INVENTORY_NAVIGATION);
                 return;
             }
             if (clickInfo.endsWith("PREFIX")) {
@@ -124,8 +137,23 @@ public class ProfileInventory {
                         playerInfo.setPrefixPattern(prefixPattern);
                         playerInfo.sendKey(Verany.getPrefix("CoreExecutor", playerInfo.getPrefixPattern()), "core.prefix.selected", new Placeholder("%name%", playerInfo.getKey("core.prefix." + prefixPattern.getKey().toLowerCase())));
                         setItems().setSettingItems(ProfileCategory.SettingCategory.PREFIX).setCategoryItems();
+                        playerInfo.playSound(VeranySound.INVENTORY_NAVIGATION);
                         return;
                     }
+                }
+            }
+            for (int slot : settingsCategorySlots) {
+                if (event.getSlot() == slot) {
+                    AbstractSetting<?> setting = Settings.getSettingByMaterial(event.getInventory().getItem(event.getSlot() - 9).getType());
+                    if (setting != null) {
+                        if (setting.getTClass().equals(HubSetting.TimeType.class)) {
+                            AbstractSetting<HubSetting.TimeType> timeTypeSetting = (AbstractSetting<HubSetting.TimeType>) setting;
+                            playerInfo.setSettingValue(timeTypeSetting, HubSetting.TimeType.valueOf(Verany.getNextEnumValue(HubSetting.TimeType.class, playerInfo.getSettingValue(timeTypeSetting))));
+                            setItems().setSettingItems(ProfileCategory.SettingCategory.HUB).setCategoryItems();
+                            playerInfo.playSound(HubSound.INVENTORY_SETTING_CHANGE);
+                        }
+                    }
+                    break;
                 }
             }
         }
@@ -140,7 +168,7 @@ public class ProfileInventory {
         if (category.equals(ProfileCategory.SettingCategory.PREFIX)) {
             for (int i = 0; i < PrefixPattern.VALUES.size(); i++) {
                 AbstractPrefixPattern prefixPattern = PrefixPattern.VALUES.get(i);
-                inventory.setItem(settingsCategorySlots[i], new ItemBuilder(Material.valueOf(Verany.toDyeColor(prefixPattern.getColor().getFirstColor()) + "_STAINED_GLASS_PANE")).setGlow(prefixPattern.equals(playerInfo.getPrefixPattern())).setDisplayName(prefixPattern.getExample() + "§7Prefix").addLoreArray(playerInfo.getKeyArray("core.prefix.select", "~")).build());
+                inventory.setItem(settingsCategorySlots[i], new ItemBuilder(Material.valueOf(Verany.toDyeColor(prefixPattern.getColor().getFirstColor()) + "_STAINED_GLASS_PANE")).setGlow(prefixPattern.equals(playerInfo.getPrefixPattern())).setDisplayName(prefixPattern.getExample() + "§7Prefix " + playerInfo.getKey("core.prefix." + prefixPattern.getKey().toLowerCase())).addLoreArray(playerInfo.getKeyArray("core.prefix.select", "~")).build());
             }
             return this;
         }
@@ -155,6 +183,21 @@ public class ProfileInventory {
                     inventory.setItem(settingsSlots[i] + 9, new ItemBuilder(Material.LIME_DYE).build());
                 else
                     inventory.setItem(settingsSlots[i] + 9, new ItemBuilder(Material.RED_DYE).build());
+            } else if (hubSetting.getTClass().equals(Settings.SoundSettingList.class)) {
+                AbstractSetting<Settings.SoundSettingList> setting = (AbstractSetting<Settings.SoundSettingList>) hubSetting;
+                if (playerInfo.getSettingValue(setting).isEnabled()) {
+                    inventory.setItem(settingsSlots[i] + 9, new ItemBuilder(Material.LIME_DYE).build());
+                } else {
+                    inventory.setItem(settingsSlots[i] + 9, new ItemBuilder(Material.RED_DYE).build());
+                }
+            } else if (hubSetting.getTClass().equals(HubSetting.TimeType.class)) {
+                AbstractSetting<HubSetting.TimeType> setting = (AbstractSetting<HubSetting.TimeType>) hubSetting;
+                HubSetting.TimeType selectedType = playerInfo.getSettingValue(setting);
+                List<String> timeTypes = new ArrayList<>();
+                for (HubSetting.TimeType value : HubSetting.TimeType.values())
+                    timeTypes.add((value.equals(selectedType) ? "  §a» " : "  §8» ") + playerInfo.getKey("hub.settings.sort_" + value.name().toLowerCase()));
+                int id = Verany.getIdFromEnum(HubSetting.TimeType.class, selectedType);
+                inventory.setItem(settingsSlots[i] + 9, new ItemBuilder(Material.valueOf(DyeColor.values()[id].name() + "_DYE")).addLoreAll(timeTypes).build());
             }
         }
 

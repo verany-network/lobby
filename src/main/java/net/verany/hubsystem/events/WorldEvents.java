@@ -1,16 +1,16 @@
 package net.verany.hubsystem.events;
 
 import lombok.Getter;
+import net.verany.api.AbstractVerany;
 import net.verany.api.Verany;
 import net.verany.api.event.events.PlayerLanguageUpdateEvent;
 import net.verany.api.event.events.PlayerPrefixUpdateEvent;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.api.sound.VeranySound;
 import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.utils.player.HubPlayer;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import net.verany.hubsystem.utils.settings.HubSetting;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
@@ -74,10 +74,25 @@ public class WorldEvents implements Listener {
     }
 
     @EventHandler
-    public void onItemSwap(ProjectileLaunchEvent event) {
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
         if (event.getEntity() instanceof Trident) {
-            System.out.println("trident");
-            event.setCancelled(true);
+            event.setCancelled(false);
+        }
+    }
+
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if (event.getEntity() instanceof Trident) {
+            if(event.getEntity().getShooter() instanceof Player) {
+                Player shooter = (Player) event.getEntity().getShooter();
+                Location location = event.getEntity().getLocation();
+                location.setPitch(shooter.getLocation().getPitch());
+                location.setYaw(shooter.getLocation().getYaw());
+                event.getEntity().remove();
+                shooter.teleport(location.clone().add(0, 0.2, 0));
+                Verany.getPlayer(shooter.getUniqueId().toString(), HubPlayer.class).setItems();
+                Verany.PROFILE_OBJECT.getPlayer(shooter.getUniqueId()).get().playSound(Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+            }
         }
     }
 
@@ -105,7 +120,7 @@ public class WorldEvents implements Listener {
         }
 
         if (player.hasMetadata("elytra") && (System.currentTimeMillis() > player.getMetadata("elytra").get(0).asLong()))
-            if (player.isOnGround()) {
+            if (player.isOnGround() || player.getLocation().getBlock().isLiquid()) {
                 Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).resetElytra();
                 player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1.5F);
             }
@@ -115,6 +130,17 @@ public class WorldEvents implements Listener {
                 HubSystem.INSTANCE.removeMetadata(player, "jumping");
                 player.setAllowFlight(true);
             }
+        if (player.getLocation().getBlock().isLiquid()) {
+            if (!player.hasMetadata("liquid") && player.getInventory().contains(Material.TRIDENT)) {
+                HubSystem.INSTANCE.setMetadata(player, "liquid", true);
+                Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
+            }
+        } else {
+            if (player.hasMetadata("liquid") && player.getInventory().contains(Material.TRIDENT)) {
+                HubSystem.INSTANCE.removeMetadata(player, "liquid");
+                Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
+            }
+        }
     }
 
     @EventHandler
@@ -124,6 +150,7 @@ public class WorldEvents implements Listener {
             player.getInventory().clear();
             Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
             HubSystem.INSTANCE.removeMetadata(player, "profile.category.");
+            Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get().playSound(VeranySound.INVENTORY_CLOSE);
         }
     }
 

@@ -71,12 +71,19 @@ public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
             public void onInteract(PlayerInteractEvent event) {
             }
         });
-        playerInfo.setItem(4, new HotbarItem(new ItemBuilder(Material.TRIDENT).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.item.trident")).addEnchantment(Enchantment.RIPTIDE, 3).setUnbreakable(true), player) {
-            @Override
-            public void onInteract(PlayerInteractEvent event) {
-            }
-        });
-        playerInfo.setItem(6, new HotbarItem(new ItemBuilder(Material.BOOK).setDisplayName(playerInfo.getKey("hub.item.inbox")), player) {
+        if (player.hasMetadata("liquid"))
+            playerInfo.setItem(4, new HotbarItem(new ItemBuilder(Material.TRIDENT).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.item.trident")).addEnchantment(Enchantment.RIPTIDE, 3).setUnbreakable(true), player) {
+                @Override
+                public void onInteract(PlayerInteractEvent event) {
+                }
+            });
+        else
+            playerInfo.setItem(4, new HotbarItem(new ItemBuilder(Material.TRIDENT).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.item.trident")).setUnbreakable(true), player) {
+                @Override
+                public void onInteract(PlayerInteractEvent event) {
+                }
+            });
+        playerInfo.setItem(6, new HotbarItem(new ItemBuilder(Material.CHEST).setDisplayName(playerInfo.getKey("hub.item.loot")), player) {
             @Override
             public void onInteract(PlayerInteractEvent event) {
             }

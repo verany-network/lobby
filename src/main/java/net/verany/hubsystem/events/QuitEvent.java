@@ -5,7 +5,9 @@ import net.verany.api.locationmanager.VeranyLocation;
 import net.verany.hubsystem.utils.player.HubPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -23,6 +25,16 @@ public class QuitEvent implements Listener {
         hubPlayer.update();
         Verany.removePlayer(player.getUniqueId().toString(), HubPlayer.class);
 
+        for (Entity entity : player.getWorld().getEntities()) {
+            if (entity instanceof Trident) {
+                Trident trident = (Trident) entity;
+                if (trident.getShooter() instanceof Player) {
+                    Player shooter = (Player) trident.getShooter();
+                    if (shooter.getName().equals(player.getName()))
+                        trident.remove();
+                }
+            }
+        }
 
         /* if(!HubConfig.BEES_SPAWNED.getValue()) {
             if(Bukkit.getOnlinePlayers().size()) {

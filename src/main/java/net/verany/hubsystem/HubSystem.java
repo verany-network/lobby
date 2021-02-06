@@ -33,7 +33,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-@VeranyModule(name = "HubSystem", prefix = "HubSystem", version = "1.1", authors = {"NicoVRNY", "tylix"}, user = "NicoVRNY", host = "159.69.63.105", password = "", databases = {"hubsystem"})
+@VeranyModule(name = "HubSystem", prefix = "HubSystem", version = "1.1", authors = {"NicoVRNY", "tylix"}, user = "NicoVRNY", host = "159.69.63.105", password = "8Vu0T5MFd9KGTE1t", databases = {"hubsystem"})
 public class HubSystem extends VeranyProject {
 
     public static HubSystem INSTANCE;
@@ -73,25 +73,27 @@ public class HubSystem extends VeranyProject {
         spawnArmorStands();
 
         Bukkit.getScheduler().runTaskTimer(this, new BeeTimeTask(), 0, 15);
-        Bukkit.getScheduler().runTaskTimer(this, new OrbTask(), 0, 5);
 
         for (AbstractSetting<?> value : Settings.VALUES)
             if (!value.getCategory().equals("hubsystem"))
                 HubSetting.toHubSetting(value).getKey();
 
-        Verany.addTask(new LevelTask(10 * 1000), new ScoreboardTask(1000), new ScoreboardTask.ScoreboardDisplayNameTask(100));
+        Verany.addTask(new LevelTask(10 * 1000), new OrbTask(50), new ScoreboardTask(1000), new ScoreboardTask.ScoreboardDisplayNameTask(100));
     }
 
     private void spawnArmorStands() {
-        if (locationManager.existLocation("elytra_start")) {
-            Location location = locationManager.getLocation("elytra_start");
+        String[] locations = new String[]{"elytra_start", "jump_and_run_start"};
+        for (String locationString : locations) {
+            if (locationManager.existLocation(locationString)) {
+                Location location = locationManager.getLocation(locationString);
+                location.setPitch(0);
 
-            location.setPitch(0);
-            ArmorStand itemArmorStand = location.getWorld().spawn(location.clone().subtract(0, 1.2, 0), ArmorStand.class);
-            itemArmorStand.setMetadata("elytra_start", new FixedMetadataValue(this, true));
-            itemArmorStand.getEquipment().setHelmet(Items.RED_ORB.clone());
-            itemArmorStand.setVisible(false);
-            itemArmorStand.setGravity(false);
+                ArmorStand armorStand = location.getWorld().spawn(location.clone().subtract(0, 1.2, 0), ArmorStand.class);
+                armorStand.setMetadata(locationString, new FixedMetadataValue(this, true));
+                armorStand.getEquipment().setHelmet(Items.RED_ORB.clone());
+                armorStand.setVisible(false);
+                armorStand.setGravity(false);
+            }
         }
     }
 
