@@ -11,6 +11,9 @@ import net.verany.api.inventory.InventoryBuilder;
 import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.api.player.clan.IClanObject;
+import net.verany.api.player.friend.IFriendObject;
+import net.verany.api.player.friend.data.FriendData;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.prefix.PrefixPattern;
 import net.verany.api.setting.Settings;
@@ -18,7 +21,6 @@ import net.verany.api.settings.AbstractSetting;
 import net.verany.api.skull.SkullBuilder;
 import net.verany.api.sound.VeranySound;
 import net.verany.hubsystem.HubSystem;
-import net.verany.hubsystem.utils.player.HubPlayer;
 import net.verany.hubsystem.utils.settings.HubSetting;
 import net.verany.hubsystem.utils.settings.HubSound;
 import org.bukkit.DyeColor;
@@ -30,7 +32,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,6 +42,7 @@ public class ProfileInventory {
     private final Integer[] profileCategorySlots = {19, 20, 21, 22, 23, 24, 25};
     private final Integer[] settingsCategorySlots = {20, 21, 22, 23, 24, 29, 30, 31, 32, 33};
     private final Integer[] settingsSlots = {20, 21, 22, 23, 24};
+    private final Integer[] contentSlot = {10, 11, 12, 13, 14, 15, 19, 20, 21, 22, 23, 24, 28, 29, 30, 31, 32, 33, 37, 38, 39, 40, 41, 42};
     private final IInventoryBuilder builder;
     private final Inventory inventory;
     private String clickInfo = "";
@@ -88,17 +90,64 @@ public class ProfileInventory {
             case FRIENDS:
                 setFriendItems();
                 break;
+            case CLAN:
+                setClanItems();
+                break;
+            case PARTY:
+                setPartyItems();
+                break;
             case SETTINGS:
                 setSettingItems();
                 break;
+            case INVENTORY:
+                setInventoryItems();
+                break;
+            case INBOX:
+                setInboxItems();
+                break;
         }
 
-        inventory.setItem(4, new ItemBuilder(category.getMaterial()).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.profile." + category.name().toLowerCase(Locale.ROOT))).build());
+        inventory.setItem(4, new ItemBuilder(category.equals(ProfileCategory.FRIENDS) ? new SkullBuilder(playerInfo.getSkinData()).build() : new ItemStack(category.getMaterial())).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.profile." + category.name().toLowerCase(Locale.ROOT))).build());
 
         return this;
     }
 
     private void setFriendItems() {
+        clickInfo = "friends";
+        IFriendObject friendObject = playerInfo.getFriendObject();
+        if (friendObject.getFriends().isEmpty())
+            inventory.setItem(22, new ItemBuilder(Material.BARRIER).setDisplayName(playerInfo.getKey("hub.profile.item.no_friends")).build());
+
+        int currentPage = playerInfo.getPage("profile.friends");
+        List<ItemStack> items = new ArrayList<>();
+        for (FriendData friend : friendObject.getFriends()) {
+            IPlayerInfo targetInfo = Verany.PROFILE_OBJECT.getPlayer(friend.getUuid()).get();
+            items.add(new SkullBuilder(targetInfo.getSkinData()).build());
+        }
+        builder.fillPageItems(new IInventoryBuilder.PageData<>(currentPage, contentSlot, 53, 52, items), new IInventoryBuilder.PageSwitchHandler() {
+            @Override
+            public void onSwitch(Type type) {
+                playerInfo.switchPage("profile.friends", type);
+                setItems(ProfileCategory.FRIENDS).setCategoryItems();
+            }
+        });
+    }
+
+    private void setClanItems() {
+        clickInfo = "clan";
+        IClanObject clanObject = playerInfo.getClanObject();
+
+    }
+
+    private void setPartyItems() {
+
+    }
+
+    private void setInventoryItems() {
+
+    }
+
+    private void setInboxItems() {
 
     }
 
@@ -113,49 +162,6 @@ public class ProfileInventory {
                 continue;
             }
             inventory.setItem(settingsCategorySlots[settingCount], new ItemBuilder(category.getMaterial()).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.profile.setting." + category.name().toLowerCase())).build());
-        }
-    }
-
-    private void onClick(InventoryClickEvent event) {
-        if (clickInfo.equals("setting_categories")) {
-            ProfileCategory.SettingCategory clickedCategory = EnumHelper.INSTANCE.valueOf(event.getCurrentItem().getType(), ProfileCategory.SettingCategory.values());
-            if (clickedCategory != null) {
-                setItems().setSettingItems(clickedCategory).setCategoryItems();
-                playerInfo.playSound(VeranySound.INVENTORY_NAVIGATION);
-            }
-        } else if (clickInfo.startsWith("settings")) {
-            if (event.getCurrentItem().getType().equals(Material.CLAY_BALL)) {
-                setItems(ProfileCategory.SETTINGS).setCategoryItems();
-                playerInfo.playSound(VeranySound.INVENTORY_NAVIGATION);
-                return;
-            }
-            if (clickInfo.endsWith("PREFIX")) {
-                for (int i = 0; i < settingsCategorySlots.length; i++) {
-                    int slot = settingsCategorySlots[i];
-                    if (event.getSlot() == slot) {
-                        AbstractPrefixPattern prefixPattern = PrefixPattern.VALUES.get(i);
-                        playerInfo.setPrefixPattern(prefixPattern);
-                        playerInfo.sendKey(Verany.getPrefix("CoreExecutor", playerInfo.getPrefixPattern()), "core.prefix.selected", new Placeholder("%name%", playerInfo.getKey("core.prefix." + prefixPattern.getKey().toLowerCase())));
-                        setItems().setSettingItems(ProfileCategory.SettingCategory.PREFIX).setCategoryItems();
-                        playerInfo.playSound(VeranySound.INVENTORY_NAVIGATION);
-                        return;
-                    }
-                }
-            }
-            for (int slot : settingsCategorySlots) {
-                if (event.getSlot() == slot) {
-                    AbstractSetting<?> setting = Settings.getSettingByMaterial(event.getInventory().getItem(event.getSlot() - 9).getType());
-                    if (setting != null) {
-                        if (setting.getTClass().equals(HubSetting.TimeType.class)) {
-                            AbstractSetting<HubSetting.TimeType> timeTypeSetting = (AbstractSetting<HubSetting.TimeType>) setting;
-                            playerInfo.setSettingValue(timeTypeSetting, HubSetting.TimeType.valueOf(Verany.getNextEnumValue(HubSetting.TimeType.class, playerInfo.getSettingValue(timeTypeSetting))));
-                            setItems().setSettingItems(ProfileCategory.SettingCategory.HUB).setCategoryItems();
-                            playerInfo.playSound(HubSound.INVENTORY_SETTING_CHANGE);
-                        }
-                    }
-                    break;
-                }
-            }
         }
     }
 
@@ -202,6 +208,56 @@ public class ProfileInventory {
         }
 
         return this;
+    }
+
+    private void onClick(InventoryClickEvent event) {
+        if (clickInfo.equals("setting_categories")) {
+            ProfileCategory.SettingCategory clickedCategory = EnumHelper.INSTANCE.valueOf(event.getCurrentItem().getType(), ProfileCategory.SettingCategory.values());
+            if (clickedCategory != null) {
+                setItems().setSettingItems(clickedCategory).setCategoryItems();
+                playerInfo.playSound(VeranySound.INVENTORY_NAVIGATION);
+            }
+        } else if (clickInfo.startsWith("settings")) {
+            if (event.getCurrentItem().getType().equals(Material.CLAY_BALL)) {
+                setItems(ProfileCategory.SETTINGS).setCategoryItems();
+                playerInfo.playSound(VeranySound.INVENTORY_NAVIGATION);
+                return;
+            }
+            if (clickInfo.endsWith("PREFIX")) {
+                for (int i = 0; i < settingsCategorySlots.length; i++) {
+                    int slot = settingsCategorySlots[i];
+                    if (event.getSlot() == slot) {
+                        AbstractPrefixPattern prefixPattern = PrefixPattern.VALUES.get(i);
+                        playerInfo.setPrefixPattern(prefixPattern);
+                        playerInfo.sendKey(Verany.getPrefix("CoreExecutor", playerInfo.getPrefixPattern()), "core.prefix.selected", new Placeholder("%name%", playerInfo.getKey("core.prefix." + prefixPattern.getKey().toLowerCase())));
+                        setItems().setSettingItems(ProfileCategory.SettingCategory.PREFIX).setCategoryItems();
+                        playerInfo.playSound(VeranySound.INVENTORY_NAVIGATION);
+                        return;
+                    }
+                }
+            }
+            for (int slot : settingsCategorySlots) {
+                if (event.getSlot() == slot) {
+                    AbstractSetting<?> setting = Settings.getSettingByMaterial(event.getInventory().getItem(event.getSlot() - 9).getType());
+                    if (setting == null)
+                        setting = Settings.getSettingByMaterial(event.getCurrentItem().getType());
+                    if (setting != null) {
+                        if (setting.getTClass().equals(HubSetting.TimeType.class)) {
+                            AbstractSetting<HubSetting.TimeType> timeTypeSetting = (AbstractSetting<HubSetting.TimeType>) setting;
+                            playerInfo.setSettingValue(timeTypeSetting, HubSetting.TimeType.valueOf(Verany.getNextEnumValue(HubSetting.TimeType.class, playerInfo.getSettingValue(timeTypeSetting))));
+                            setItems().setSettingItems(ProfileCategory.SettingCategory.HUB).setCategoryItems();
+                            playerInfo.playSound(HubSound.INVENTORY_SETTING_CHANGE);
+                        } else if (setting.getTClass().equals(Boolean.class)) {
+                            AbstractSetting<Boolean> booleanSettings = (AbstractSetting<Boolean>) setting;
+                            playerInfo.setSettingValue(booleanSettings, !playerInfo.getSettingValue(booleanSettings));
+                            setItems().setSettingItems(ProfileCategory.SettingCategory.valueOf(setting.getCategory())).setCategoryItems();
+                            playerInfo.playSound(HubSound.INVENTORY_SETTING_CHANGE);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     @AllArgsConstructor

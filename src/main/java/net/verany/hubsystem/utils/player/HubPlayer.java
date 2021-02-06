@@ -29,6 +29,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Getter
+@Setter
 public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
 
     private UUID uniqueId;
@@ -138,12 +139,20 @@ public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
         player.getInventory().setItem(4, new ItemBuilder(firework).setDisplayName(playerInfo.getKey("hub.item.power")).addItemFlag(ItemFlag.values()).build());
     }
 
+    public int getJumpAndRunHighScore() {
+        return getData(PlayerData.class).getJumpAndRunHighScore();
+    }
+
+    public void setJumpAndRunHighScore(int highScore) {
+        getData(PlayerData.class).setJumpAndRunHighScore(highScore);
+    }
 
     @Getter
     @Setter
     public static class PlayerData extends DatabaseLoadObject {
 
         private VeranyLocation lastLocation;
+        private int jumpAndRunHighScore;
 
         public PlayerData(UUID uuid, VeranyLocation lastLocation) {
             super(uuid.toString());

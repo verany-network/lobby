@@ -15,12 +15,13 @@ public class OrbTask extends AbstractTask {
 
     @Override
     public void run() {
+        if (Bukkit.getOnlinePlayers().size() == 0) return;
         for (Entity entity : HubSystem.INSTANCE.getLocationManager().getLocation("spawn").getWorld().getEntities()) {
-            if(entity instanceof ArmorStand) {
+            if (entity instanceof ArmorStand) {
                 if (entity.hasMetadata("elytra_start") || entity.hasMetadata("jump_and_run_start")) {
                     float pitch = entity.getLocation().getPitch();
                     pitch += 4;
-                    if(pitch >= 180)
+                    if (pitch >= 180)
                         pitch = -180;
                     Location location = entity.getLocation();
                     location.setPitch(pitch);

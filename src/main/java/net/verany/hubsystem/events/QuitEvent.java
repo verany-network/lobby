@@ -3,6 +3,7 @@ package net.verany.hubsystem.events;
 import net.verany.api.Verany;
 import net.verany.api.locationmanager.VeranyLocation;
 import net.verany.hubsystem.utils.player.HubPlayer;
+import net.verany.hubsystem.utils.player.jump.JumpAndRun;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
@@ -34,6 +35,11 @@ public class QuitEvent implements Listener {
                         trident.remove();
                 }
             }
+        }
+
+        if (player.hasMetadata("jump_and_run")) {
+            JumpAndRun jumpAndRun = (JumpAndRun) player.getMetadata("jump_and_run").get(0).value();
+            jumpAndRun.stop(player);
         }
 
         /* if(!HubConfig.BEES_SPAWNED.getValue()) {

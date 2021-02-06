@@ -30,6 +30,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Getter
@@ -39,6 +41,7 @@ public class HubSystem extends VeranyProject {
     public static HubSystem INSTANCE;
 
     private AbstractLocationManager locationManager;
+    private final List<Material> availableBlocks = new ArrayList<>();
 
     public HubSystem() {
         INSTANCE = this;
@@ -95,6 +98,10 @@ public class HubSystem extends VeranyProject {
                 armorStand.setGravity(false);
             }
         }
+
+        for (Material value : Material.values())
+            if (value.name().contains("CONCRETE") && !value.name().contains("POWDER"))
+                availableBlocks.add(value);
     }
 
     @Override
@@ -120,6 +127,7 @@ public class HubSystem extends VeranyProject {
 
     public static class Items {
         public static ItemStack RED_ORB =new SkullBuilder("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTVkNTNlZjQyOGIzNjlmZDVjY2U5NGNlMjA1ZDBkMmQ3YjA5NWZhZDY3NmE5YjM4Mzk3MWVlMTA0OWUzNjdhZCJ9fX0=").build();
+        public static ItemStack PLUS = new SkullBuilder("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkZDIwYmU5MzUyMDk0OWU2Y2U3ODlkYzRmNDNlZmFlYjI4YzcxN2VlNmJmY2JiZTAyNzgwMTQyZjcxNiJ9fX0=").build();
     }
 
 }

@@ -31,6 +31,7 @@ public class JoinEvent implements Listener {
         player.getInventory().clear();
         player.getInventory().setArmorContents(null);
         player.setExp(0);
+        player.setWalkSpeed(0.3F);
         player.setGameMode(GameMode.ADVENTURE);
 
         HubPlayer hubPlayer = new HubPlayer(HubSystem.INSTANCE);

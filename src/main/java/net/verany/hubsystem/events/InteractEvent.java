@@ -6,6 +6,7 @@ import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.utils.inventories.NickInventory;
 import net.verany.hubsystem.utils.inventories.TeleporterInventory;
 import net.verany.hubsystem.utils.player.HubPlayer;
+import net.verany.hubsystem.utils.player.jump.JumpAndRun;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -72,6 +73,14 @@ public class InteractEvent implements Listener {
         if (event.getRightClicked() instanceof ArmorStand) {
             if (event.getRightClicked().getLocation().distance(HubSystem.INSTANCE.getLocationManager().getLocation("elytra_start")) <= 1.5) {
                 Verany.getPlayer(event.getPlayer().getUniqueId().toString(), HubPlayer.class).startElytra();
+            } else if (event.getRightClicked().getLocation().distance(HubSystem.INSTANCE.getLocationManager().getLocation("jump_and_run_start")) <= 1.5) {
+                Player player = event.getPlayer();
+                JumpAndRun jumpAndRun = new JumpAndRun();
+                jumpAndRun.start(player);
+                HubSystem.INSTANCE.setMetadata(player, "jump_and_run", jumpAndRun);
+                player.getInventory().clear();
+                player.setWalkSpeed(0.2F);
+                player.setAllowFlight(false);
             }
         }
     }

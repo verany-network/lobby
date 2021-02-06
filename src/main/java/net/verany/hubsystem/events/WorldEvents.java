@@ -9,8 +9,10 @@ import net.verany.api.player.IPlayerInfo;
 import net.verany.api.sound.VeranySound;
 import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.utils.player.HubPlayer;
+import net.verany.hubsystem.utils.player.jump.JumpAndRun;
 import net.verany.hubsystem.utils.settings.HubSetting;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
@@ -112,6 +114,27 @@ public class WorldEvents implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
+
+        if (player.hasMetadata("jump_and_run")) {
+            Block underBlock = player.getLocation().subtract(0.0D, 1.0D, 0.0D).getBlock();
+            JumpAndRun jumpAndRun = (JumpAndRun) player.getMetadata("jump_and_run").get(0).value();
+            if (jumpAndRun.isFreeze()) {
+                int movX = event.getFrom().getBlockX() - event.getTo().getBlockX();
+                int movZ = event.getFrom().getBlockZ() - event.getTo().getBlockZ();
+                if ((Math.abs(movX) > 0.5) || (Math.abs(movZ) > 0.5))
+                    player.teleport(event.getFrom());
+                return;
+            }
+            if (underBlock.getLocation().getBlockX() == jumpAndRun.getNextLocation().getBlockX() && underBlock.getLocation().getBlockY() == jumpAndRun.getNextLocation().getBlockY() && underBlock.getLocation().getBlockZ() == jumpAndRun.getNextLocation().getBlockZ())
+                jumpAndRun.nextBlock(player, false);
+            if (player.getLocation().getY() < jumpAndRun.getCurrentLocation().getY() - 1) {
+                jumpAndRun.stop(player);
+                player.setWalkSpeed(0.3F);
+                player.setAllowFlight(true);
+            }
+            return;
+        }
+
         if (player.getGameMode().equals(GameMode.ADVENTURE)) {
             if (player.getLocation().add(0, -1, 0).getBlock().getType() != Material.AIR) {
                 player.setAllowFlight(true);
