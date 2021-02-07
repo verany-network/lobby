@@ -18,14 +18,14 @@ public class BuildServerCommand implements CommandExecutor {
         Player player = (Player) sender;
         IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
 
-        if(player.hasPermission("verany.hub.buildserver")) {
-            if(args.length == 0) {
+        if (player.hasPermission("verany.hub.buildserver")) {
+            if (args.length == 0) {
                 player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Du wirst zum BauServer gesendet§8...");
                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
                 playerInfo.sendOnServer("Build-1");
             } else {
                 player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§cDeine Eingabe ist leider falsch gewesen§8.");
-                }
+            }
 
         } else {
             player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§cDazu hast du keine Berechtigung§8.");
