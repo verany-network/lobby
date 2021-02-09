@@ -39,7 +39,7 @@ public class ActionbarTask extends AbstractTask {
 
             if (player.hasMetadata("jump_and_run")) {
                 JumpAndRun jumpAndRun = (JumpAndRun) player.getMetadata("jump_and_run").get(0).value();
-                player.sendActionBar(onlinePlayer.getKey("hub.jump_and_run.actionbar", new Placeholder("%current_score%", jumpAndRun.getCurrentScore()), new Placeholder("%highscore%", Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).getJumpAndRunHighScore())));
+                onlinePlayer.setDefaultActionbar(onlinePlayer.getKey("hub.jump_and_run.actionbar", new Placeholder("%current_score%", jumpAndRun.getCurrentScore()), new Placeholder("%highscore%", Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).getJumpAndRunHighScore())));
                 continue;
             }
 
