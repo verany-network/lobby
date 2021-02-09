@@ -7,12 +7,16 @@ import net.verany.api.Verany;
 import net.verany.api.actionbar.DefaultActionbar;
 import net.verany.api.enumhelper.EnumHelper;
 import net.verany.api.enumhelper.VeranyEnum;
+import net.verany.api.gamemode.AbstractGameMode;
+import net.verany.api.gamemode.VeranyGameMode;
 import net.verany.api.inventory.InventoryBuilder;
 import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.particle.ParticleManager;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.prefix.PrefixPattern;
+import net.verany.api.setting.SettingWrapper;
+import net.verany.api.settings.AbstractSetting;
 import net.verany.hubsystem.HubSystem;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -22,22 +26,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@AllArgsConstructor
 public class TeleporterInventory {
 
     private final Player player;
+    private final IPlayerInfo playerInfo;
     private final Integer[] locationSlots = {10, 11, 15, 16, 20, 22, 24};
     private final Integer[] categorySlots = {37, 49, 43};
+    private final Inventory inventory;
+    private TeleporterCategory category = TeleporterCategory.GAMES;
 
-    public void setItems(TeleporterCategory category) {
-        IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
-
-        Inventory inventory = InventoryBuilder.builder().size(9 * 6).title("§8◗§7◗ §b§lTeleporter").event(event -> {
+    public TeleporterInventory(Player player) {
+        this.player = player;
+        this.playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
+        this.inventory = InventoryBuilder.builder().size(9 * 6).title("§8◗§7◗ §b§lTeleporter").event(event -> {
             event.setCancelled(true);
 
             TeleporterCategory teleporterCategory = EnumHelper.INSTANCE.valueOf(event.getCurrentItem().getType(), TeleporterCategory.values());
             if (teleporterCategory != null) {
-                setItems(teleporterCategory);
+                category = teleporterCategory;
+                setItems();
                 player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                 return;
             }
@@ -57,12 +64,19 @@ public class TeleporterInventory {
                 }
             }
         }).build().fillInventory(new ItemBuilder(Material.valueOf(Verany.toDyeColor(playerInfo.getPrefixPattern().getColor().getFirstColor()) + "_STAINED_GLASS_PANE")).setNoName().build()).fillInventory(null, locationSlots).buildAndOpen(player);
+    }
+
+    public void setItems() {
+        HubSystem.INSTANCE.setMetadata(player, "teleporter", this);
 
         for (int i = 0; i < getLocations(category).size(); i++) {
             TeleportLocations locations = getLocations(category).get(i);
 
-
-            String[] lore = playerInfo.getKeyArray("hub.teleporter.lore." + locations.getLocationName().toLowerCase(), "~", new Placeholder("%online%", 0), new Placeholder("%rating%", "★★★★☆"));
+            int online = 0;
+            AbstractGameMode gameMode = VeranyGameMode.getGameModeByName(locations.getLocationName());
+            if (gameMode != null)
+                online = Verany.GAME_MODE_OBJECT.getOnlinePlayers(gameMode);
+            String[] lore = playerInfo.getKeyArray("hub.teleporter.lore." + locations.getLocationName().toLowerCase(), '~', new Placeholder("%online%", Verany.asDecimal(online)), new Placeholder("%rating%", "★★★★☆"));
 
             inventory.setItem(locationSlots[i], new ItemBuilder(locations.getMaterial()).addLoreArray(lore).setDisplayName(getName(locations.name())).build());
         }

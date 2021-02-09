@@ -15,6 +15,7 @@ import net.verany.hubsystem.commands.BuildServerCommand;
 import net.verany.hubsystem.commands.SetupCommand;
 import net.verany.hubsystem.commands.ToggleRankCommand;
 import net.verany.hubsystem.events.*;
+import net.verany.hubsystem.utils.actionbar.ActionbarTask;
 import net.verany.hubsystem.utils.bees.BeeTimeTask;
 import net.verany.hubsystem.utils.bees.OrbTask;
 import net.verany.hubsystem.utils.player.LevelTask;
@@ -81,7 +82,7 @@ public class HubSystem extends VeranyProject {
             if (!value.getCategory().equals("hubsystem"))
                 HubSetting.toHubSetting(value).getKey();
 
-        Verany.addTask(new LevelTask(10 * 1000), new OrbTask(50), new ScoreboardTask(1000), new ScoreboardTask.ScoreboardDisplayNameTask(100));
+        Verany.addTask(new ActionbarTask(750), new LevelTask(10 * 1000), new OrbTask(50), new ScoreboardTask(1000), new ScoreboardTask.ScoreboardDisplayNameTask(100));
     }
 
     private void spawnArmorStands() {
@@ -107,6 +108,8 @@ public class HubSystem extends VeranyProject {
     @Override
     public void onDisable() {
         locationManager.save();
+        getConnection().disconnect();
+        Verany.shutdown();
     }
 
     private void registerCommands() {

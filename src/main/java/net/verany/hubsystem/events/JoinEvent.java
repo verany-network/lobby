@@ -1,6 +1,7 @@
 package net.verany.hubsystem.events;
 
 import net.verany.api.Verany;
+import net.verany.api.event.events.PlayerLoadCompleteEvent;
 import net.verany.api.gamemode.VeranyGameMode;
 import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.player.IPlayerInfo;
@@ -22,9 +23,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class JoinEvent implements Listener {
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onJoin(PlayerJoinEvent event) {
+    @EventHandler
+    public void handleJoin(PlayerJoinEvent event) {
         event.setJoinMessage(null);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onJoin(PlayerLoadCompleteEvent event) {
         Player player = event.getPlayer();
         IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
 

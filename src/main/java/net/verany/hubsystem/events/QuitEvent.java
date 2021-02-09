@@ -5,6 +5,7 @@ import net.verany.api.locationmanager.VeranyLocation;
 import net.verany.hubsystem.utils.player.HubPlayer;
 import net.verany.hubsystem.utils.player.jump.JumpAndRun;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

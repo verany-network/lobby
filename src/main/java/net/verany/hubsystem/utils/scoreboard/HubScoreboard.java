@@ -15,7 +15,7 @@ public class HubScoreboard {
 
     // Hellblau für 5sek, dann verläuft es Türkis ganz schnell von links nach rechts und bleibt türkis, dann blinkt es ein mal hellblau, dann blinkt es türkis, dann wieder für 5sek hellblau
     // private final String[] displayName = {"§b§lVerany", "§3§lV§b§lerany", "§b§lV§3§le§b§lrany", "§b§lVe§3§lr§b§lany", "§b§lVer§3§la§b§lny", "§b§lVera§3§ln§b§ly", "§b§lVeran§3§ly"};
-    private final String[] displayName = {"$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$f§lV$s§lerany", "$f§lVe$s§lrany", "$f§lVer$s§lany", "$f§lVera$s§lny", "$f§lVeran$s§ly", "$f§lVerany", "$f§lVerany", "$f§lVerany", "$s§lVerany","$s§lVerany",  "$f§lVerany", "$f§lVerany", "$s§lVerany","$s§lVerany",  "$f§lVerany", "$f§lVerany"};
+    private final String[] displayName = {"$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$f§lV$s§lerany", "$f§lVe$s§lrany", "$f§lVer$s§lany", "$f§lVera$s§lny", "$f§lVeran$s§ly", "$f§lVerany", "$f§lVerany", "$f§lVerany", "$s§lVerany", "$s§lVerany", "$f§lVerany", "$f§lVerany", "$s§lVerany", "$s§lVerany", "$f§lVerany", "$f§lVerany"};
     private final Player player;
     private final IPlayerInfo playerInfo;
     private IScoreboardBuilder scoreboardBuilder;
@@ -31,6 +31,7 @@ public class HubScoreboard {
         scoreboardBuilder = new ScoreboardBuilder(player);
         HubSystem.INSTANCE.setMetadata(player, "displayNamePosition", 0);
         update();
+        scoreboardBuilder.setTitle(displayName[0]);
     }
 
     public void update() {
@@ -38,20 +39,26 @@ public class HubScoreboard {
     }
 
     private void setScores() {
+        if (!player.isOnline()) return;
 
         String playedTime = "";
         long seconds = TimeUnit.MILLISECONDS.toSeconds(playerInfo.getPlayTime());
         long minutes = TimeUnit.MILLISECONDS.toMinutes(playerInfo.getPlayTime());
         long hours = TimeUnit.MILLISECONDS.toHours(playerInfo.getPlayTime());
-        if (hours == 0)
-            if (minutes == 0)
-                playedTime = seconds + "s";
+        long days = TimeUnit.MILLISECONDS.toDays(playerInfo.getPlayTime());
+        if (days == 0) {
+            if (hours == 0)
+                if (minutes == 0)
+                    playedTime = seconds + "s";
+                else
+                    playedTime = minutes + "m";
             else
-                playedTime = minutes + "m";
-        else
-            playedTime = hours + "h";
+                playedTime = hours + "h";
+        } else {
+            playedTime = days + "d " + hours + "h";
+        }
 
-        String[] scores = playerInfo.getKeyArray("hub_scoreboard_scores", "~", new Placeholder("%rank%", playerInfo.getGroupWithColor()), new Placeholder("%credits%", playerInfo.getCreditsObject().getCreditsAsDecimal()), new Placeholder("%playtime%", playedTime), new Placeholder("%global_rank%", Verany.asDecimal(playerInfo.getGlobalRank())));
+        String[] scores = playerInfo.getKeyArray("hub_scoreboard_scores", '~', new Placeholder("%rank%", playerInfo.getGroupWithColor()), new Placeholder("%credits%", playerInfo.getCreditsObject().getCreditsAsDecimal()), new Placeholder("%playtime%", playedTime), new Placeholder("%global_rank%", Verany.asDecimal(playerInfo.getGlobalRank())));
         int id = scores.length;
         for (int i = 0; i < scores.length; i++) {
             scoreboardBuilder.setSlot(i, scores[id - 1]);

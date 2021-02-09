@@ -174,14 +174,14 @@ public class ProfileInventory {
         if (category.equals(ProfileCategory.SettingCategory.PREFIX)) {
             for (int i = 0; i < PrefixPattern.VALUES.size(); i++) {
                 AbstractPrefixPattern prefixPattern = PrefixPattern.VALUES.get(i);
-                inventory.setItem(settingsCategorySlots[i], new ItemBuilder(Material.valueOf(Verany.toDyeColor(prefixPattern.getColor().getFirstColor()) + "_STAINED_GLASS_PANE")).setGlow(prefixPattern.equals(playerInfo.getPrefixPattern())).setDisplayName(prefixPattern.getExample() + "§7Prefix " + playerInfo.getKey("core.prefix." + prefixPattern.getKey().toLowerCase())).addLoreArray(playerInfo.getKeyArray("core.prefix.select", "~")).build());
+                inventory.setItem(settingsCategorySlots[i], new ItemBuilder(Material.valueOf(Verany.toDyeColor(prefixPattern.getColor().getFirstColor()) + "_STAINED_GLASS_PANE")).setGlow(prefixPattern.equals(playerInfo.getPrefixPattern())).setDisplayName(prefixPattern.getExample() + "§7Prefix " + playerInfo.getKey("core.prefix." + prefixPattern.getKey().toLowerCase())).addLoreArray(playerInfo.getKeyArray("core.prefix.select", '~')).build());
             }
             return this;
         }
 
         for (int i = 0; i < HubSetting.getSettings(category).size(); i++) {
             AbstractSetting<?> hubSetting = HubSetting.getSettings(category).get(i);
-            inventory.setItem(settingsSlots[i], new ItemBuilder(hubSetting.getMaterial()).build());
+            inventory.setItem(settingsSlots[i], new ItemBuilder(hubSetting.getMaterial()).setDisplayName(playerInfo.getKey("hub.settings.item.name", new Placeholder("%setting_name%", playerInfo.getKey("hub.setting.name." + hubSetting.getKey().toLowerCase())))).build());
 
             if (hubSetting.getTClass().equals(Boolean.class)) {
                 AbstractSetting<Boolean> booleanAbstractSetting = (AbstractSetting<Boolean>) hubSetting;

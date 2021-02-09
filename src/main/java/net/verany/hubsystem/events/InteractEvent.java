@@ -71,6 +71,10 @@ public class InteractEvent implements Listener {
     public void onEntityInteract(PlayerInteractAtEntityEvent event) {
         event.setCancelled(true);
         if (event.getRightClicked() instanceof ArmorStand) {
+            if (event.getRightClicked().getCustomName() != null && event.getRightClicked().getCustomName().contains("§b§lBINGO")) {
+                Verany.PROFILE_OBJECT.getPlayer(event.getPlayer().getUniqueId()).get().sendOnServer("Bingo-1");
+                return;
+            }
             if (event.getRightClicked().getLocation().distance(HubSystem.INSTANCE.getLocationManager().getLocation("elytra_start")) <= 1.5) {
                 Verany.getPlayer(event.getPlayer().getUniqueId().toString(), HubPlayer.class).startElytra();
             } else if (event.getRightClicked().getLocation().distance(HubSystem.INSTANCE.getLocationManager().getLocation("jump_and_run_start")) <= 1.5) {

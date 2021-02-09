@@ -174,6 +174,10 @@ public class WorldEvents implements Listener {
             Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
             HubSystem.INSTANCE.removeMetadata(player, "profile.category.");
             Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get().playSound(VeranySound.INVENTORY_CLOSE);
+        } else if (player.hasMetadata("hub_switcher")) {
+            HubSystem.INSTANCE.removeMetadata(player, "hub_switcher");
+        } else if (player.hasMetadata("teleporter")) {
+            HubSystem.INSTANCE.removeMetadata(player, "teleporter");
         }
     }
 

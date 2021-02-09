@@ -13,6 +13,7 @@ import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.skull.SkullBuilder;
 import net.verany.hubsystem.HubSystem;
+import net.verany.hubsystem.utils.inventories.HubSwitcherInventory;
 import net.verany.hubsystem.utils.inventories.ProfileInventory;
 import net.verany.hubsystem.utils.inventories.TeleporterInventory;
 import org.bukkit.Bukkit;
@@ -59,7 +60,7 @@ public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
             @Override
             public void onInteract(PlayerInteractEvent event) {
                 if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-                    new TeleporterInventory(player).setItems(TeleporterInventory.TeleporterCategory.GAMES);
+                    new TeleporterInventory(player).setItems();
             }
         });
         playerInfo.setItem(1, new HotbarItem(new ItemBuilder(Material.COMPASS).setDisplayName(playerInfo.getKey("hub.item.lootcompass")), player) {
@@ -90,6 +91,11 @@ public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
             }
         });
         playerInfo.setItem(7, new HotbarItem(new ItemBuilder(Material.CLOCK).setDisplayName(playerInfo.getKey("hub.item.hubswitcher")), player) {
+            @Override
+            public void onInteract(PlayerInteractEvent event) {
+                if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+                    new HubSwitcherInventory(player).setItems();
+            }
         });
         playerInfo.setItem(8, new HotbarItem(new SkullBuilder(playerInfo.getSkinData()).setDisplayName(playerInfo.getKey("hub.item.profile")), player) {
             @Override
