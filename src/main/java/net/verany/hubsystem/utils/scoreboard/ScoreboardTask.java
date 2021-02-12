@@ -6,6 +6,7 @@ import net.verany.api.setting.Settings;
 import net.verany.api.task.AbstractTask;
 import net.verany.hubsystem.utils.inventories.HubSwitcherInventory;
 import net.verany.hubsystem.utils.inventories.TeleporterInventory;
+import net.verany.hubsystem.utils.player.HubPlayer;
 import net.verany.hubsystem.utils.settings.HubSetting;
 import org.bukkit.entity.Player;
 
@@ -21,6 +22,8 @@ public class ScoreboardTask extends AbstractTask {
     @Override
     public void run() {
         for (IPlayerInfo player : Verany.getOnlinePlayers()) {
+            if (player.getPlayer().isGliding())
+                Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).addStatistics("elytra");
             if (player.getPlayer().hasMetadata("hub_switcher")) {
                 HubSwitcherInventory inventory = (HubSwitcherInventory) player.getPlayer().getMetadata("hub_switcher").get(0).value();
                 inventory.setItems();
@@ -29,6 +32,10 @@ public class ScoreboardTask extends AbstractTask {
             if (player.getPlayer().hasMetadata("teleporter")) {
                 TeleporterInventory inventory = (TeleporterInventory) player.getPlayer().getMetadata("teleporter").get(0).value();
                 inventory.setItems();
+                continue;
+            }
+            if (player.getPlayer().hasMetadata("jump_and_run")) {
+                Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).addStatistics("jump_and_run");
                 continue;
             }
             if (player.getPlayer() == null || !player.getPlayer().hasMetadata("scoreboard")) continue;
