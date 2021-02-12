@@ -3,9 +3,11 @@ package net.verany.hubsystem.events;
 import lombok.Getter;
 import net.verany.api.AbstractVerany;
 import net.verany.api.Verany;
+import net.verany.api.event.events.PlayerAfkEvent;
 import net.verany.api.event.events.PlayerLanguageUpdateEvent;
 import net.verany.api.event.events.PlayerPrefixUpdateEvent;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.api.player.afk.IAFKObject;
 import net.verany.api.sound.VeranySound;
 import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.utils.player.HubPlayer;
@@ -85,7 +87,7 @@ public class WorldEvents implements Listener {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         if (event.getEntity() instanceof Trident) {
-            if(event.getEntity().getShooter() instanceof Player) {
+            if (event.getEntity().getShooter() instanceof Player) {
                 Player shooter = (Player) event.getEntity().getShooter();
                 Location location = event.getEntity().getLocation();
                 location.setPitch(shooter.getLocation().getPitch());
@@ -193,6 +195,19 @@ public class WorldEvents implements Listener {
         Player player = event.getPlayer();
         if (!player.hasMetadata("profile.category"))
             Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
+    }
+
+    @EventHandler
+    public void handlePrefixUpdate(PlayerAfkEvent event) {
+        Player player = event.getPlayer();
+        if (event.getPlayerInfo().getAfkObject().isAfk()) {
+            if (player.hasMetadata("jump_and_run")) {
+                event.getPlayerInfo().getAfkObject().disableAfkCheck(IAFKObject.CheckType.MOVE);
+                JumpAndRun jumpAndRun = (JumpAndRun) player.getMetadata("jump_and_run").get(0).value();
+                jumpAndRun.stop(player);
+                event.getPlayerInfo().getAfkObject().enableAfkCheck(IAFKObject.CheckType.MOVE);
+            }
+        }
     }
 
 }
