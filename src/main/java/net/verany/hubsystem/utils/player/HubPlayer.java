@@ -26,6 +26,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -153,16 +155,28 @@ public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
         getData(PlayerData.class).setJumpAndRunHighScore(highScore);
     }
 
+    public void addStatistics(String key) {
+        getData(PlayerData.class).addTime(key);
+    }
+
     @Getter
     @Setter
     public static class PlayerData extends DatabaseLoadObject {
 
         private VeranyLocation lastLocation;
         private int jumpAndRunHighScore;
+        private final Map<String, Long> time = new HashMap<>();
 
         public PlayerData(UUID uuid, VeranyLocation lastLocation) {
             super(uuid.toString());
             this.lastLocation = lastLocation;
+        }
+
+        public void addTime(String key) {
+            if (time.containsKey(key))
+                time.put(key, time.get(key) + 1);
+            else
+                time.put(key, 0L);
         }
     }
 
