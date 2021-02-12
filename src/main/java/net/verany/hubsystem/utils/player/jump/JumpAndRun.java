@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.server.v1_16_R3.Particles;
 import net.verany.api.Verany;
+import net.verany.api.actionbar.NumberActionbar;
 import net.verany.api.particle.ParticleManager;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
@@ -28,41 +29,45 @@ public class JumpAndRun {
     private int currentScore = 0;
     private boolean freeze = true;
 
-    private final Material block;
+    private Material block;
     private Material woolBlock;
 
     public JumpAndRun() {
-        block = HubSystem.INSTANCE.getAvailableBlocks().get(new Random().nextInt(HubSystem.INSTANCE.getAvailableBlocks().size() - 1));
+        /*block = HubSystem.INSTANCE.getAvailableBlocks().get(new Random().nextInt(HubSystem.INSTANCE.getAvailableBlocks().size() - 1));
         String blockColor = block.name().split("_")[0];
         if (block.name().contains("LIGHT"))
             blockColor = "LIGHT_" + block.name().split("_")[1];
         for (Material value : Material.values())
             if (value.name().contains("WOOL") && value.name().contains(blockColor))
                 woolBlock = value;
+
+            woolBlock =*/
     }
 
     public void start(Player player) {
+        IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
+        block = Material.valueOf(Verany.toDyeColor(playerInfo.getPrefixPattern().getColor().getFirstColor()) + "_CONCRETE");
+        woolBlock = Material.valueOf(Verany.toDyeColor(playerInfo.getPrefixPattern().getColor().getFirstColor()) + "_WOOL");
+
         double x = this.random.nextInt(10);
         double z = this.random.nextInt(10);
         this.currentLocation = new Location(player.getWorld(), player.getLocation().getX() + x, 120, player.getLocation().getZ() + z);
-        player.teleport(this.currentLocation.add(0.5D, 1.0D, 0.5D));
-        this.currentLocation.subtract(0.0D, 1.0D, 0.0D);
+        player.teleport(this.currentLocation.clone().add(0.5D, 1.0D, 0.5D));
         nextBlock(player, true);
 
         freeze = false;
-
     }
 
     public void nextBlock(Player player, boolean isStarted) {
         if (!isStarted) {
             currentScore++;
-            player.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, 0.5F, 1.0F);
+            player.playSound(player.getLocation(), Sound.BLOCK_COMPOSTER_EMPTY, 2F, 0.5F);
             removeBlock(this.currentLocation);
         } else
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F);
 
         this.currentLocation = player.getLocation();
-        final int radius = this.random.nextInt(1) + (this.random.nextInt(1) + 2) + 2;
+        final int radius = this.random.nextInt(1) + (this.random.nextInt(1) + 2) + (Verany.getRandomNumberBetween(0, 100) < 25 ? 2 : 1);
         final double angle = Math.random() * 3.141592653589793 * 2.0;
         final double x = Math.cos(angle) * radius;
         double y = this.random.nextInt(1);
@@ -79,7 +84,9 @@ public class JumpAndRun {
         this.currentLocation.subtract(0.0D, 1.0D, 0.0D).getBlock().setType(block, true);
         this.nextLocation.subtract(0.0D, down, 0.0D).getBlock().setType(woolBlock, true);
 
-        ParticleManager particleManager = new ParticleManager(Particles.CLOUD, nextLocation.clone().add(.5, 0, .5), true, .5F, .4F, .5F, 0, 20);
+        nextLocation.setX(nextLocation.getBlockX());
+        nextLocation.setZ(nextLocation.getBlockZ());
+        ParticleManager particleManager = new ParticleManager(Particles.HAPPY_VILLAGER, nextLocation.clone().clone().add(0.5, 1, 0.5), true, 0, .1F, 0, 0, 20);
         particleManager.sendPlayer(player);
     }
 
@@ -97,9 +104,9 @@ public class JumpAndRun {
         if (highScore < currentScore) {
             if (Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).getJumpAndRunHighScore() != 0) {
                 int exp = Verany.getRandomNumberBetween(10, 20);
-
-                playerInfo.sendKey(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()), "hub.jump_and_run.new_highscore", new Placeholder("%current_score%", currentScore), new Placeholder("%highscore%", highScore));
-                playerInfo.sendKey(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()), "hub.add.exp", new Placeholder("%exp%", exp));
+                playerInfo.getLevelObject().addExp(exp);
+                playerInfo.addActionbar(new NumberActionbar(playerInfo.getKey("hub.jump_and_run.new_highscore", new Placeholder("%current_score%", currentScore), new Placeholder("%highscore%", highScore)), 2000, highScore));
+                playerInfo.addActionbar(new NumberActionbar(playerInfo.getKey("hub.add.exp", new Placeholder("%exp%", exp)), 2000, exp));
             }
             Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setJumpAndRunHighScore(currentScore);
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 1.0F);
