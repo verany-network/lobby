@@ -65,41 +65,41 @@ public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
                     new TeleporterInventory(player).setItems();
             }
         });
-        playerInfo.setItem(1, new HotbarItem(new ItemBuilder(Material.COMPASS).setDisplayName(playerInfo.getKey("hub.item.lootcompass")), player) {
+        playerInfo.setItem(1, new HotbarItem(new ItemBuilder(Material.COMPASS).addLoreArray(playerInfo.getKeyArray("hub.item.teleporter.lore", '~')).setDisplayName(playerInfo.getKey("hub.item.lootcompass")), player) {
             @Override
             public void onInteract(PlayerInteractEvent event) {
             }
         });
-        playerInfo.setItem(2, new HotbarItem(new ItemBuilder(Material.NAME_TAG).setDisplayName(playerInfo.getKey("hub.item.nick")), player) {
+        playerInfo.setItem(2, new HotbarItem(new ItemBuilder(Material.NAME_TAG).addLoreArray(playerInfo.getKeyArray("hub.item.nick.lore", '~')).setDisplayName(playerInfo.getKey("hub.item.nick")), player) {
             @Override
             public void onInteract(PlayerInteractEvent event) {
             }
         });
         if (player.hasMetadata("liquid"))
-            playerInfo.setItem(4, new HotbarItem(new ItemBuilder(Material.TRIDENT).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.item.trident")).addEnchantment(Enchantment.RIPTIDE, 3).setUnbreakable(true), player) {
+            playerInfo.setItem(4, new HotbarItem(new ItemBuilder(Material.TRIDENT).addLoreArray(playerInfo.getKeyArray("hub.item.trident_water.lore", '~')).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.item.trident")).addEnchantment(Enchantment.RIPTIDE, 3).setUnbreakable(true), player) {
                 @Override
                 public void onInteract(PlayerInteractEvent event) {
                 }
             });
         else
-            playerInfo.setItem(4, new HotbarItem(new ItemBuilder(Material.TRIDENT).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.item.trident")).setUnbreakable(true), player) {
+            playerInfo.setItem(4, new HotbarItem(new ItemBuilder(Material.TRIDENT).addLoreArray(playerInfo.getKeyArray("hub.item.trident_land.lore", '~')).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.item.trident")).setUnbreakable(true), player) {
                 @Override
                 public void onInteract(PlayerInteractEvent event) {
                 }
             });
-        playerInfo.setItem(6, new HotbarItem(new ItemBuilder(Material.CHEST).setDisplayName(playerInfo.getKey("hub.item.loot")), player) {
+        playerInfo.setItem(6, new HotbarItem(new ItemBuilder(Material.CHEST).addLoreArray(playerInfo.getKeyArray("hub.item.loot.lore", '~')).setDisplayName(playerInfo.getKey("hub.item.loot")), player) {
             @Override
             public void onInteract(PlayerInteractEvent event) {
             }
         });
-        playerInfo.setItem(7, new HotbarItem(new ItemBuilder(Material.CLOCK).setDisplayName(playerInfo.getKey("hub.item.hubswitcher")), player) {
+        playerInfo.setItem(7, new HotbarItem(new ItemBuilder(Material.CLOCK).addLoreArray(playerInfo.getKeyArray("hub.item.hub_swithcer.lore", '~')).setDisplayName(playerInfo.getKey("hub.item.hubswitcher")), player) {
             @Override
             public void onInteract(PlayerInteractEvent event) {
                 if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
                     new HubSwitcherInventory(player).setItems();
             }
         });
-        playerInfo.setItem(8, new HotbarItem(new SkullBuilder(playerInfo.getSkinData()).setDisplayName(playerInfo.getKey("hub.item.profile")), player) {
+        playerInfo.setItem(8, new HotbarItem(new SkullBuilder(playerInfo.getSkinData()).addLoreArray(playerInfo.getKeyArray("hub.item.profile.lore", '~')).setDisplayName(playerInfo.getKey("hub.item.profile")), player) {
             @Override
             public void onInteract(PlayerInteractEvent event) {
                 if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
