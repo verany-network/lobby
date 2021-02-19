@@ -2,6 +2,7 @@ package net.verany.hubsystem.utils.inventories;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.verany.api.AbstractVerany;
 import net.verany.api.Verany;
 import net.verany.api.enumhelper.EnumHelper;
 import net.verany.api.enumhelper.VeranyEnum;
@@ -120,9 +121,24 @@ public class ProfileInventory {
 
         int currentPage = playerInfo.getPage("profile.friends");
         List<ItemStack> items = new ArrayList<>();
-        for (FriendData friend : friendObject.getFriends()) {
+
+        List<FriendData> friends = friendObject.getFriends();
+        List<Verany.SortData<FriendData>> sortData = new ArrayList<>();
+        for (FriendData friend : friends) {
+            IPlayerInfo playerInfo = Verany.getPlayer(friend.getUuid());
+            IFriendObject targetFriend = playerInfo.getFriendObject();
+            String status = targetFriend.getStatus().equals("online") ? "a" : "b";
+            sortData.add(new Verany.SortData<>(status + "_" + playerInfo.getPermissionObject().getCurrentGroup().getGroup().getScoreboardId() + "_" + (System.currentTimeMillis() - playerInfo.getLastOnline()) + "_" + playerInfo.getName(), friend));
+        }
+        friends = Verany.sortList(sortData, false);
+
+        for (FriendData friend : friends) {
             IPlayerInfo targetInfo = Verany.PROFILE_OBJECT.getPlayer(friend.getUuid()).get();
-            items.add(new SkullBuilder(targetInfo.getSkinData()).build());
+            if (targetInfo.getFriendObject().getStatus().equals("offline")) {
+                items.add(new ItemBuilder(Material.SKELETON_SKULL).addLoreArray(" ", "§7Last seen§8: §b" + Verany.getPrettyTime(playerInfo.getLanguage().getLocale(), targetInfo.getLastOnline())).setDisplayName(targetInfo.getNameWithColor()).build());
+            } else {
+                items.add(new SkullBuilder(targetInfo.getSkinData()).setDisplayName(targetInfo.getNameWithColor()).build());
+            }
         }
         builder.fillPageItems(new IInventoryBuilder.PageData<>(currentPage, contentSlot, 53, 52, items), new IInventoryBuilder.PageSwitchHandler() {
             @Override
