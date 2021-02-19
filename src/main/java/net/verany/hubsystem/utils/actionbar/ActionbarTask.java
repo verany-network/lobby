@@ -54,6 +54,8 @@ public class ActionbarTask extends AbstractTask {
             int messageCount = onlinePlayer.getTempSetting(messageCountSetting);
             int maxMessages;
 
+            if (count > categories.size())
+                count = 0;
             ActionbarCategory category = categories.get(count);
             switch (category) {
                 case SERVER:
