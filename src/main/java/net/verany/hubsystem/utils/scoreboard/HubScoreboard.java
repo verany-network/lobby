@@ -55,7 +55,8 @@ public class HubScoreboard {
             else
                 playedTime = hours + "h";
         } else {
-            playedTime = days + "d " + hours + "h";
+            hours = seconds / 60 / 60 % 24;
+            playedTime = days + "d" + (hours != 0 ? " " + hours + "h" : "");
         }
 
         String[] scores = playerInfo.getKeyArray("hub_scoreboard_scores", '~', new Placeholder("%rank%", playerInfo.getGroupWithColor()), new Placeholder("%credits%", playerInfo.getCreditsObject().getCreditsAsDecimal()), new Placeholder("%playtime%", playedTime), new Placeholder("%global_rank%", Verany.asDecimal(playerInfo.getGlobalRank())));
