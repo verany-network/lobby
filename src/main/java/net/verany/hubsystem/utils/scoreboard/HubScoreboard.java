@@ -24,12 +24,12 @@ public class HubScoreboard {
         this.player = player;
         this.playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
         HubSystem.INSTANCE.setMetadata(player, "scoreboard", this);
+        HubSystem.INSTANCE.setMetadata(player, "displayNamePosition", 0);
         load();
     }
 
     private void load() {
         scoreboardBuilder = new ScoreboardBuilder(player);
-        HubSystem.INSTANCE.setMetadata(player, "displayNamePosition", 0);
         update();
         scoreboardBuilder.setTitle(displayName[0]);
     }
