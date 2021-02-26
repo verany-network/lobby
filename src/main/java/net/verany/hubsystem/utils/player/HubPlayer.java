@@ -58,14 +58,14 @@ public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
     }
 
     public void setItems() {
-        playerInfo.setItem(0, new HotbarItem(new ItemBuilder(Material.FIREWORK_ROCKET).setDisplayName(playerInfo.getKey("hub.item.teleporter")), player) {
+        playerInfo.setItem(0, new HotbarItem(new ItemBuilder(Material.FIREWORK_ROCKET).addLoreArray(playerInfo.getKeyArray("hub.item.teleporter.lore", '~')).setDisplayName(playerInfo.getKey("hub.item.teleporter")), player) {
             @Override
             public void onInteract(PlayerInteractEvent event) {
                 if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
                     new TeleporterInventory(player).setItems();
             }
         });
-        playerInfo.setItem(1, new HotbarItem(new ItemBuilder(Material.COMPASS).addLoreArray(playerInfo.getKeyArray("hub.item.teleporter.lore", '~')).setDisplayName(playerInfo.getKey("hub.item.lootcompass")), player) {
+        playerInfo.setItem(1, new HotbarItem(new ItemBuilder(Material.COMPASS).addLoreArray(playerInfo.getKeyArray("hub.item.loot_compass.lore", '~')).setDisplayName(playerInfo.getKey("hub.item.lootcompass")), player) {
             @Override
             public void onInteract(PlayerInteractEvent event) {
             }
@@ -92,7 +92,7 @@ public class HubPlayer extends DatabaseLoader implements IDefault<UUID> {
             public void onInteract(PlayerInteractEvent event) {
             }
         });
-        playerInfo.setItem(7, new HotbarItem(new ItemBuilder(Material.CLOCK).addLoreArray(playerInfo.getKeyArray("hub.item.hub_swithcer.lore", '~')).setDisplayName(playerInfo.getKey("hub.item.hubswitcher")), player) {
+        playerInfo.setItem(7, new HotbarItem(new ItemBuilder(Material.CLOCK).addLoreArray(playerInfo.getKeyArray("hub.item.hub_switcher.lore", '~')).setDisplayName(playerInfo.getKey("hub.item.hubswitcher")), player) {
             @Override
             public void onInteract(PlayerInteractEvent event) {
                 if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
