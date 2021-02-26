@@ -6,6 +6,7 @@ import net.verany.api.setting.Settings;
 import net.verany.api.task.AbstractTask;
 import net.verany.hubsystem.utils.inventories.HubSwitcherInventory;
 import net.verany.hubsystem.utils.inventories.TeleporterInventory;
+import net.verany.hubsystem.utils.inventories.games.ArcadeInventory;
 import net.verany.hubsystem.utils.player.HubPlayer;
 import net.verany.hubsystem.utils.settings.HubSetting;
 import org.bukkit.entity.Player;
@@ -31,6 +32,11 @@ public class ScoreboardTask extends AbstractTask {
             }
             if (player.getPlayer().hasMetadata("teleporter")) {
                 TeleporterInventory inventory = (TeleporterInventory) player.getPlayer().getMetadata("teleporter").get(0).value();
+                inventory.setItems();
+                continue;
+            }
+            if (player.getPlayer().hasMetadata("arcade")) {
+                ArcadeInventory inventory = (ArcadeInventory) player.getPlayer().getMetadata("arcade").get(0).value();
                 inventory.setItems();
                 continue;
             }
