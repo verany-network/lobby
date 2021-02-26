@@ -15,6 +15,7 @@ import net.verany.api.enumhelper.VeranyEnum;
 import net.verany.api.inventory.InventoryBuilder;
 import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.hubsystem.HubSystem;
 import net.verany.volcano.round.ServerRoundData;
 import org.bson.Document;
 import org.bukkit.Material;
@@ -28,14 +29,14 @@ public class ArcadeInventory {
     private final Player player;
     private final IPlayerInfo playerInfo;
     private final Integer[] contentSlot = {10, 11, 12, 13, 14, 15, 19, 20, 21, 22, 23, 24, 28, 29, 30, 31, 32, 33, 37, 38, 39, 40, 41, 42};
+    private final Inventory inventory;
+    private final Category category;
 
-    public ArcadeInventory(Player player) {
+    public ArcadeInventory(Player player, Category category) {
         this.player = player;
         this.playerInfo = Verany.getPlayer(player);
-    }
-
-    public void setItems(Category category) {
-        Inventory inventory = InventoryBuilder.builder().size(9 * 6).title(playerInfo.getKey("hub.arcade." + category.name().toLowerCase())).event(event -> {
+        this.category = category;
+        this.inventory = InventoryBuilder.builder().size(9 * 6).title(playerInfo.getKey("hub.arcade." + category.name().toLowerCase())).event(event -> {
 
             if (event.getCurrentItem().getType().equals(Material.ARMOR_STAND)) {
                 String name = event.getCurrentItem().getItemMeta().getDisplayName();
@@ -50,6 +51,10 @@ public class ArcadeInventory {
                 playerInfo.sendOnServer(server);
             }
         }).build().fillCycle(new ItemBuilder(Material.valueOf(Verany.toDyeColor(playerInfo.getPrefixPattern().getColor().getFirstColor()) + "_STAINED_GLASS_PANE")).setNoName().build()).buildAndOpen(player);
+    }
+
+    public void setItems() {
+        HubSystem.INSTANCE.setMetadata(player, "arcade", this);
 
         Map<ServiceInfoSnapshot, List<Document>> rounds = new HashMap<>();
 
@@ -60,6 +65,9 @@ public class ArcadeInventory {
             documents.removeIf(document -> !document.containsKey("gameState") || (document.containsKey("gameState") && !document.getString("gameState").equalsIgnoreCase("WAITING")));
             rounds.put(cloudService, documents);
         }
+
+        for (Integer integer : contentSlot)
+            inventory.setItem(integer, null);
 
         rounds.forEach((serviceInfoSnapshot, documents) -> {
             for (int i = 0; i < documents.size(); i++) {
