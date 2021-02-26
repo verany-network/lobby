@@ -54,8 +54,8 @@ public class ArcadeInventory {
         Map<ServiceInfoSnapshot, List<Document>> rounds = new HashMap<>();
 
         for (ServiceInfoSnapshot cloudService : CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServices(category.getTaskName())) {
+            if (!cloudService.isConnected() || !cloudService.getProperties().contains("round_data")) continue;
             String roundData = cloudService.getProperties().getString("round_data");
-            System.out.println(roundData);
             List<Document> documents = Verany.GSON.fromJson(roundData, ServerRoundData.class).getDocuments();
             documents.removeIf(document -> !document.containsKey("gameState") || (document.containsKey("gameState") && !document.getString("gameState").equalsIgnoreCase("WAITING")));
             rounds.put(cloudService, documents);
