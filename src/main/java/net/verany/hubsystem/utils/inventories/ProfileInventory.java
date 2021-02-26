@@ -127,8 +127,8 @@ public class ProfileInventory {
         for (FriendData friend : friends) {
             IPlayerInfo playerInfo = Verany.getPlayer(friend.getUuid());
             IFriendObject targetFriend = playerInfo.getFriendObject();
-            String status = targetFriend.getStatus().equals("online") ? "a" : "b";
-            sortData.add(new Verany.SortData<>(status + "_" + playerInfo.getPermissionObject().getCurrentGroup().getGroup().getScoreboardId() + "_" + (System.currentTimeMillis() - playerInfo.getLastOnline()) + "_" + playerInfo.getName(), friend));
+            String status = targetFriend.getStatus().equals("online") ? "2" : "1";
+            sortData.add(new Verany.SortData<>(status + playerInfo.getPermissionObject().getCurrentGroup().getGroup().getScoreboardId() + playerInfo.getLastOnline() + playerInfo.getName(), friend));
         }
         friends = Verany.sortList(sortData, false);
 
@@ -140,12 +140,9 @@ public class ProfileInventory {
                 items.add(new SkullBuilder(targetInfo.getSkinData()).setDisplayName(targetInfo.getNameWithColor()).build());
             }
         }
-        builder.fillPageItems(new IInventoryBuilder.PageData<>(currentPage, contentSlot, 53, 52, items), new IInventoryBuilder.PageSwitchHandler() {
-            @Override
-            public void onSwitch(Type type) {
-                playerInfo.switchPage("profile.friends", type);
-                setItems(ProfileCategory.FRIENDS).setCategoryItems();
-            }
+        builder.fillPageItems(new IInventoryBuilder.PageData<>(currentPage, contentSlot, 53, 52, items), type -> {
+            playerInfo.switchPage("profile.friends", type);
+            setItems(ProfileCategory.FRIENDS).setCategoryItems();
         });
     }
 
