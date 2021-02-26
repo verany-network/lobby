@@ -74,7 +74,7 @@ public class InteractEvent implements Listener {
         if (event.getRightClicked() instanceof ArmorStand) {
             if (event.getRightClicked().getCustomName() != null && event.getRightClicked().getCustomName().contains("§b§lBINGO")) {
                 /*Verany.PROFILE_OBJECT.getPlayer(event.getPlayer().getUniqueId()).get().sendOnServer("Bingo-1");*/
-                new ArcadeInventory(event.getPlayer()).setItems(ArcadeInventory.Category.BINGO);
+                new ArcadeInventory(event.getPlayer(), ArcadeInventory.Category.BINGO).setItems();
                 return;
             }
             if (event.getRightClicked().getLocation().distance(HubSystem.INSTANCE.getLocationManager().getLocation("elytra_start")) <= 1.5) {
