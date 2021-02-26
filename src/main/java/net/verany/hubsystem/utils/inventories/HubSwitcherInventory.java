@@ -16,6 +16,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -62,13 +63,11 @@ public class HubSwitcherInventory {
     }
 
     private List<ServiceInfoSnapshot> getSorted(String task) {
-        List<String> stringList = new ArrayList<>();
-        for (ServiceInfoSnapshot cloudService : CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServices(task))
-            stringList.add(cloudService.getName());
-        Collections.sort(stringList);
-        List<ServiceInfoSnapshot> toReturn = new ArrayList<>();
-        for (String s : stringList)
-            toReturn.add(CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServiceByName(s));
-        return toReturn;
+        Collection<ServiceInfoSnapshot> services = CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServices(task);
+        List<Verany.SortData<ServiceInfoSnapshot>> sortData = new ArrayList<>();
+        for (ServiceInfoSnapshot service : services)
+            sortData.add(new Verany.SortData<>(service.getName(), service));
+        services = Verany.sortList(sortData, false);
+        return new ArrayList<>(services);
     }
 }
