@@ -2,11 +2,12 @@ package net.verany.hubsystem.utils.scoreboard;
 
 import net.verany.api.Verany;
 import net.verany.api.player.IPlayerInfo;
-import net.verany.api.setting.Settings;
+import net.verany.api.settings.Settings;
 import net.verany.api.task.AbstractTask;
 import net.verany.hubsystem.utils.inventories.HubSwitcherInventory;
 import net.verany.hubsystem.utils.inventories.TeleporterInventory;
 import net.verany.hubsystem.utils.inventories.games.ArcadeInventory;
+import net.verany.hubsystem.utils.inventories.games.FlagWarsInventory;
 import net.verany.hubsystem.utils.player.HubPlayer;
 import net.verany.hubsystem.utils.settings.HubSetting;
 import org.bukkit.entity.Player;
@@ -42,6 +43,11 @@ public class ScoreboardTask extends AbstractTask {
             }
             if (player.getPlayer().hasMetadata("jump_and_run")) {
                 Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).addStatistics("jump_and_run");
+                continue;
+            }
+            if (player.getPlayer().hasMetadata("flagwars")) {
+                FlagWarsInventory inventory = (FlagWarsInventory) player.getPlayer().getMetadata("flagwars").get(0).value();
+                inventory.setItems((FlagWarsInventory.FlagWarsVariant) player.getPlayer().getMetadata("variant").get(0).value());
                 continue;
             }
             if (player.getPlayer() == null || !player.getPlayer().hasMetadata("scoreboard")) continue;
