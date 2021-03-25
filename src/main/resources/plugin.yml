@@ -11,6 +11,7 @@ commands:
     aliases: [trank]
   build:
     aliases: [buildserver]
+  event:
 
 loadBefore:
   - MC-Core-Executor
