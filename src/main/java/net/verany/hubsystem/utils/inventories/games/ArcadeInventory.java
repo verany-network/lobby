@@ -8,15 +8,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.verany.api.Verany;
+import net.verany.api.enumhelper.IdentifierType;
 import net.verany.api.enumhelper.VeranyEnum;
 import net.verany.api.inventory.IInventoryBuilder;
 import net.verany.api.inventory.InventoryBuilder;
 import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
-import net.verany.api.setting.SettingWrapper;
 import net.verany.api.settings.AbstractSetting;
+import net.verany.api.settings.SettingWrapper;
 import net.verany.hubsystem.HubSystem;
+import net.verany.volcano.VeranyServer;
+import net.verany.volcano.round.AbstractVolcanoRound;
 import net.verany.volcano.round.ServerRoundData;
 import org.bson.Document;
 import org.bukkit.ChatColor;
@@ -32,7 +35,7 @@ public class ArcadeInventory {
 
     private final Player player;
     private final IPlayerInfo playerInfo;
-    private final Integer[] contentSlot = {10, 11, 12, 13, 14, 15, 19, 20, 21, 22, 23, 24, 28, 29, 30, 31, 32, 33, 37, 38, 39, 40, 41, 42};
+    private final Integer[] contentSlot = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 40, 41, 42,43};
     private final Inventory inventory;
     private final IInventoryBuilder inventoryBuilder;
     private final Category category;
@@ -92,10 +95,13 @@ public class ArcadeInventory {
         BingoSortType sortType = playerInfo.getSettingValue(bingoSortType);
         List<Verany.SortData<ItemStack>> sortData = new ArrayList<>();
         AtomicBoolean reverse = new AtomicBoolean(sortType.name().endsWith("_REVERSE"));
+
         rounds.forEach((serviceInfoSnapshot, documents) -> {
+
             for (Document document : documents) {
                 String id = document.getString("id");
                 String difficulty = document.getString("difficulty");
+                int maxPlayers = (int) Math.round(document.getDouble("max_players"));
                 List<String> players = document.getList("players", String.class);
 
                 String key;
@@ -117,7 +123,7 @@ public class ArcadeInventory {
                         key = id;
                 }
 
-                sortData.add(new Verany.SortData<>(key, new ItemBuilder(Material.ARMOR_STAND).setAmount(players.isEmpty() ? 1 : players.size()).setDisplayName(playerInfo.getKey("hub.arcade." + category.name().toLowerCase() + ".name", new Placeholder("%name%", serviceInfoSnapshot.getServiceId().getName()), new Placeholder("%id%", id))).addLoreArray(playerInfo.getKeyArray("hub.arcade." + category.name().toLowerCase() + ".lore", '~', new Placeholder("%players%", players.size()), new Placeholder("%difficulty%", difficulty))).build()));
+                sortData.add(new Verany.SortData<>(key, new ItemBuilder(Material.ARMOR_STAND).setAmount(players.isEmpty() ? 1 : players.size()).setDisplayName(playerInfo.getKey("hub.arcade." + category.name().toLowerCase() + ".name", new Placeholder("%name%", serviceInfoSnapshot.getServiceId().getName()), new Placeholder("%id%", id))).addLoreArray(playerInfo.getKeyArray("hub.arcade." + category.name().toLowerCase() + ".lore", '~', new Placeholder("%players%", players.size()), new Placeholder("%max_players%", maxPlayers), new Placeholder("%difficulty%", difficulty))).build()));
             }
         });
 
@@ -137,10 +143,10 @@ public class ArcadeInventory {
 
     @AllArgsConstructor
     @Getter
-    public enum Category implements VeranyEnum {
+    public enum Category implements IdentifierType<Material> {
         BINGO(Material.POPPY, "Bingo");
 
-        private final Material material;
+        private final Material id;
         private final String taskName;
     }
 
