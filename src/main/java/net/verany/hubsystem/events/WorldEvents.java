@@ -182,6 +182,8 @@ public class WorldEvents implements Listener {
             HubSystem.INSTANCE.removeMetadata(player, "teleporter");
         } else if (player.hasMetadata("arcade")) {
             HubSystem.INSTANCE.removeMetadata(player, "arcade");
+        } else if (player.hasMetadata("flagwars")) {
+            HubSystem.INSTANCE.removeMetadata(player, "arcade");
         }
     }
 
