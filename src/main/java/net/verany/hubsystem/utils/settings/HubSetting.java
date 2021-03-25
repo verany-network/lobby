@@ -1,8 +1,8 @@
 package net.verany.hubsystem.utils.settings;
 
 import lombok.Getter;
-import net.verany.api.setting.Settings;
 import net.verany.api.settings.AbstractSetting;
+import net.verany.api.settings.Settings;
 import net.verany.hubsystem.utils.inventories.ProfileInventory;
 import org.bukkit.Material;
 
