@@ -52,10 +52,13 @@ public class JoinEvent implements Listener {
 
         player.setFoodLevel(20);
         player.setHealth(20);
-        player.setHealthScale(2);
         player.setLevel(0);
         player.setAllowFlight(true);
         player.setFlying(false);
+
+        Bukkit.getScheduler().runTaskLater(HubSystem.INSTANCE, () -> {
+            player.setHealthScale(2);
+        }, 5);
 
         new HubScoreboard(player);
     }
