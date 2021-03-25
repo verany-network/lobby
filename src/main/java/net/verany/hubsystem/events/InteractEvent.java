@@ -6,6 +6,7 @@ import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.utils.inventories.NickInventory;
 import net.verany.hubsystem.utils.inventories.TeleporterInventory;
 import net.verany.hubsystem.utils.inventories.games.ArcadeInventory;
+import net.verany.hubsystem.utils.inventories.games.FlagWarsInventory;
 import net.verany.hubsystem.utils.player.HubPlayer;
 import net.verany.hubsystem.utils.player.jump.JumpAndRun;
 import org.bukkit.*;
@@ -49,7 +50,7 @@ public class InteractEvent implements Listener {
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2F, 2F);
                     break;
             }
-            if(event.getAction().equals(Action.RIGHT_CLICK_AIR) && player.getInventory().getItemInMainHand().getType().equals(Material.TRIDENT))
+            if (event.getAction().equals(Action.RIGHT_CLICK_AIR) && player.getInventory().getItemInMainHand().getType().equals(Material.TRIDENT))
                 event.setCancelled(false);
 
         }
@@ -73,8 +74,15 @@ public class InteractEvent implements Listener {
         event.setCancelled(true);
         if (event.getRightClicked() instanceof ArmorStand) {
             if (event.getRightClicked().getCustomName() != null && event.getRightClicked().getCustomName().contains("§b§lBINGO")) {
-                /*Verany.PROFILE_OBJECT.getPlayer(event.getPlayer().getUniqueId()).get().sendOnServer("Bingo-1");*/
                 new ArcadeInventory(event.getPlayer(), ArcadeInventory.Category.BINGO).setItems();
+                return;
+            }
+            if (event.getRightClicked().getCustomName() != null && event.getRightClicked().getCustomName().contains("§b§lSOLO")) {
+                new FlagWarsInventory(event.getPlayer()).setItems(FlagWarsInventory.FlagWarsVariant.SOLO);
+                return;
+            }
+            if (event.getRightClicked().getCustomName() != null && event.getRightClicked().getCustomName().contains("§b§lDUO")) {
+                new FlagWarsInventory(event.getPlayer()).setItems(FlagWarsInventory.FlagWarsVariant.DUO);
                 return;
             }
             if (event.getRightClicked().getLocation().distance(HubSystem.INSTANCE.getLocationManager().getLocation("elytra_start")) <= 1.5) {
