@@ -6,8 +6,8 @@ import net.verany.api.Verany;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.leveling.LevelCalculator;
-import net.verany.api.setting.SettingWrapper;
 import net.verany.api.settings.AbstractSetting;
+import net.verany.api.settings.SettingWrapper;
 import net.verany.api.task.AbstractTask;
 import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.utils.config.HubConfig;
@@ -54,7 +54,7 @@ public class ActionbarTask extends AbstractTask {
             int messageCount = onlinePlayer.getTempSetting(messageCountSetting);
             int maxMessages;
 
-            if (count > categories.size())
+            if (count >= categories.size())
                 count = 0;
             ActionbarCategory category = categories.get(count);
             switch (category) {
@@ -92,6 +92,8 @@ public class ActionbarTask extends AbstractTask {
                 default:
                     String[] messages = onlinePlayer.getKeyArray("hub.actionbar." + category.name().toLowerCase(), '~');
                     maxMessages = messages.length;
+                    if (messageCount >= messages.length)
+                        messageCount = 0;
                     onlinePlayer.setDefaultActionbar(messages[messageCount]);
                     break;
             }
