@@ -94,9 +94,11 @@ public class FlagWarsInventory {
             for (ServiceInfoSnapshot serviceInfoSnapshot : CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServicesAsync("FW-" + variant).get()) {
                 if (cloudPlayer.getProperties().contains("rejoin-time") && cloudPlayer.getProperties().contains("server") && cloudPlayer.getProperties().getString("server").equals(serviceInfoSnapshot.getServiceId().getName())) {
                     long rejoinTime = cloudPlayer.getProperties().getLong("rejoin-time");
+                    System.out.println(rejoinTime);
                     if (rejoinTime >= System.currentTimeMillis()) {
                         String roundData = serviceInfoSnapshot.getProperties().getString("round_data");
-                        Document dataDocument = Verany.GSON.fromJson(roundData, ServerRoundData.class).getDocuments().stream().filter(document -> document.getString("id").equals(cloudPlayer.getProperties().getString("round-id"))).findAny().orElse(null);
+
+                        Document dataDocument = Verany.GSON.fromJson(roundData, ServerRoundData.class).getDocuments().stream().filter(document -> document.containsKey("id") && document.getString("id").equals(cloudPlayer.getProperties().getString("round-id"))).findAny().orElse(null);
                         if (dataDocument == null) continue;
 
                         String id = dataDocument.getString("id");
