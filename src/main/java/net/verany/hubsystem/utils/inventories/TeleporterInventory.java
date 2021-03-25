@@ -14,8 +14,6 @@ import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.particle.ParticleManager;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
-import net.verany.api.prefix.PrefixPattern;
-import net.verany.api.setting.SettingWrapper;
 import net.verany.api.settings.AbstractSetting;
 import net.verany.hubsystem.HubSystem;
 import org.bukkit.*;
