@@ -8,10 +8,11 @@ import net.verany.api.locationmanager.AbstractLocationManager;
 import net.verany.api.locationmanager.LocationManager;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
-import net.verany.api.setting.Settings;
 import net.verany.api.settings.AbstractSetting;
+import net.verany.api.settings.Settings;
 import net.verany.api.skull.SkullBuilder;
 import net.verany.hubsystem.commands.BuildServerCommand;
+import net.verany.hubsystem.commands.EventCommand;
 import net.verany.hubsystem.commands.SetupCommand;
 import net.verany.hubsystem.commands.ToggleRankCommand;
 import net.verany.hubsystem.events.*;
@@ -36,7 +37,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-@VeranyModule(name = "HubSystem", prefix = "HubSystem", version = "1.1", authors = {"NicoVRNY", "tylix"}, user = "NicoVRNY", host = "159.69.63.105", password = "8Vu0T5MFd9KGTE1t", databases = {"hubsystem"})
+@VeranyModule(name = "HubSystem", prefix = "HubSystem", maxRounds = -1, version = "1.1", authors = {"NicoVRNY", "tylix"}, user = "NicoVRNY", host = "159.69.63.105", password = "8Vu0T5MFd9KGTE1t", databases = {"hubsystem"})
 public class HubSystem extends VeranyProject {
 
     public static HubSystem INSTANCE;
@@ -74,6 +75,13 @@ public class HubSystem extends VeranyProject {
 
         locationManager = new LocationManager(this, "locations", "hubsystem");
 
+        /*AbstractSetupCategory teleportLocations = setupObject.getNewCategory(Material.CROSSBOW);
+        teleportLocations.addLocation("spawn", Material.BEACON);
+        teleportLocations.addLocation("elytra", Material.ELYTRA);
+        teleportLocations.addLocation("jump_and_run", Material.GOLDEN_BOOTS);
+
+        setupObject.registerNewLocation("teleportLocation", teleportLocations);*/
+
         spawnArmorStands();
 
         Bukkit.getScheduler().runTaskTimer(this, new BeeTimeTask(), 0, 15);
@@ -107,15 +115,16 @@ public class HubSystem extends VeranyProject {
 
     @Override
     public void onDisable() {
+        Verany.shutdown();
         locationManager.save();
         getConnection().disconnect();
-        Verany.shutdown();
     }
 
     private void registerCommands() {
         getCommand("setup").setExecutor(new SetupCommand());
         getCommand("togglerank").setExecutor(new ToggleRankCommand());
         getCommand("build").setExecutor(new BuildServerCommand());
+        getCommand("event").setExecutor(new EventCommand());
     }
 
     private void registerEvents() {
