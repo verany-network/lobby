@@ -76,7 +76,8 @@ public class HubScoreboard {
         String title = displayName[currentSlot];
         title = title.replace("$f", playerInfo.getPrefixPattern().getColor().getFirstColor().toString());
         title = title.replace("$s", playerInfo.getPrefixPattern().getColor().getSecondColor().toString());
-        scoreboardBuilder.setTitle(title);
+        if (scoreboardBuilder != null)
+            scoreboardBuilder.setTitle(title);
         HubSystem.INSTANCE.setMetadata(player, "displayNamePosition", currentSlot);
     }
 
