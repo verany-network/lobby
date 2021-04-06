@@ -2,10 +2,13 @@ package net.verany.hubsystem.events;
 
 import net.verany.api.Verany;
 import net.verany.api.locationmanager.VeranyLocation;
+import net.verany.hubsystem.HubSystem;
+import net.verany.hubsystem.utils.bossbar.BossBarTask;
 import net.verany.hubsystem.utils.player.HubPlayer;
 import net.verany.hubsystem.utils.player.jump.JumpAndRun;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -25,7 +28,9 @@ public class QuitEvent implements Listener {
         HubPlayer hubPlayer = Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class);
         hubPlayer.getData(HubPlayer.PlayerData.class).setLastLocation(VeranyLocation.toVeranyLocation(player.getLocation()));
         hubPlayer.update();
+        Verany.getPlayer(player).setTempSetting(BossBarTask.BossBarSetting.CURRENT_MESSAGE, "");
         Verany.removePlayer(player.getUniqueId().toString(), HubPlayer.class);
+        Bukkit.getBossBar(new NamespacedKey(HubSystem.INSTANCE, "bossbar_" + player.getName())).removePlayer(player);
 
         for (Entity entity : player.getWorld().getEntities()) {
             if (entity instanceof Trident) {
