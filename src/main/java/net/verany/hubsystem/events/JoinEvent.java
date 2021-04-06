@@ -1,9 +1,11 @@
 package net.verany.hubsystem.events;
 
+import lombok.SneakyThrows;
 import net.verany.api.Verany;
 import net.verany.api.event.events.PlayerLoadCompleteEvent;
 import net.verany.api.gamemode.VeranyGameMode;
 import net.verany.api.itembuilder.ItemBuilder;
+import net.verany.api.npc.INPC;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.skull.SkullBuilder;
 import net.verany.hubsystem.HubSystem;
@@ -11,15 +13,22 @@ import net.verany.hubsystem.utils.config.HubConfig;
 import net.verany.hubsystem.utils.player.HubPlayer;
 import net.verany.hubsystem.utils.scoreboard.HubScoreboard;
 import net.verany.hubsystem.utils.settings.HubSetting;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
 
 public class JoinEvent implements Listener {
 
@@ -28,6 +37,7 @@ public class JoinEvent implements Listener {
         event.setJoinMessage(null);
     }
 
+    @SneakyThrows
     @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerLoadCompleteEvent event) {
         Player player = event.getPlayer();
@@ -50,6 +60,9 @@ public class JoinEvent implements Listener {
 
         hubPlayer.setItems();
 
+        BossBar bossBar = Bukkit.createBossBar(new NamespacedKey(HubSystem.INSTANCE, "bossbar_" + player.getName()), "", BarColor.BLUE, BarStyle.SEGMENTED_6);
+        bossBar.addPlayer(player);
+
         player.setFoodLevel(20);
         player.setHealth(20);
         player.setLevel(0);
@@ -59,6 +72,12 @@ public class JoinEvent implements Listener {
         Bukkit.getScheduler().runTaskLater(HubSystem.INSTANCE, () -> {
             player.setHealthScale(2);
         }, 5);
+
+        playerInfo.setSkinData();
+        INPC npc = Verany.createNPC("Survival", new Location(Bukkit.getWorld("world"), 1.5D, 68D, 17.5D, -135F, 5F), true, player);
+        npc.setGameProfile(playerInfo.getSkinData());
+        npc.lookAtPlayer(player);
+        npc.spawn();
 
         new HubScoreboard(player);
     }
