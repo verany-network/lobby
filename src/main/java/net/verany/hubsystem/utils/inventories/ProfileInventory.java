@@ -43,7 +43,7 @@ public class ProfileInventory {
     private final Integer[] profileCategorySlots = {19, 20, 21, 22, 23, 24, 25};
     private final Integer[] settingsCategorySlots = {20, 21, 22, 23, 24, 29, 30, 31, 32, 33};
     private final Integer[] settingsSlots = {20, 21, 22, 23, 24};
-    private final Integer[] contentSlot = {10, 11, 12, 13, 14, 15, 19, 20, 21, 22, 23, 24, 28, 29, 30, 31, 32, 33, 37, 38, 39, 40, 41, 42};
+    private final Integer[] contentSlot = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 40, 41, 42, 43};
     private final IInventoryBuilder builder;
     private final Inventory inventory;
     private String clickInfo = "";
