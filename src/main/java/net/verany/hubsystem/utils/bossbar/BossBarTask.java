@@ -62,7 +62,17 @@ public class BossBarTask extends AbstractTask {
                     continue;
                 }
 
-                message = new StringBuilder(message.toString().replaceFirst(Character.toString(message.charAt(0)), ""));
+                StringBuilder currentColor = new StringBuilder();
+                int id = 0;
+                while (message.charAt(id) == '§') {
+                    currentColor.append(message.charAt(id));
+                    currentColor.append(message.charAt(id + 1));
+                    id += 2;
+                    if (id >= message.length()) break;
+                }
+                message = new StringBuilder(message.toString().replaceFirst(currentColor.toString(), ""));
+                if (message.length() > 0)
+                    message = new StringBuilder(message.toString().replaceFirst(String.valueOf(message.charAt(0)), ""));
                 bar.setTitle(message.toString());
 
                 onlinePlayer.setTempSetting(BossBarSetting.CURRENT_MESSAGE, message.toString());
@@ -74,20 +84,23 @@ public class BossBarTask extends AbstractTask {
                 continue;
             }
             char c = currentKey.charAt(currentTextCharacter);
-            if (c == '§') {
-                for (int i = currentTextCharacter; i < currentKey.length(); i++) {
-                    if (i + 2 < currentKey.length() && currentKey.charAt(i + 2) != '§') break;
-                    message.append(currentKey.charAt(i));
+            StringBuilder colorCode = new StringBuilder();
+            while ((c == '§' || (currentKey.length() > currentTextCharacter + 2 && currentKey.charAt(currentTextCharacter + 2) == '§')) && currentKey.length() > currentTextCharacter + 2) {
+                for (int i = 0; i < 2; i++) {
+                    colorCode.append(c);
                     currentTextCharacter++;
+                    c = currentKey.charAt(currentTextCharacter);
                 }
             }
+            onlinePlayer.setTempSetting(BossBarSetting.LAST_COLOR, colorCode);
+            message.append(colorCode);
             message.append(c);
 
-            bar.setTitle(onlinePlayer.getTempSetting(BossBarSetting.LAST_COLOR) + message);
+            bar.setTitle(onlinePlayer.getTempSetting(BossBarSetting.LAST_COLOR).toString() + message);
 
             currentTextCharacter++;
 
-            if (currentTextCharacter == currentKey.length()) {
+            if (currentTextCharacter >= currentKey.length()) {
                 currentTextCharacter = 0;
                 onlinePlayer.setTempSetting(BossBarSetting.WAITING, System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(6));
             }
@@ -103,6 +116,6 @@ public class BossBarTask extends AbstractTask {
         public static final AbstractSetting<String> CURRENT_MESSAGE = new SettingWrapper.TempSettingWrapper<>("current_message", String.class, "");
         public static final AbstractSetting<Long> WAITING = new SettingWrapper.TempSettingWrapper<>("waiting", Long.class, 0L);
         public static final AbstractSetting<Boolean> BACK = new SettingWrapper.TempSettingWrapper<>("back", Boolean.class, false);
-        public static final AbstractSetting<String> LAST_COLOR = new SettingWrapper.TempSettingWrapper<>("last_color", String.class, "");
+        public static final AbstractSetting<StringBuilder> LAST_COLOR = new SettingWrapper.TempSettingWrapper<>("last_color", StringBuilder.class, new StringBuilder());
     }
 }
