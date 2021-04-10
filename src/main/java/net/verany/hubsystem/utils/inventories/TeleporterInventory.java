@@ -22,6 +22,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
+import java.util.Locale;
+
 public class TeleporterInventory {
 
     private final Player player;
@@ -40,11 +42,11 @@ public class TeleporterInventory {
 
             EnumMode mode = EnumHelper.INSTANCE.valueOf(event.getCurrentItem().getType(), EnumMode.values());
             if (mode != null) {
-                boolean exist = HubSystem.INSTANCE.getLocationManager().existLocation(mode.getLocationName());
+                boolean exist = HubSystem.INSTANCE.getLocationManager().existLocation(mode.name().toLowerCase());
                 if (!exist)
                     player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation("spawn").clone().add(0, 0.2, 0));
                 else
-                    player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation(mode.getLocationName()).clone().add(0, 0.2, 0));
+                    player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation(mode.name().toLowerCase()).clone().add(0, 0.2, 0));
                 player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
                 String actionbar = playerInfo.getKey("hub.teleporter.actionbar", new Placeholder("%locationName%", ""));
                 playerInfo.setActionbar(new DefaultActionbar(actionbar, 2000));
@@ -59,12 +61,12 @@ public class TeleporterInventory {
             EnumMode mode = EnumMode.values()[i];
 
             String[] lore = {};
-            AbstractGameMode gameMode = GameModeWrapper.getGameModeByName(mode.getLocationName());
+            AbstractGameMode gameMode = GameModeWrapper.getGameModeByName(mode.name().toLowerCase());
             int online = 0;
             if (gameMode != null) {
                 online = Verany.GAME_MODE_OBJECT.getOnlinePlayers(gameMode);
             }
-            lore = playerInfo.getKeyArray("hub.teleporter.lore." + mode.getLocationName().toLowerCase(), '~', new Placeholder("%online%", Verany.asDecimal(online)), new Placeholder("%rating%", "★★★★☆"));
+            lore = playerInfo.getKeyArray("hub.teleporter.lore." + mode.name().toLowerCase(), '~', new Placeholder("%online%", Verany.asDecimal(online)), new Placeholder("%rating%", "★★★★☆"));
             inventory.setItem(modes[i], new ItemBuilder(mode.getId()).setDisplayName(playerInfo.getKey("hub.teleporter.mode." + mode.name().toLowerCase())).addLoreArray(lore).build());
         }
 
@@ -73,19 +75,18 @@ public class TeleporterInventory {
     @AllArgsConstructor
     @Getter
     public enum EnumMode implements IdentifierType<Material> {
-        SPAWN(Material.FIREWORK_ROCKET, "spawn"),
-        LOOTBOXES(Material.LIGHT_BLUE_SHULKER_BOX, "lootboxes"),
-        HALL_OF_FAME(Material.OAK_SIGN, "hall_of_fame"),
+        SPAWN(Material.FIREWORK_ROCKET),
+        LOOTBOXES(Material.LIGHT_BLUE_SHULKER_BOX),
+        HALL_OF_FAME(Material.OAK_SIGN),
 
-        FLAGWARS(Material.BLUE_BANNER, "flagwars"),
-        SURVIVAL(Material.TOTEM_OF_UNDYING, "survival"),
-        DUELS(Material.CROSSBOW, "duels"),
-        SNOWWARS(Material.SNOWBALL, "snowwars"),
-        BINGO(Material.CRAFTING_TABLE, "bingo"),
-        CREATIVE(Material.GRASS_BLOCK, "creative");
+        FLAGWARS(Material.BLUE_BANNER),
+        SURVIVAL(Material.TOTEM_OF_UNDYING),
+        DUELS(Material.CROSSBOW),
+        SNOWWARS(Material.SNOWBALL),
+        BINGO(Material.CRAFTING_TABLE),
+        CREATIVE(Material.GRASS_BLOCK);
 
         private final Material id;
-        private final String locationName;
     }
 
     /*private final Player player;
