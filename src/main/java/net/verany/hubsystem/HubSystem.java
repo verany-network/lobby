@@ -91,7 +91,7 @@ public class HubSystem extends VeranyProject {
             if (!value.getCategory().equals("hubsystem"))
                 HubSetting.toHubSetting(value).getKey();
 
-        Verany.addTask(new ActionbarTask(750), new BossBarTask(40), new LevelTask(10 * 1000), new OrbTask(50), new ScoreboardTask(1000), new ScoreboardTask.ScoreboardDisplayNameTask(100));
+        Verany.addTask(new ActionbarTask(750), new BossBarTask(50), new LevelTask(10 * 1000), new OrbTask(50), new ScoreboardTask(1000), new ScoreboardTask.ScoreboardDisplayNameTask(100));
     }
 
     private void spawnArmorStands() {
