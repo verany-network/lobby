@@ -71,8 +71,8 @@ public class BossBarTask extends AbstractTask {
                     id += 2;
                     if (id >= message.length()) break;
                 }
-                if(currentColor.toString().contains("§"))
-                onlinePlayer.setTempSetting(BossBarSetting.LAST_COLOR, currentColor);
+                if (currentColor.toString().contains("§"))
+                    onlinePlayer.setTempSetting(BossBarSetting.LAST_COLOR, currentColor);
                 message = new StringBuilder(message.toString().replaceFirst(currentColor.toString(), ""));
                 if (message.length() > 0)
                     message = new StringBuilder(message.toString().replaceFirst(String.valueOf(message.charAt(0)), ""));
