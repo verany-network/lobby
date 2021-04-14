@@ -1,4 +1,4 @@
-package net.verany.hubsystem.game.hubswitcher;
+package net.verany.hubsystem.game.inventory;
 
 import de.dytanic.cloudnet.driver.CloudNetDriver;
 import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
