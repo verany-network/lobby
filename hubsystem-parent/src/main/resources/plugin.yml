@@ -5,3 +5,7 @@ authors:
   - tylix
   - NicoVRNY
 main: net.verany.hubsystem.HubSystem
+
+commands:
+  setup:
+  build:
