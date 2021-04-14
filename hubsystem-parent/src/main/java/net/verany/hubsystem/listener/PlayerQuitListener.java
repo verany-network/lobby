@@ -6,7 +6,9 @@ import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.hubsystem.game.player.IHubPlayer;
 import org.bukkit.boss.BarFlag;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Trident;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerQuitListener extends AbstractListener {
@@ -24,6 +26,17 @@ public class PlayerQuitListener extends AbstractListener {
             hubPlayer.setBossBar(null);
             hubPlayer.update();
             Verany.removePlayer(player.getUniqueId().toString(), IHubPlayer.class);
+
+            for (Entity entity : player.getWorld().getEntities()) {
+                if (entity instanceof Trident) {
+                    Trident trident = (Trident) entity;
+                    if (trident.getShooter() instanceof Player) {
+                        Player shooter = (Player) trident.getShooter();
+                        if (shooter.getName().equals(player.getName()))
+                            trident.remove();
+                    }
+                }
+            }
         });
     }
 }
