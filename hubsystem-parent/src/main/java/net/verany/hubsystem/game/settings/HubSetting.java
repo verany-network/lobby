@@ -3,7 +3,7 @@ package net.verany.hubsystem.game.settings;
 import lombok.Getter;
 import net.verany.api.settings.AbstractSetting;
 import net.verany.api.settings.Settings;
-import net.verany.hubsystem.game.profile.ProfileInventory;
+import net.verany.hubsystem.game.inventory.ProfileInventory;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
