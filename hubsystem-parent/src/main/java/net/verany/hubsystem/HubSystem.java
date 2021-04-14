@@ -7,6 +7,8 @@ import net.verany.api.locationmanager.AbstractLocationManager;
 import net.verany.api.locationmanager.LocationManager;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
+import net.verany.hubsystem.commands.BuildCommand;
+import net.verany.hubsystem.commands.SetupCommand;
 import net.verany.hubsystem.game.actionbar.ActionbarTask;
 import net.verany.hubsystem.game.bossbar.BossBarTask;
 import net.verany.hubsystem.game.level.LevelTask;
@@ -19,7 +21,16 @@ import org.bukkit.entity.Boss;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-@VeranyModule(name = "HubSystem", prefix = "HubSystem", version = "1.1", authors = {"NicoVRNY", "tylix"}, user = "NicoVRNY", host = "159.69.63.105", password = "8Vu0T5MFd9KGTE1t", databases = {"hubsystem"})
+@VeranyModule(
+        name = "HubSystem",
+        prefix = "HubSystem",
+        version = "1.1",
+        authors = {"NicoVRNY", "tylix"},
+        user = "NicoVRNY",
+        host = "159.69.63.105",
+        password = "8Vu0T5MFd9KGTE1t",
+        databases = {"hubsystem"}
+)
 public class HubSystem extends VeranyProject {
 
     public static HubSystem INSTANCE;
@@ -51,7 +62,7 @@ public class HubSystem extends VeranyProject {
         initListener();
         initCommands();
 
-        locationManager = new LocationManager(this, "locations", "hubsystem");
+        locationManager = new LocationManager(this, "locations2", "hubsystem");
 
         Verany.addTask(new ActionbarTask(750), new LevelTask(10 * 1000), new BossBarTask(50), new ScoreboardTask(1000), new ScoreboardTask.ScoreboardDisplayNameTask(150));
 
@@ -62,10 +73,12 @@ public class HubSystem extends VeranyProject {
         IngameConfig.CHAT_FORMAT.setValue(" §8◗§7◗ {0}{1} §8▏ §7{2} §8• §f{3}");
         IngameConfig.AFK_TIME.setValue(TimeUnit.MINUTES.toMillis(10));
         IngameConfig.AFK.setValue(true);
+        IngameConfig.COLORED_CHAT.setValue(true);
     }
 
     private void initCommands() {
-
+        new BuildCommand(this);
+        new SetupCommand(this);
     }
 
     private void initListener() {
