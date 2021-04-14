@@ -40,9 +40,9 @@ public class PlayerJoinListener extends AbstractListener {
             scoreboard.load();
             hubPlayer.setScoreboard(scoreboard);
 
-            if (playerInfo.getSettingValue(HubSetting.LAST_LOCATION_TELEPORT))
+            /*if (playerInfo.getSettingValue(HubSetting.LAST_LOCATION_TELEPORT))
                 player.teleport(hubPlayer.getLastLocation().toLocation());
-            else
+            else*/
                 player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation("spawn"));
 
             player.setGameMode(GameMode.ADVENTURE);
