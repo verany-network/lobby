@@ -81,6 +81,10 @@ public class ProtectionListener extends AbstractListener {
             event.setCancelled(true);
         });
 
+        Verany.registerListener(project, WeatherChangeEvent.class, event -> {
+            event.setCancelled(true);
+        });
+
         Verany.registerListener(project, PlayerLanguageUpdateEvent.class, event -> {
             Player player = event.getPlayer();
             if (!player.hasMetadata("profile.category"))
@@ -107,12 +111,6 @@ public class ProtectionListener extends AbstractListener {
                     jumpAndRun.stop(player);
                     playerInfo.getAfkObject().enableAfkCheck(IAFKObject.CheckType.MOVE);
                 }
-            }
-        });
-
-        Verany.registerListener(project, ProjectileLaunchEvent.class, event -> {
-            if (event.getEntity() instanceof Trident) {
-                event.setCancelled(false);
             }
         });
 
