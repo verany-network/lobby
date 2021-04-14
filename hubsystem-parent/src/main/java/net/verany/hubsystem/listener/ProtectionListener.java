@@ -127,6 +127,9 @@ public class ProtectionListener extends AbstractListener {
         Verany.registerListener(project, PlayerMoveEvent.class, event -> {
             Player player = event.getPlayer();
 
+            if(player.getLocation().getBlockY() <= 0)
+                player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation("spawn"));
+
             if (player.getGameMode().equals(GameMode.ADVENTURE)) {
                 if (player.getLocation().add(0, -1, 0).getBlock().getType() != Material.AIR) {
                     player.setAllowFlight(true);
