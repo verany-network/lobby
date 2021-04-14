@@ -1,3 +1,5 @@
-
-src/main/java/net/verany/hubsystem/HubSystem.java
-src/main/java/net/verany/hubsystem/HubSystem.java
+.gradle
+.idea
+gradle
+hubsystem-api/build
+hubsystem-parent/build

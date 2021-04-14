@@ -2,35 +2,28 @@ plugins {
     id 'java'
 }
 
-repositories {
-    mavenCentral()
-    maven {
-        url 'https://repo.cloudnetservice.eu/repository/releases/'
+subprojects {
+    apply plugin: 'java'
+
+    group 'net.verany.hubsystem'
+    version '2021.3.1'
+
+    repositories {
+        mavenCentral()
     }
-}
 
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
-
-dependencies {
-    compileOnly(files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/1.16.4/Paper-Server/target/paper-1.16.4.jar"))
-    compile(files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/VeranyCore-Addon/addon-parent-mc/build/libs/addon-parent-mc-0.6.9-DEV-SNAPSHOT.jar"))
-
-    compile 'org.projectlombok:lombok:1.18.10'
-    annotationProcessor 'org.projectlombok:lombok:1.18.10'
-    compile 'org.ocpsoft.prettytime:prettytime:4.0.5.Final'
-    compileOnly 'de.dytanic.cloudnet:cloudnet-bridge:3.2.0-RELEASE'
-    compileOnly 'de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.3.0-RELEASE'
-    compileOnly 'de.dytanic.cloudnet:cloudnet-bridge:3.3.0-RELEASE'
-}
-
-jar {
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
     }
-    exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.10'
+        annotationProcessor 'org.projectlombok:lombok:1.18.10'
+        compile 'org.ocpsoft.prettytime:prettytime:4.0.5.Final'
+        compileOnly files('C:/Users/maxim/Desktop/Verany Season 2/Spigot/1.16.4/Paper-Server/target/paper-1.16.4.jar')
+        compileOnly files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/VeranyCore-Addon/addon-parent-mc/build/libs/addon-parent-mc-2021.4.2.jar")
+    }
 }

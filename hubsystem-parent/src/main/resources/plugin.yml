@@ -1,0 +1,7 @@
+name: Verany-HubSystem
+version: 2021.4.1
+api-version: 1.16
+authors:
+  - tylix
+  - NicoVRNY
+main: net.verany.hubsystem.HubSystem
