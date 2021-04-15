@@ -9,6 +9,7 @@ import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.game.player.HubPlayer;
+import net.verany.hubsystem.game.player.IHubPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -81,24 +82,24 @@ public class JumpAndRun {
     }
 
     public void stop(Player player) {
-        player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation("jump_and_run"));
+        player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation("hubgames"));
         HubSystem.INSTANCE.removeMetadata(player, "jump_and_run");
         this.currentLocation.getBlock().setType(Material.AIR);
         this.nextLocation.getBlock().setType(Material.AIR);
         IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
-        int highScore = Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).getJumpAndRunHighScore();
+        int highScore = Verany.getPlayer(player.getUniqueId().toString(), IHubPlayer.class).getJumpAndRunHighScore();
         if (highScore < currentScore) {
-            if (Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).getJumpAndRunHighScore() != 0) {
+            if (Verany.getPlayer(player.getUniqueId().toString(), IHubPlayer.class).getJumpAndRunHighScore() != 0) {
                 int exp = Verany.getRandomNumberBetween(10, 20);
                 playerInfo.getLevelObject().addExp(exp);
                 playerInfo.addActionbar(new NumberActionbar(playerInfo.getKey("hub.jump_and_run.new_highscore", new Placeholder("%current_score%", currentScore), new Placeholder("%highscore%", highScore)), 2000, highScore));
                 playerInfo.addActionbar(new NumberActionbar(playerInfo.getKey("hub.add.exp", new Placeholder("%exp%", exp)), 2000, exp));
             }
-            Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setJumpAndRunHighScore(currentScore);
+            Verany.getPlayer(player.getUniqueId().toString(), IHubPlayer.class).setJumpAndRunHighScore(currentScore);
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 1.0F);
         } else
             player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_DESTROY, 1.0F, 1.0F);
-        Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).setItems();
+        Verany.getPlayer(player.getUniqueId().toString(), IHubPlayer.class).setItems();
     }
 
     private void removeBlock(Location location) {
