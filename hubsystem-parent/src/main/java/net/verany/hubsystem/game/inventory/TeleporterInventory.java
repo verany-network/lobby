@@ -57,8 +57,8 @@ public class TeleporterInventory {
     @AllArgsConstructor
     @Getter
     public enum TeleportType implements IdentifierType<Material> {
-        GAMES(Material.CROSSBOW),
         SPAWN(Material.BEACON),
+        HUB_GAMES(Material.CROSSBOW),
         LOOT_BOXES(Material.GREEN_SHULKER_BOX),
         TEAM_HALL(Material.SHIELD),
         HALL_OF_FAME(Material.DIAMOND);
