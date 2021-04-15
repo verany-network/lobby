@@ -13,6 +13,7 @@ import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.game.config.HubConfig;
 import net.verany.hubsystem.game.jumpandrun.JumpAndRun;
 import net.verany.hubsystem.game.player.HubPlayer;
+import net.verany.hubsystem.game.player.IHubPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -40,7 +41,7 @@ public class ActionbarTask extends AbstractTask {
 
             if (player.hasMetadata("jump_and_run")) {
                 JumpAndRun jumpAndRun = (JumpAndRun) player.getMetadata("jump_and_run").get(0).value();
-                int highscore = Verany.getPlayer(player.getUniqueId().toString(), HubPlayer.class).getJumpAndRunHighScore();
+                int highscore = onlinePlayer.getPlayer(IHubPlayer.class).getJumpAndRunHighScore();
                 String progressBar = Verany.getProgressBar(Math.min(jumpAndRun.getCurrentScore(), highscore), highscore, 10, '|', jumpAndRun.getCurrentScore() < highscore ? ChatColor.GREEN : ChatColor.DARK_GREEN, ChatColor.RED);
                 onlinePlayer.setDefaultActionbar(onlinePlayer.getKey("hub.jump_and_run.actionbar", new Placeholder("%current_score%", jumpAndRun.getCurrentScore()), new Placeholder("%highscore%", highscore + " §8(" + progressBar + "§8)")));
                 continue;
