@@ -4,7 +4,10 @@ import net.verany.api.Verany;
 import net.verany.api.event.AbstractListener;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.game.player.IHubPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -26,6 +29,8 @@ public class PlayerQuitListener extends AbstractListener {
             hubPlayer.setBossBar(null);
             hubPlayer.update();
             Verany.removePlayer(player.getUniqueId().toString(), IHubPlayer.class);
+
+            Bukkit.removeBossBar(new NamespacedKey(HubSystem.INSTANCE, "bossbar_" + player.getName()));
 
             for (Entity entity : player.getWorld().getEntities()) {
                 if (entity instanceof Trident) {
