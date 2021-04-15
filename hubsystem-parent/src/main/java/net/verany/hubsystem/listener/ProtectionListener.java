@@ -10,12 +10,15 @@ import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.afk.IAFKObject;
 import net.verany.api.sound.VeranySound;
 import net.verany.hubsystem.HubSystem;
+import net.verany.hubsystem.game.HubGame;
 import net.verany.hubsystem.game.jumpandrun.JumpAndRun;
 import net.verany.hubsystem.game.player.HubPlayer;
 import net.verany.hubsystem.game.player.IHubPlayer;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
 import org.bukkit.event.block.Action;
@@ -62,12 +65,40 @@ public class ProtectionListener extends AbstractListener {
 
         Verany.registerListener(project, PlayerInteractAtEntityEvent.class, event -> {
             event.setCancelled(true);
+            if (event.getRightClicked() instanceof ArmorStand) {
+                Player player = event.getPlayer();
+                IPlayerInfo playerInfo = Verany.getPlayer(player);
+                IHubPlayer hubPlayer = playerInfo.getPlayer(IHubPlayer.class);
+                if (event.getRightClicked().hasMetadata("hubGame")) {
+                    HubGame hubGame = (HubGame) event.getRightClicked().getMetadata("hubGame").get(0).value();
+                    switch (hubGame) {
+                        case ELYTRA:
+                            hubPlayer.startElytra();
+                            break;
+                        case JUMPANDRUN:
+                            JumpAndRun jumpAndRun = new JumpAndRun();
+                            jumpAndRun.start(player);
+                            HubSystem.INSTANCE.setMetadata(player, "jump_and_run", jumpAndRun);
+                            player.getInventory().clear();
+                            player.setWalkSpeed(0.2F);
+                            player.setAllowFlight(false);
+                            break;
+                    }
+                }
+            }
         });
 
         Verany.registerListener(project, PlayerInteractEvent.class, event -> {
             Player player = event.getPlayer();
 
             event.setCancelled(true);
+
+            if (event.getAction().equals(Action.RIGHT_CLICK_AIR))
+                if (event.getItem() != null && player.hasMetadata("elytra") && event.getItem().getType().equals(Material.FIREWORK_ROCKET)) {
+                    Bukkit.getScheduler().runTaskLater(HubSystem.INSTANCE, () -> Verany.getPlayer(player.getUniqueId().toString(), IHubPlayer.class).setFirework(false), 2);
+                    event.setCancelled(false);
+                    return;
+                }
 
             if (event.getAction().equals(Action.RIGHT_CLICK_AIR) && player.getInventory().getItemInMainHand().getType().equals(Material.TRIDENT))
                 event.setCancelled(false);
@@ -83,6 +114,13 @@ public class ProtectionListener extends AbstractListener {
 
         Verany.registerListener(project, WeatherChangeEvent.class, event -> {
             event.setCancelled(true);
+        });
+
+        Verany.registerListener(project, InventoryCloseEvent.class, event -> {
+            Player player = (Player) event.getPlayer();
+            if (player.hasMetadata("inventory")) {
+                player.removeMetadata("inventory", HubSystem.INSTANCE);
+            }
         });
 
         Verany.registerListener(project, PlayerLanguageUpdateEvent.class, event -> {
@@ -104,7 +142,7 @@ public class ProtectionListener extends AbstractListener {
             Player player = event.getPlayer();
             IPlayerInfo playerInfo = event.getPlayerInfo();
 
-            if(playerInfo.getAfkObject().isAfk()){
+            if (playerInfo.getAfkObject().isAfk()) {
                 if (player.hasMetadata("jump_and_run")) {
                     playerInfo.getAfkObject().disableAfkCheck(IAFKObject.CheckType.MOVE);
                     JumpAndRun jumpAndRun = (JumpAndRun) player.getMetadata("jump_and_run").get(0).value();
@@ -127,7 +165,27 @@ public class ProtectionListener extends AbstractListener {
         Verany.registerListener(project, PlayerMoveEvent.class, event -> {
             Player player = event.getPlayer();
 
-            if(player.getLocation().getBlockY() <= 0)
+            if (player.hasMetadata("jump_and_run")) {
+                Block underBlock = player.getLocation().subtract(0.0D, 1.0D, 0.0D).getBlock();
+                JumpAndRun jumpAndRun = (JumpAndRun) player.getMetadata("jump_and_run").get(0).value();
+                if (jumpAndRun.isFreeze()) {
+                    int movX = event.getFrom().getBlockX() - event.getTo().getBlockX();
+                    int movZ = event.getFrom().getBlockZ() - event.getTo().getBlockZ();
+                    if ((Math.abs(movX) > 0.5) || (Math.abs(movZ) > 0.5))
+                        player.teleport(event.getFrom());
+                    return;
+                }
+                if (underBlock.getLocation().getBlockX() == jumpAndRun.getNextLocation().getBlockX() && underBlock.getLocation().getBlockY() == jumpAndRun.getNextLocation().getBlockY() && underBlock.getLocation().getBlockZ() == jumpAndRun.getNextLocation().getBlockZ())
+                    jumpAndRun.nextBlock(player, false);
+                if (player.getLocation().getY() < jumpAndRun.getCurrentLocation().getY() - 1) {
+                    jumpAndRun.stop(player);
+                    player.setWalkSpeed(0.3F);
+                    player.setAllowFlight(true);
+                }
+                return;
+            }
+
+            if (player.getLocation().getBlockY() <= 0)
                 player.teleport(HubSystem.INSTANCE.getLocationManager().getLocation("spawn"));
 
             if (player.getGameMode().equals(GameMode.ADVENTURE)) {
@@ -136,6 +194,11 @@ public class ProtectionListener extends AbstractListener {
                     player.setFlying(false);
                 }
             }
+            if (player.hasMetadata("elytra") && (System.currentTimeMillis() > player.getMetadata("elytra").get(0).asLong()))
+                if (player.isOnGround() || player.getLocation().getBlock().isLiquid()) {
+                    Verany.getPlayer(player.getUniqueId().toString(), IHubPlayer.class).resetElytra();
+                    player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1.5F);
+                }
             if (player.getLocation().getBlock().isLiquid()) {
                 if (!player.hasMetadata("liquid") && player.getInventory().contains(Material.TRIDENT)) {
                     HubSystem.INSTANCE.setMetadata(player, "liquid", true);
