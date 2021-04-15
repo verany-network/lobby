@@ -39,29 +39,15 @@ public class ProtectionListener extends AbstractListener {
     public ProtectionListener(VeranyProject project) {
         super(project);
 
-        Verany.registerListener(project, BlockBreakEvent.class, event -> {
-            event.setCancelled(true);
-        });
-
-        Verany.registerListener(project, BlockPlaceEvent.class, event -> {
-            event.setCancelled(true);
-        });
-
-        Verany.registerListener(project, PlayerSwapHandItemsEvent.class, event -> {
-            event.setCancelled(true);
-        });
-
-        Verany.registerListener(project, InventoryClickEvent.class, event -> {
-            event.setCancelled(true);
-        });
-
-        Verany.registerListener(project, FoodLevelChangeEvent.class, event -> {
-            event.setCancelled(true);
-        });
-
-        Verany.registerListener(project, EntityDamageEvent.class, event -> {
-            event.setCancelled(true);
-        });
+        Verany.registerListener(project, BlockBreakEvent.class, event -> event.setCancelled(true));
+        Verany.registerListener(project, BlockPlaceEvent.class, event -> event.setCancelled(true));
+        Verany.registerListener(project, PlayerSwapHandItemsEvent.class, event -> event.setCancelled(true));
+        Verany.registerListener(project, InventoryClickEvent.class, event -> event.setCancelled(true));
+        Verany.registerListener(project, FoodLevelChangeEvent.class, event -> event.setCancelled(true));
+        Verany.registerListener(project, EntityDamageEvent.class, event -> event.setCancelled(true));
+        Verany.registerListener(project, PlayerDropItemEvent.class, event -> event.setCancelled(true));
+        Verany.registerListener(project, WeatherChangeEvent.class, event -> event.setCancelled(true));
+        Verany.registerListener(project, WeatherChangeEvent.class, event -> event.setCancelled(true));
 
         Verany.registerListener(project, PlayerInteractAtEntityEvent.class, event -> {
             event.setCancelled(true);
@@ -102,18 +88,6 @@ public class ProtectionListener extends AbstractListener {
 
             if (event.getAction().equals(Action.RIGHT_CLICK_AIR) && player.getInventory().getItemInMainHand().getType().equals(Material.TRIDENT))
                 event.setCancelled(false);
-        });
-
-        Verany.registerListener(project, PlayerDropItemEvent.class, event -> {
-            event.setCancelled(true);
-        });
-
-        Verany.registerListener(project, WeatherChangeEvent.class, event -> {
-            event.setCancelled(true);
-        });
-
-        Verany.registerListener(project, WeatherChangeEvent.class, event -> {
-            event.setCancelled(true);
         });
 
         Verany.registerListener(project, InventoryCloseEvent.class, event -> {
