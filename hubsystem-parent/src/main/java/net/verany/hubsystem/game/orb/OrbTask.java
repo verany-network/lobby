@@ -1,6 +1,8 @@
 package net.verany.hubsystem.game.orb;
 
 import net.verany.api.task.AbstractTask;
+import net.verany.hubsystem.HubSystem;
+import net.verany.hubsystem.game.VeranyGame;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -26,6 +28,10 @@ public class OrbTask extends AbstractTask {
                     location.setPitch(pitch);
                     location.setYaw(pitch);
                     entity.teleport(location);
+                } else if (entity.hasMetadata("veranyGame")) {
+                    VeranyGame veranyGame = (VeranyGame) entity.getMetadata("veranyGame").get(0).value();
+                    if (veranyGame == null) return;
+                    veranyGame.setArmorStand();
                 }
             }
         }

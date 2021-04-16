@@ -2,6 +2,7 @@ package net.verany.hubsystem.game;
 
 import net.verany.hubsystem.HubSystem;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -19,6 +20,14 @@ public class HubManager implements IHubManager {
                 if (world.getLocation().distance(location) <= 1.5) {
                     world.setMetadata("hubGame", new FixedMetadataValue(HubSystem.INSTANCE, value));
                 }
+            }
+            if (!world.hasMetadata("hubGame") && world.getCustomName() != null) {
+                for (VeranyGame value : VeranyGame.values())
+                    if (ChatColor.stripColor(world.getCustomName()).equalsIgnoreCase(value.name())) {
+                        value.setLocation(world.getLocation());
+                        value.setArmorStand();
+                        world.setMetadata("veranyGame", new FixedMetadataValue(HubSystem.INSTANCE, value));
+                    }
             }
         }
     }

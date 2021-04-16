@@ -1,5 +1,10 @@
 package net.verany.hubsystem.listener;
 
+import de.dytanic.cloudnet.driver.CloudNetDriver;
+import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
+import de.dytanic.cloudnet.ext.bridge.player.ICloudPlayer;
+import de.dytanic.cloudnet.ext.bridge.player.IPlayerManager;
+import lombok.SneakyThrows;
 import net.verany.api.Verany;
 import net.verany.api.event.AbstractListener;
 import net.verany.api.event.events.PlayerAfkEvent;
@@ -11,9 +16,12 @@ import net.verany.api.player.afk.IAFKObject;
 import net.verany.api.sound.VeranySound;
 import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.game.HubGame;
+import net.verany.hubsystem.game.VeranyGame;
 import net.verany.hubsystem.game.jumpandrun.JumpAndRun;
 import net.verany.hubsystem.game.player.HubPlayer;
 import net.verany.hubsystem.game.player.IHubPlayer;
+import net.verany.volcano.round.ServerRoundData;
+import org.bson.Document;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
@@ -33,6 +41,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.util.Vector;
+
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public class ProtectionListener extends AbstractListener {
 
@@ -69,6 +80,49 @@ public class ProtectionListener extends AbstractListener {
                             player.setAllowFlight(false);
                             break;
                     }
+                    return;
+                }
+                if (event.getRightClicked().hasMetadata("veranyGame")) {
+                    VeranyGame veranyGame = (VeranyGame) event.getRightClicked().getMetadata("veranyGame").get(0).value();
+                    if (veranyGame == null) return;
+                    switch (veranyGame) {
+                        case FLAGWARS: {
+                            playerInfo.playSound(Sound.ENTITY_PLAYER_LEVELUP);
+                            playerInfo.sendOnRandomServer("FW-Lobby");
+                            break;
+                        }
+                        case BINGO: {
+                            Map<ServiceInfoSnapshot, List<Document>> rounds = new HashMap<>();
+
+                            try {
+                                for (ServiceInfoSnapshot cloudService : CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServicesAsync("Bingo").get()) {
+                                    if (!cloudService.isConnected() || !cloudService.getProperties().contains("round_data"))
+                                        continue;
+                                    String roundData = cloudService.getProperties().getString("round_data");
+                                    List<Document> documents = Verany.GSON.fromJson(roundData, ServerRoundData.class).getDocuments();
+                                    documents.removeIf(document -> !document.containsKey("gameState") || (document.containsKey("gameState") && !document.getString("gameState").equalsIgnoreCase("WAITING")));
+                                    rounds.put(cloudService, documents);
+                                }
+                                ServiceInfoSnapshot service = rounds.keySet().stream().findAny().orElse(null);
+                                if (service == null) return;
+
+                                List<Document> documents = rounds.get(service);
+                                Document round = documents.get(new Random().nextInt(documents.size()));
+                                String id = round.getString("id");
+
+                                ICloudPlayer cloudPlayer = playerInfo.getCloudPlayer();
+                                cloudPlayer.getProperties().append("round-id", id);
+                                CloudNetDriver.getInstance().getServicesRegistry().getFirstService(IPlayerManager.class).updateOnlinePlayer(cloudPlayer);
+
+                                playerInfo.playSound(Sound.ENTITY_PLAYER_LEVELUP);
+                                playerInfo.sendOnServer(service.getServiceId().getName());
+                            } catch (InterruptedException | ExecutionException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        }
+                    }
+                    return;
                 }
             }
         });
