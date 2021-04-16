@@ -52,7 +52,6 @@ public class HubSwitcherInventory implements IHubInventory {
             services.addAll(getSorted(task));
         for (int i = 0; i < services.size(); i++) {
             ServiceInfoSnapshot hub = services.get(i);
-            if (hub.getProperty(BridgeServiceProperty.IS_ONLINE).isEmpty()) continue;
             String name = hub.getName();
             int online = Verany.GAME_MODE_OBJECT.getOnlinePlayers(new String[]{hub.getServiceId().getTaskName()}, new String[]{name});
             inventory.setItem(slots[i], new ItemBuilder(hub.getServiceId().getName().startsWith("VIP") ? Material.GOLDEN_HELMET : Material.IRON_HELMET).setGlow(name.equals(playerInfo.getServer())).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.switcher.item.hub", new Placeholder("%server_name%", name))).addLoreArray(playerInfo.getKeyArray("hub.switcher.item.hub.lore", '~', new Placeholder("%online%", Verany.asDecimal(online)))).build());
