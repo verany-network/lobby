@@ -47,7 +47,6 @@ public class ProtectionListener extends AbstractListener {
         Verany.registerListener(project, EntityDamageEvent.class, event -> event.setCancelled(true));
         Verany.registerListener(project, PlayerDropItemEvent.class, event -> event.setCancelled(true));
         Verany.registerListener(project, WeatherChangeEvent.class, event -> event.setCancelled(true));
-        Verany.registerListener(project, WeatherChangeEvent.class, event -> event.setCancelled(true));
 
         Verany.registerListener(project, PlayerInteractAtEntityEvent.class, event -> {
             event.setCancelled(true);
@@ -100,16 +99,16 @@ public class ProtectionListener extends AbstractListener {
         Verany.registerListener(project, PlayerLanguageUpdateEvent.class, event -> {
             Player player = event.getPlayer();
             if (!player.hasMetadata("profile.category"))
-                Verany.getPlayer(player.getUniqueId().toString(), IHubPlayer.class).setItems();
+                Verany.getPlayer(player).getPlayer(IHubPlayer.class).setItems();
         });
 
         Verany.registerListener(project, PlayerPrefixUpdateEvent.class, event -> {
             Player player = event.getPlayer();
             IPlayerInfo playerInfo = Verany.getPlayer(player);
-            BossBar bar = Bukkit.getBossBar(new NamespacedKey(HubSystem.INSTANCE, "bossbar_" + player.getName()));
+            BossBar bar = playerInfo.getBossBar();
             bar.setColor(toBarColor(playerInfo.getPrefixPattern().getColor().getFirstColor()));
             if (!player.hasMetadata("profile.category"))
-                Verany.getPlayer(player.getUniqueId().toString(), IHubPlayer.class).setItems();
+                playerInfo.getPlayer(IHubPlayer.class).setItems();
         });
 
         Verany.registerListener(project, PlayerAfkEvent.class, event -> {
