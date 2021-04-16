@@ -1,7 +1,6 @@
 package net.verany.hubsystem.game.orb;
 
 import net.verany.api.task.AbstractTask;
-import net.verany.hubsystem.HubSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
