@@ -23,6 +23,7 @@ public class BossBarTask extends AbstractTask {
             if (player.getBossBar() == null) continue;
 
             IPlayerInfo playerInfo = Verany.getPlayer(player.getUniqueId());
+            if (playerInfo.getPrefixPattern() == null) continue;
             BossBar bossBar = player.getBossBar();
 
             String[] bossBars = playerInfo.getKeyArray("hub.bossbars", '~');
