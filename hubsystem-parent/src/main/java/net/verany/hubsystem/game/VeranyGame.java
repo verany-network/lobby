@@ -1,6 +1,7 @@
 package net.verany.hubsystem.game;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.verany.api.Verany;
 import net.verany.api.gamemode.VeranyGameMode;
@@ -9,14 +10,16 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 
 @Getter
+@RequiredArgsConstructor
 public enum VeranyGame {
 
-    FLAGWARS,
-    BINGO;
+    FLAGWARS("FW-Lobby"),
+    BINGO("Bingo");
 
     @Setter
     private Location location;
     private ArmorStand armorStand;
+    private final String taskName;
 
     public void setArmorStand() {
         if (armorStand == null) armorStand = spawnArmorStand();
