@@ -17,6 +17,7 @@ import net.verany.api.sound.VeranySound;
 import net.verany.hubsystem.HubSystem;
 import net.verany.hubsystem.game.HubGame;
 import net.verany.hubsystem.game.VeranyGame;
+import net.verany.hubsystem.game.inventory.GameInventory;
 import net.verany.hubsystem.game.jumpandrun.JumpAndRun;
 import net.verany.hubsystem.game.player.HubPlayer;
 import net.verany.hubsystem.game.player.IHubPlayer;
@@ -63,6 +64,7 @@ public class ProtectionListener extends AbstractListener {
             event.setCancelled(true);
             if (event.getRightClicked() instanceof ArmorStand) {
                 Player player = event.getPlayer();
+                if (player.getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) return;
                 IPlayerInfo playerInfo = Verany.getPlayer(player);
                 IHubPlayer hubPlayer = playerInfo.getPlayer(IHubPlayer.class);
                 if (event.getRightClicked().hasMetadata("hubGame")) {
@@ -87,8 +89,7 @@ public class ProtectionListener extends AbstractListener {
                     if (veranyGame == null) return;
                     switch (veranyGame) {
                         case FLAGWARS: {
-                            playerInfo.playSound(Sound.ENTITY_PLAYER_LEVELUP);
-                            playerInfo.sendOnRandomServer("FW-Lobby");
+                            new GameInventory(player, veranyGame).setItems();
                             break;
                         }
                         case BINGO: {
