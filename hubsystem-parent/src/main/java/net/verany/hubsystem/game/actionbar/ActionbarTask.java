@@ -14,10 +14,16 @@ import net.verany.hubsystem.game.config.HubConfig;
 import net.verany.hubsystem.game.jumpandrun.JumpAndRun;
 import net.verany.hubsystem.game.player.HubPlayer;
 import net.verany.hubsystem.game.player.IHubPlayer;
+import net.verany.hubsystem.game.settings.HubSetting;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ActionbarTask extends AbstractTask {
 
+    private final double SECONDS_TO_TICKS_FACTOR = 1_000d / Math.pow(60d, 2d);
     private final AbstractSetting<Long> timeSettings = new SettingWrapper.TempSettingWrapper<>("time", Long.class, System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(7));
     private final AbstractSetting<Integer> countSetting = new SettingWrapper.TempSettingWrapper<>("count", Integer.class, 0);
     private final AbstractSetting<Integer> messageCountSetting = new SettingWrapper.TempSettingWrapper<>("messageCount", Integer.class, 0);
@@ -35,9 +42,23 @@ public class ActionbarTask extends AbstractTask {
 
     @Override
     public void run() {
+
+        World world = HubSystem.INSTANCE.getLocationManager().getLocation("spawn").getWorld();
+        Verany.sync(HubSystem.INSTANCE, () -> world.setTime(getWorldTime()));
+
         for (IPlayerInfo onlinePlayer : Verany.getOnlinePlayers()) {
             Player player = onlinePlayer.getPlayer();
             if (!player.isOnline()) continue;
+
+            HubSetting.TimeType timeType = onlinePlayer.getSettingValue(HubSetting.TIME_TYPE);
+            switch (timeType) {
+                case DAY:
+                    player.setPlayerTime(1000, false);
+                    break;
+                case NIGHT:
+                    player.setPlayerTime(18000, false);
+                    break;
+            }
 
             if (player.hasMetadata("jump_and_run")) {
                 JumpAndRun jumpAndRun = (JumpAndRun) player.getMetadata("jump_and_run").get(0).value();
@@ -146,5 +167,18 @@ public class ActionbarTask extends AbstractTask {
             this.permissions = Arrays.asList(permissions);
         }
 
+    }
+
+    private long getWorldTime() {
+        ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.now(), ZoneId.of("Europe/Berlin"));
+        int secondsInDay = dateTime.getHour() * 3600 + dateTime.getMinute() * 60 + dateTime.getSecond();
+        return overflow(18_000 + (int) (secondsInDay * SECONDS_TO_TICKS_FACTOR), 24_000);
+    }
+
+    public int overflow(int value, int at) {
+        while (value > at) {
+            value -= at;
+        }
+        return value;
     }
 }
