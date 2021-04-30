@@ -168,15 +168,18 @@ public class ProtectionListener extends AbstractListener {
 
         Verany.registerListener(project, PlayerAfkEvent.class, event -> {
             Player player = event.getPlayer();
-            IPlayerInfo playerInfo = event.getPlayerInfo();
+            try {
+                IPlayerInfo playerInfo = Verany.getPlayer(player);
 
-            if (playerInfo.getAfkObject().isAfk()) {
-                if (player.hasMetadata("jump_and_run")) {
-                    playerInfo.getAfkObject().disableAfkCheck(IAFKObject.CheckType.MOVE);
-                    JumpAndRun jumpAndRun = (JumpAndRun) player.getMetadata("jump_and_run").get(0).value();
-                    jumpAndRun.stop(player);
-                    playerInfo.getAfkObject().enableAfkCheck(IAFKObject.CheckType.MOVE);
+                if (playerInfo.getAfkObject().isAfk()) {
+                    if (player.hasMetadata("jump_and_run")) {
+                        playerInfo.getAfkObject().disableAfkCheck(IAFKObject.CheckType.MOVE);
+                        JumpAndRun jumpAndRun = (JumpAndRun) player.getMetadata("jump_and_run").get(0).value();
+                        jumpAndRun.stop(player);
+                        playerInfo.getAfkObject().enableAfkCheck(IAFKObject.CheckType.MOVE);
+                    }
                 }
+            } catch (Exception ignore) {
             }
         });
 
