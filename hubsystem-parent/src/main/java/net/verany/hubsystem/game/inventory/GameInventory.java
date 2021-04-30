@@ -40,9 +40,13 @@ public class GameInventory implements IHubInventory {
 
     @Override
     public void setItems() {
-        HubSystem.INSTANCE.setMetadata(player, "inventory", this);
-
         List<ServiceInfoSnapshot> sorted = getSorted(game.getTaskName());
+        if (sorted.size() == 1) {
+            playerInfo.playSound(Sound.ENTITY_PLAYER_LEVELUP);
+            playerInfo.sendOnServer(sorted.get(0).getServiceId().getName());
+            return;
+        }
+        HubSystem.INSTANCE.setMetadata(player, "inventory", this);
         for (int i = 0; i < sorted.size(); i++) {
             ServiceInfoSnapshot service = sorted.get(i);
             int online = service.getProperty(BridgeServiceProperty.PLAYERS).get().size();
