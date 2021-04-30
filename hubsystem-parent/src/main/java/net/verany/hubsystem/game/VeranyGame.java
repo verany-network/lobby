@@ -13,7 +13,7 @@ import org.bukkit.entity.ArmorStand;
 @RequiredArgsConstructor
 public enum VeranyGame {
 
-    FLAGWARS("FW-Lobby"),
+    FLAGWARS("FW-Hub"),
     BINGO("Bingo");
 
     @Setter
