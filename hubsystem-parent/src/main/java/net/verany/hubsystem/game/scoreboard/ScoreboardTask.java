@@ -31,8 +31,11 @@ public class ScoreboardTask extends AbstractTask {
         public void run() {
             for (IHubPlayer player : Verany.getPlayers(IHubPlayer.class)) {
                 if (player.getScoreboard() == null) continue;
-                if (!Verany.getPlayer(player.getUniqueId()).getSettingValue(Settings.SCOREBOARD_ANIMATION)) continue;
-                player.getScoreboard().setDisplayName();
+                try {
+                    if (!Verany.getPlayer(player.getUniqueId()).getSettingValue(Settings.SCOREBOARD_ANIMATION)) continue;
+                    player.getScoreboard().setDisplayName();
+                } catch (Exception ignore) {
+                }
             }
         }
     }
