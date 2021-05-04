@@ -87,7 +87,7 @@ public class ProtectionListener extends AbstractListener {
                 if (event.getRightClicked().hasMetadata("veranyGame")) {
                     VeranyGame veranyGame = (VeranyGame) event.getRightClicked().getMetadata("veranyGame").get(0).value();
                     if (veranyGame == null) return;
-                    switch (veranyGame) {
+                    /*switch (veranyGame) {
                         case FLAGWARS: {
                             new GameInventory(player, veranyGame).setItems();
                             break;
@@ -122,7 +122,8 @@ public class ProtectionListener extends AbstractListener {
                             }
                             break;
                         }
-                    }
+                    }*/
+                    new GameInventory(player, veranyGame).setItems();
                     return;
                 }
             }
@@ -160,8 +161,8 @@ public class ProtectionListener extends AbstractListener {
         Verany.registerListener(project, PlayerPrefixUpdateEvent.class, event -> {
             Player player = event.getPlayer();
             IPlayerInfo playerInfo = Verany.getPlayer(player);
-            BossBar bar = playerInfo.getBossBar();
-            bar.setColor(toBarColor(playerInfo.getPrefixPattern().getColor().getFirstColor()));
+            BossBar bar = playerInfo.getPlayer(IHubPlayer.class).getBossBar();
+            bar.setColor(toBarColor(event.getNewPattern().getColor().getFirstColor()));
             if (!player.hasMetadata("profile.category"))
                 playerInfo.getPlayer(IHubPlayer.class).setItems();
         });
@@ -274,7 +275,7 @@ public class ProtectionListener extends AbstractListener {
     private BarColor toBarColor(ChatColor color) {
         try {
             return BarColor.valueOf(color.name().replace("DARK_", "").replace("LIGHT_", ""));
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return BarColor.BLUE;
         }
     }
