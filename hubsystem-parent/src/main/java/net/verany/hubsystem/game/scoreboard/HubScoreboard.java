@@ -1,11 +1,21 @@
 package net.verany.hubsystem.game.scoreboard;
 
+import de.dytanic.cloudnet.driver.CloudNetDriver;
+import de.dytanic.cloudnet.ext.bridge.BridgeServiceProperty;
+import de.dytanic.cloudnet.ext.bridge.player.ServicePlayer;
 import net.verany.api.Verany;
+import net.verany.api.config.IngameConfig;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.api.player.permission.group.AbstractPermissionGroup;
 import net.verany.api.scoreboard.IScoreboardBuilder;
 import net.verany.api.scoreboard.ScoreboardBuilder;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.concurrent.TimeUnit;
 
@@ -58,6 +68,24 @@ public class HubScoreboard implements IHubScoreboard {
             scoreboardBuilder.setSlot(i, scores[id - 1]);
             id--;
         }
+
+        Scoreboard scoreboard = scoreboardBuilder.getScoreboard();
+        CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServices("Hub").forEach(serviceInfoSnapshot -> {
+            if (serviceInfoSnapshot.getProperty(BridgeServiceProperty.PLAYERS).isPresent())
+                for (ServicePlayer servicePlayer : serviceInfoSnapshot.getProperty(BridgeServiceProperty.PLAYERS).get()) {
+                    IPlayerInfo playerInfo = Verany.getPlayer(servicePlayer.getUniqueId());
+                    AbstractPermissionGroup group = playerInfo.getPermissionObject().getCurrentGroup().getGroup();
+
+                    String teamName = group.getScoreboardId() + playerInfo.getUniqueId().toString().substring(0, 10);
+                    Team team = scoreboard.getTeam(teamName) == null ? scoreboard.registerNewTeam(teamName) : scoreboard.getTeam(teamName);
+                    team.setPrefix(Verany.format(IngameConfig.TAB_LIST_FORMAT.getValue(), group.getColor(), group.getPrefix()));
+                    team.setColor(ChatColor.GRAY);
+                    team.setOption(Team.Option.COLLISION_RULE, IngameConfig.PLAYER_COLLISION.getValue() ? Team.OptionStatus.ALWAYS : Team.OptionStatus.NEVER);
+
+                    if (!team.hasEntry(servicePlayer.getName()))
+                        team.addEntry(servicePlayer.getName());
+                }
+        });
     }
 
     @Override
