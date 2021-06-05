@@ -87,24 +87,12 @@ public class ProfileInventory {
         HubSystem.INSTANCE.setMetadata(player, "profile.category.", category);
 
         switch (category) {
-            case FRIENDS:
-                setFriendItems();
-                break;
-            case CLAN:
-                setClanItems();
-                break;
-            case PARTY:
-                setPartyItems();
-                break;
-            case SETTINGS:
-                setSettingItems();
-                break;
-            case INVENTORY:
-                setInventoryItems();
-                break;
-            case INBOX:
-                setInboxItems();
-                break;
+            case FRIENDS -> setFriendItems();
+            case CLAN -> setClanItems();
+            case PARTY -> setPartyItems();
+            case SETTINGS -> setSettingItems();
+            case INVENTORY -> setInventoryItems();
+            case INBOX -> setInboxItems();
         }
 
         inventory.setItem(4, new ItemBuilder(category.equals(ProfileCategory.FRIENDS) ? new SkullBuilder(playerInfo.getSkinData()).build() : new ItemStack(category.getMaterial())).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.profile." + category.name().toLowerCase(Locale.ROOT))).build());

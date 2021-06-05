@@ -69,18 +69,17 @@ public class ProtectionListener extends AbstractListener {
                 IHubPlayer hubPlayer = playerInfo.getPlayer(IHubPlayer.class);
                 if (event.getRightClicked().hasMetadata("hubGame")) {
                     HubGame hubGame = (HubGame) event.getRightClicked().getMetadata("hubGame").get(0).value();
+                    if(hubGame == null) return;
                     switch (hubGame) {
-                        case ELYTRA:
-                            hubPlayer.startElytra();
-                            break;
-                        case JUMPANDRUN:
+                        case ELYTRA -> hubPlayer.startElytra();
+                        case JUMPANDRUN -> {
                             JumpAndRun jumpAndRun = new JumpAndRun();
                             jumpAndRun.start(player);
                             HubSystem.INSTANCE.setMetadata(player, "jump_and_run", jumpAndRun);
                             player.getInventory().clear();
                             player.setWalkSpeed(0.2F);
                             player.setAllowFlight(false);
-                            break;
+                        }
                     }
                     return;
                 }

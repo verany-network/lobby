@@ -25,15 +25,13 @@ public enum VeranyGame {
         if (armorStand == null) armorStand = spawnArmorStand();
 
         switch (this) {
-            case FLAGWARS: {
+            case FLAGWARS -> {
                 int playing = Verany.GAME_MODE_OBJECT.getOnlinePlayers(VeranyGameMode.FLAG_WARS);
                 armorStand.setCustomName("§7Currently playing§8: §b" + playing);
-                break;
             }
-            case BINGO: {
+            case BINGO -> {
                 int playing = Verany.GAME_MODE_OBJECT.getOnlinePlayers(VeranyGameMode.ARCADE);
                 armorStand.setCustomName("§7Currently playing§8: §b" + playing);
-                break;
             }
         }
     }

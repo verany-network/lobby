@@ -25,6 +25,7 @@ public class PlayerQuitListener extends AbstractListener {
 
             IHubPlayer hubPlayer = playerInfo.getPlayer(IHubPlayer.class);
             hubPlayer.setLastLocation();
+            hubPlayer.getBossBar().setTitle("");
             hubPlayer.getBossBar().removePlayer(player);
             hubPlayer.setBossBar(null);
             hubPlayer.update();

@@ -7,6 +7,8 @@ import net.verany.api.locationmanager.AbstractLocationManager;
 import net.verany.api.locationmanager.LocationManager;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
+import net.verany.api.player.IPlayerInfo;
+import net.verany.api.player.PlayerInfo;
 import net.verany.hubsystem.commands.BuildCommand;
 import net.verany.hubsystem.commands.SetupCommand;
 import net.verany.hubsystem.game.HubManager;
@@ -21,9 +23,9 @@ import net.verany.hubsystem.listener.PlayerJoinListener;
 import net.verany.hubsystem.listener.PlayerQuitListener;
 import net.verany.hubsystem.listener.ProtectionListener;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Boss;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @VeranyModule(
@@ -72,7 +74,7 @@ public class HubSystem extends VeranyProject {
         hubManager = new HubManager();
         Bukkit.getScheduler().runTaskLater(this, () -> hubManager.registerArmorStands(), 20);
 
-        Verany.addTask(new ActionbarTask(750), new InventoryTask(1000), new OrbTask(50),new LevelTask(10 * 1000), new BossBarTask(50), new ScoreboardTask(1000), new ScoreboardTask.ScoreboardDisplayNameTask(150));
+        Verany.addTask(new ActionbarTask(750), new InventoryTask(1000), new OrbTask(50), new LevelTask(10 * 1000), new BossBarTask(50), new ScoreboardTask(1000), new ScoreboardTask.ScoreboardDisplayNameTask(150));
 
         IngameConfig.PLAYER_COLLISION.setValue(false);
         IngameConfig.TAB_LIST.setValue(true);
@@ -82,6 +84,7 @@ public class HubSystem extends VeranyProject {
         IngameConfig.AFK_TIME.setValue(TimeUnit.MINUTES.toMillis(10));
         IngameConfig.AFK.setValue(true);
         IngameConfig.COLORED_CHAT.setValue(true);
+
     }
 
     private void initCommands() {

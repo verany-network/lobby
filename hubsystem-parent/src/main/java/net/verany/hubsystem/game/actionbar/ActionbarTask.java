@@ -52,12 +52,8 @@ public class ActionbarTask extends AbstractTask {
 
             HubSetting.TimeType timeType = onlinePlayer.getSettingValue(HubSetting.TIME_TYPE);
             switch (timeType) {
-                case DAY:
-                    player.setPlayerTime(1000, false);
-                    break;
-                case NIGHT:
-                    player.setPlayerTime(18000, false);
-                    break;
+                case DAY -> player.setPlayerTime(1000, false);
+                case NIGHT -> player.setPlayerTime(18000, false);
             }
 
             if (player.hasMetadata("jump_and_run")) {
@@ -79,7 +75,7 @@ public class ActionbarTask extends AbstractTask {
                 count = 0;
             ActionbarCategory category = categories.get(count);
             switch (category) {
-                case SERVER:
+                case SERVER -> {
                     maxMessages = 1;
                     try {
                         double tps = Double.parseDouble(Verany.round(Bukkit.getTPS()[0]));
@@ -88,35 +84,34 @@ public class ActionbarTask extends AbstractTask {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    break;
-                case REPORTS:
+                }
+                case REPORTS -> {
                     maxMessages = 1;
                     int reports = Verany.reportObject.getOpenReports().size();
                     onlinePlayer.setDefaultActionbar(onlinePlayer.getKey("hub.actionbar.reports", new Placeholder("%amount%", (reports < 5 ? "§a" + reports : reports < 10 ? "§e" + reports : "§c" + reports))));
-                    break;
-                case SUPPORT:
+                }
+                case SUPPORT -> {
                     maxMessages = 1;
                     int support = HubSystem.INSTANCE.getPlayersInSupport();
                     onlinePlayer.setDefaultActionbar(onlinePlayer.getKey("hub.actionbar.support", new Placeholder("%amount%", (support < 5 ? "§a" + support : support < 10 ? "§e" + support : "§c" + support))));
-                    break;
-                case LEVEL:
+                }
+                case LEVEL -> {
                     maxMessages = 1;
                     int level = onlinePlayer.getLevelObject().getLevel();
                     int exp = onlinePlayer.getLevelObject().getExp();
                     int maxExp = onlinePlayer.getLevelObject().getMaxExp();
                     int newExp = (level == 1 ? exp : exp - LevelCalculator.fullTargetExp(level - 1));
                     int newMaxExp = (level == 1 ? maxExp : maxExp - LevelCalculator.fullTargetExp(level - 1));
-
                     String progressBar = Verany.getProgressBar(newExp, newMaxExp, 50, '|', ChatColor.GREEN, ChatColor.RED);
                     onlinePlayer.setDefaultActionbar(onlinePlayer.getKey("hub.actionbar." + category.name().toLowerCase(), new Placeholder("%current_level%", Verany.asDecimal(level)), new Placeholder("%progress_bar%", progressBar), new Placeholder("%next_level%", Verany.asDecimal(level + 1)), new Placeholder("%exp%", Verany.asDecimal(onlinePlayer.getLevelObject().getExp())), new Placeholder("%max_exp%", Verany.asDecimal(onlinePlayer.getLevelObject().getMaxExp()))));
-                    break;
-                default:
+                }
+                default -> {
                     String[] messages = onlinePlayer.getKeyArray("hub.actionbar." + category.name().toLowerCase(), '~');
                     maxMessages = messages.length;
                     if (messageCount >= messages.length)
                         messageCount = 0;
                     onlinePlayer.setDefaultActionbar(messages[messageCount]);
-                    break;
+                }
             }
 
             if (System.currentTimeMillis() < time) continue;

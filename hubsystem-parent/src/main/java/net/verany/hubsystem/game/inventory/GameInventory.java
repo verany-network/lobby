@@ -33,7 +33,7 @@ public class GameInventory implements IHubInventory {
     private final IPlayerInfo playerInfo;
     private final VeranyGame game;
     private final IInventoryBuilder inventoryBuilder;
-    private final Inventory inventory;
+    private Inventory inventory;
 
     public GameInventory(Player player, VeranyGame game) {
         this.player = player;
@@ -46,7 +46,6 @@ public class GameInventory implements IHubInventory {
                 return;
             }
         }).build();
-        inventory = inventoryBuilder.createAndOpen(player);
     }
 
     @SneakyThrows
@@ -78,13 +77,11 @@ public class GameInventory implements IHubInventory {
                     List<String> players = document.getList("players", String.class);
 
                     String key;
-                    switch (sortType) {
-                        case PLAYERS:
-                            key = players.size() + "_" + id;
-                            reverse.set(true);
-                            break;
-                        default:
-                            key = id;
+                    if (sortType == BingoSortType.PLAYERS) {
+                        key = players.size() + "_" + id;
+                        reverse.set(true);
+                    } else {
+                        key = id;
                     }
 
                     KeyBuilder displayName = KeyBuilder.builder().
@@ -114,6 +111,7 @@ public class GameInventory implements IHubInventory {
             List<ItemStack> items = Verany.sortList(sortData, reverse.get());
 
             if (items.size() == 1) {
+                player.removeMetadata("inventory", HubSystem.INSTANCE);
                 connect(playerInfo, items.get(0));
                 return;
             }
@@ -124,10 +122,13 @@ public class GameInventory implements IHubInventory {
                 clear();
                 setItems();
             });
+
+            inventory = inventoryBuilder.createAndOpen(player);
             return;
         }
         List<ServiceInfoSnapshot> sorted = getSorted(game.getTaskName());
         if (sorted.size() == 1) {
+            player.removeMetadata("inventory", HubSystem.INSTANCE);
             connect(playerInfo, sorted.get(0).getServiceId().getName());
             return;
         }
