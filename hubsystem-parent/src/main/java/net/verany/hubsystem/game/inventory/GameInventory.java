@@ -23,8 +23,10 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GameInventory implements IHubInventory {
@@ -141,6 +143,26 @@ public class GameInventory implements IHubInventory {
 
     private void connect(IPlayerInfo playerInfo, String service) {
         playerInfo.playSound(Sound.ENTITY_PLAYER_LEVELUP);
+        new BukkitRunnable() {
+
+            private int waitingInt = 0;
+
+            @Override
+            public void run() {
+                if (playerInfo.getPlayer() == null) {
+                    cancel();
+                    System.out.println("canceled");
+                    return;
+                }
+
+                waitingInt++;
+                if (waitingInt == 4)
+                    waitingInt = 0;
+
+                player.sendTitle(playerInfo.getKey("hub.send.title"), playerInfo.getKey("hub.send.subtitle", new Placeholder("%dot%", "§8.".repeat(Math.max(0, waitingInt))), new Placeholder("%name%", service)), 0, 20 * 5, 10);
+            }
+        }.runTaskTimer(HubSystem.INSTANCE, 0, 5);
+        
         playerInfo.sendOnServer(service);
     }
 
