@@ -8,3 +8,7 @@ main: net.verany.hubsystem.HubSystem
 commands:
   setup:
   build:
+
+depend:
+  - MC-Core-Executor
+  - CloudNet-Bridge
