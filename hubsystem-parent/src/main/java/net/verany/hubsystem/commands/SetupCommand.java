@@ -54,7 +54,6 @@ public class SetupCommand extends AbstractCommand implements TabCompleter {
                         player.sendMessage(playerInfo.getPrefix(HubSystem.INSTANCE.getModule()) + "§7Der §bSpawn §7wurde gesetzt§8.");
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 2F);
                         break;
-
                     case "build":
                         if(player.getGameMode().equals(GameMode.CREATIVE)) {
                             player.setGameMode(GameMode.ADVENTURE);
