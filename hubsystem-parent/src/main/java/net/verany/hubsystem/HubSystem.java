@@ -80,6 +80,7 @@ public class HubSystem extends VeranyProject {
         IngameConfig.TAB_LIST.setValue(true);
         IngameConfig.TAB_LIST_FORMAT.setValue("{0}{1} §8▏ §7");
         IngameConfig.TAB_LIST_CLAN.setValue(true);
+        IngameConfig.CHAT.setValue(true);
         IngameConfig.CHAT_FORMAT.setValue(" §8◗§7◗ {0}{1} §8▏ §7{2} §8• §f{3}");
         IngameConfig.AFK_TIME.setValue(TimeUnit.MINUTES.toMillis(10));
         IngameConfig.AFK.setValue(true);
