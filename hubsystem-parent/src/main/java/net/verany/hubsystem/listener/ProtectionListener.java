@@ -11,6 +11,7 @@ import net.verany.api.event.events.PlayerAfkEvent;
 import net.verany.api.event.events.PlayerLanguageUpdateEvent;
 import net.verany.api.event.events.PlayerPrefixUpdateEvent;
 import net.verany.api.module.VeranyProject;
+import net.verany.api.npc.event.NPCInteractEvent;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.afk.IAFKObject;
 import net.verany.api.sound.VeranySound;
@@ -69,7 +70,7 @@ public class ProtectionListener extends AbstractListener {
                 IHubPlayer hubPlayer = playerInfo.getPlayer(IHubPlayer.class);
                 if (event.getRightClicked().hasMetadata("hubGame")) {
                     HubGame hubGame = (HubGame) event.getRightClicked().getMetadata("hubGame").get(0).value();
-                    if(hubGame == null) return;
+                    if (hubGame == null) return;
                     switch (hubGame) {
                         case ELYTRA -> hubPlayer.startElytra();
                         case JUMPANDRUN -> {
@@ -267,6 +268,19 @@ public class ProtectionListener extends AbstractListener {
                 Vector vector = player.getLocation().getDirection().multiply(1.3).setY(1);
                 player.playSound(player.getLocation(), Sound.ENTITY_CAT_HISS, 3, 1);
                 player.setVelocity(vector);
+            }
+        });
+
+        Verany.registerListener(project, NPCInteractEvent.class, event -> {
+            Player player = event.getPlayer();
+            if (player.hasMetadata("npc.clicked")) {
+                long time = player.getMetadata("npc.clicked").get(0).asLong();
+                if (time >= System.currentTimeMillis())
+                    return;
+            }
+            if (event.getNpc().getName().equals("flagwars")) {
+                new GameInventory(player, VeranyGame.FLAGWARS).setItems();
+                HubSystem.INSTANCE.setMetadata(player, "npc.clicked", System.currentTimeMillis() + 500);
             }
         });
     }
