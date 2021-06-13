@@ -5,6 +5,7 @@ import net.verany.api.event.AbstractListener;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.hubsystem.HubSystem;
+import net.verany.hubsystem.game.bossbar.BossBarTask;
 import net.verany.hubsystem.game.player.IHubPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -13,6 +14,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 public class PlayerQuitListener extends AbstractListener {
 
@@ -29,6 +32,12 @@ public class PlayerQuitListener extends AbstractListener {
             hubPlayer.getBossBar().removePlayer(player);
             hubPlayer.setBossBar(null);
             hubPlayer.update();
+            playerInfo.setTempSetting(BossBarTask.BossBarSetting.CURRENT_TEXT, 0);
+            playerInfo.setTempSetting(BossBarTask.BossBarSetting.CURRENT_TEXT_CHARACTER, 0);
+            playerInfo.setTempSetting(BossBarTask.BossBarSetting.CURRENT_MESSAGE, "");
+            playerInfo.setTempSetting(BossBarTask.BossBarSetting.LAST_COLOR, new StringBuilder());
+            playerInfo.setTempSetting(BossBarTask.BossBarSetting.BACK, false);
+            playerInfo.setTempSetting(BossBarTask.BossBarSetting.WAITING, 0L);
             Verany.removePlayer(player.getUniqueId().toString(), IHubPlayer.class);
 
             Bukkit.removeBossBar(new NamespacedKey(HubSystem.INSTANCE, "bossbar_" + player.getName()));
