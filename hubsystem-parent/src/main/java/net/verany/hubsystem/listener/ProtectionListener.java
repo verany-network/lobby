@@ -282,6 +282,10 @@ public class ProtectionListener extends AbstractListener {
                 new GameInventory(player, VeranyGame.FLAGWARS).setItems();
                 HubSystem.INSTANCE.setMetadata(player, "npc.clicked", System.currentTimeMillis() + 500);
             }
+            if (event.getNpc().getName().equals("bingo")) {
+                new GameInventory(player, VeranyGame.BINGO).setItems();
+                HubSystem.INSTANCE.setMetadata(player, "npc.clicked", System.currentTimeMillis() + 500);
+            }
         });
     }
 
