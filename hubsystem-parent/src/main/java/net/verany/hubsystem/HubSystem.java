@@ -1,5 +1,6 @@
 package net.verany.hubsystem;
 
+import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import net.verany.api.Verany;
 import net.verany.api.config.IngameConfig;
@@ -7,8 +8,6 @@ import net.verany.api.locationmanager.AbstractLocationManager;
 import net.verany.api.locationmanager.LocationManager;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
-import net.verany.api.player.IPlayerInfo;
-import net.verany.api.player.PlayerInfo;
 import net.verany.hubsystem.commands.BuildCommand;
 import net.verany.hubsystem.commands.SetupCommand;
 import net.verany.hubsystem.game.HubManager;
@@ -19,13 +18,11 @@ import net.verany.hubsystem.game.inventory.task.InventoryTask;
 import net.verany.hubsystem.game.level.LevelTask;
 import net.verany.hubsystem.game.orb.OrbTask;
 import net.verany.hubsystem.game.scoreboard.ScoreboardTask;
+import net.verany.hubsystem.listener.PlayerDeathListener;
 import net.verany.hubsystem.listener.PlayerJoinListener;
 import net.verany.hubsystem.listener.PlayerQuitListener;
 import net.verany.hubsystem.listener.ProtectionListener;
 import org.bukkit.Bukkit;
-
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @VeranyModule(
@@ -97,5 +94,6 @@ public class HubSystem extends VeranyProject {
         new PlayerJoinListener(this);
         new PlayerQuitListener(this);
         new ProtectionListener(this);
+        new PlayerDeathListener(this);
     }
 }

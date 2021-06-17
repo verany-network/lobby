@@ -8,14 +8,17 @@ subprojects {
     apply plugin: 'java'
 
     group 'net.verany.hubsystem'
-    version '2021.3.1'
+    version '2021.6.1'
 
     repositories {
         mavenCentral()
+        maven {
+            url 'https://papermc.io/repo/repository/maven-public/'
+        }
     }
 
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
@@ -25,8 +28,8 @@ subprojects {
         compileOnly 'org.projectlombok:lombok:1.18.20'
         annotationProcessor 'org.projectlombok:lombok:1.18.20'
         implementation 'org.ocpsoft.prettytime:prettytime:4.0.5.Final'
-        compileOnly files('C:/Users/maxim/Desktop/Verany Season 2/Spigot/VeranyCore-Addon/addon-executor/build/libs/paper.jar')
-        compileOnly files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/VeranyCore-Addon/addon-parent-mc/build/libs/addon-parent-mc-2021.6.1.jar")
-        implementation files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/core-round-manager/round-parent/build/libs/round-parent-2021.3.1.jar");
+        compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+        compileOnly files("C:/Users/Kevin Schulte/Desktop/Systeme/Verany/lib/addon-parent-mc-2021.6.1.jar")
+        implementation files("C:/Users/Kevin Schulte/Desktop/Systeme/Verany/lib/core-round-manager.jar");
     }
 }

@@ -1,10 +1,5 @@
 package net.verany.hubsystem.listener;
 
-import de.dytanic.cloudnet.driver.CloudNetDriver;
-import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
-import de.dytanic.cloudnet.ext.bridge.player.ICloudPlayer;
-import de.dytanic.cloudnet.ext.bridge.player.IPlayerManager;
-import lombok.SneakyThrows;
 import net.verany.api.Verany;
 import net.verany.api.event.AbstractListener;
 import net.verany.api.event.events.PlayerAfkEvent;
@@ -20,11 +15,13 @@ import net.verany.hubsystem.game.HubGame;
 import net.verany.hubsystem.game.VeranyGame;
 import net.verany.hubsystem.game.inventory.GameInventory;
 import net.verany.hubsystem.game.jumpandrun.JumpAndRun;
-import net.verany.hubsystem.game.player.HubPlayer;
 import net.verany.hubsystem.game.player.IHubPlayer;
-import net.verany.volcano.round.ServerRoundData;
-import org.bson.Document;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BossBar;
@@ -36,16 +33,18 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.util.Vector;
-
-import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 public class ProtectionListener extends AbstractListener {
 
