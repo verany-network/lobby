@@ -26,6 +26,8 @@ public class PlayerQuitListener extends AbstractListener {
             Player player = event.getPlayer();
             IPlayerInfo playerInfo = Verany.getPlayer(player);
 
+            event.quitMessage(null);
+
             IHubPlayer hubPlayer = playerInfo.getPlayer(IHubPlayer.class);
             hubPlayer.setLastLocation();
             hubPlayer.getBossBar().setTitle("");
