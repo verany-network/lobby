@@ -58,14 +58,13 @@ public class PlayerJoinListener extends AbstractListener {
                 HubSystem.INSTANCE.getLocationManager().getDataOptional(AbstractLocationManager.VeranyLocations.class).ifPresent(veranyLocations -> {
                     veranyLocations.getLocations().forEach((s, veranyLocation) -> {
                         if (s.startsWith("npc_")) {
-                            player.sendMessage("spawn npc");
-                            INPC npc = Verany.createNPC(s.split("_")[1], veranyLocation.toLocation(), true, player);
+                            INPC npc = Verany.createNPC(s.split("_")[1], veranyLocation.toLocation(), player);
                             npc.setGameProfile(playerInfo.getSkinData());
                             npc.spawn();
                         }
                     });
                 });
-            }, 2);
+            }, 5);
 
             BossBar bossBar = Bukkit.createBossBar(new NamespacedKey(HubSystem.INSTANCE, "bossbar_" + player.getName()), "", BarColor.BLUE, BarStyle.SEGMENTED_6);
             bossBar.addPlayer(player);
