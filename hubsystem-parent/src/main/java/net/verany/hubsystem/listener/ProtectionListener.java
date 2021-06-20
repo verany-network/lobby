@@ -5,7 +5,9 @@ import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
 import de.dytanic.cloudnet.ext.bridge.player.ICloudPlayer;
 import de.dytanic.cloudnet.ext.bridge.player.IPlayerManager;
 import lombok.SneakyThrows;
+import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
 import net.verany.api.Verany;
+import net.verany.api.enumhelper.EnumHelper;
 import net.verany.api.event.AbstractListener;
 import net.verany.api.event.events.PlayerAfkEvent;
 import net.verany.api.event.events.PlayerLanguageUpdateEvent;
@@ -273,19 +275,9 @@ public class ProtectionListener extends AbstractListener {
 
         Verany.registerListener(project, NPCInteractEvent.class, event -> {
             Player player = event.getPlayer();
-            if (player.hasMetadata("npc.clicked")) {
-                long time = player.getMetadata("npc.clicked").get(0).asLong();
-                if (time >= System.currentTimeMillis())
-                    return;
-            }
-            if (event.getNpc().getName().equals("flagwars")) {
-                new GameInventory(player, VeranyGame.FLAGWARS).setItems();
-                HubSystem.INSTANCE.setMetadata(player, "npc.clicked", System.currentTimeMillis() + 500);
-            }
-            if (event.getNpc().getName().equals("bingo")) {
-                new GameInventory(player, VeranyGame.BINGO).setItems();
-                HubSystem.INSTANCE.setMetadata(player, "npc.clicked", System.currentTimeMillis() + 500);
-            }
+            if (!event.getInteractType().equals(PacketPlayInUseEntity.EnumEntityUseAction.INTERACT)) return;
+            VeranyGame game = VeranyGame.valueOf(event.getNpc().getName().toUpperCase());
+            new GameInventory(player, game).setItems();
         });
     }
 
