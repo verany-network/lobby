@@ -1,7 +1,7 @@
-Verany HubSystem
+Verany LobbySystem
 =============
 
-The hub offers our players the opportunity to move quickly on the network. 
+The lobby offers our players the opportunity to move quickly on the network. 
 
 Licencing
 ---------------------------
