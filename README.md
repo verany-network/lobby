@@ -1,9 +1,9 @@
-Verany LobbySystem
+Verany Lobby System
 =============
 
-The lobby offers our players the opportunity to move quickly on the network. 
+Die Lobby bietet unseren Spielern die Möglichkeit, sich schnell im Netzwerk fort zu bewegen. 
 
-Licencing
+Lizensierung
 ---------------------------
 
-Of course we are grateful for the work on our project, but it has to be mentioned that all files that can be found here are for the Verany project. All contributions are subject to the terms of the EULA. 
+Natürlich sind wir dankbar für die Arbeit an unserem Projekt, aber es muss erwähnt werden, dass alle Dateien, die hier zu finden sind, für das Verany-Projekt sind. Alle Beiträge unterliegen den Bedingungen der EULA. 
