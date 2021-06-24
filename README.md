@@ -1,8 +1,8 @@
 Verany Lobby System
 =============
 
-Willkommen zur LobbySystem-Einrichtung,
-hier lernt ihr wie ihr das LobbySystem in euer Projekt einbezieht und wie ihr dieses anschließend einbezieht.
+Willkommen zur Lobby-Einrichtung,
+hier lernt ihr wie ihr das LobbySystem in euer Projekt einbezieht und wie ihr dieses anschließend baut.
 
 Das Lobby System einbeziehen
 ----------------------
@@ -11,7 +11,7 @@ Mit den folgenden Schritten wird es euch ermöglicht unser LobbySystem in euere 
 
 ### Installation
 
-Installiere den aktuellsten Stand des Lobby Systems mithilfe unserer **[GitHub Releases](https://github.com/verany-network/lobby-system/releases)**. Klicke auf dieser Seite einfach auf den farblich hervorgehobenen Button "Download". Die weiteren Schritte werden dir von hier an von GitHub selbst verständlich näher gebracht.
+Installiere den aktuellsten Stand des Lobby Systems mithilfe unserer **[GitHub Releases](https://github.com/verany-network/lobby/releases)**. Klicke auf dieser Seite einfach auf den farblich hervorgehobenen Button "Download". Die weiteren Schritte werden dir von hier an von GitHub selbst verständlich näher gebracht.
 
 
 Lizensierung
