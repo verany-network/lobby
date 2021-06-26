@@ -24,7 +24,7 @@ subprojects {
     dependencies {
         compileOnly 'org.projectlombok:lombok:1.18.20'
         annotationProcessor 'org.projectlombok:lombok:1.18.20'
-        implementation 'org.ocpsoft.prettytime:prettytime:4.0.5.Final'
+        implementation 'org.ocpsoft.prettytime:prettytime:5.0.1.Final'
         compileOnly files('C:/Users/maxim/Desktop/Verany Season 2/Spigot/VeranyCore-Addon/addon-executor/build/libs/paper.jar')
         compileOnly files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/VeranyCore-Addon/addon-parent-mc/build/libs/addon-parent-mc-2021.6.1.jar")
         implementation files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/core-round-manager/round-parent/build/libs/round-parent-2021.3.1.jar");
