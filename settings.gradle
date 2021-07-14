@@ -1,4 +1,0 @@
-rootProject.name = 'verany-hubsystem'
-include 'hubsystem-api'
-include 'hubsystem-parent'
-
