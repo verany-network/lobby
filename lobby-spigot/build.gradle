@@ -1,0 +1,14 @@
+dependencies {
+  implementation project(":lobby-lib")
+  compile project(":lobby-lib")
+
+  compileOnly("space.mcplay:core-plugin:${System.getProperty("corePlugin")}")
+}
+
+jar {
+  from {
+    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+  }
+  exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
+}
+

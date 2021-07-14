@@ -1,0 +1,10 @@
+name: Lobby
+version: 1.0.0
+author: Dani_R
+
+main: space.mcplay.lobby.LobbyPlugin
+depend:
+  - SpigotCore
+  - SpigotNode
+
+api-version: 1.13

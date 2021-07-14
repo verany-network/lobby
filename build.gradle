@@ -1,32 +1,52 @@
 plugins {
-    id "io.freefair.lombok" version "5.3.3.3"
-    id 'java-library'
-    id 'idea'
+  id 'java'
 }
 
-subprojects {
-    apply plugin: 'java'
+allprojects {
+  System.setProperty("coreVersion", "2.2.01")
+  System.setProperty("corePlugin", "1.0.7")
 
-    group 'net.verany.hubsystem'
-    version '2021.3.1'
+  apply plugin: 'java'
 
-    repositories {
-        mavenCentral()
+  group 'space.mcplay'
+  version '1.0.0'
+
+  sourceCompatibility = 1.8
+
+  tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+  }
+
+  ext {
+    // dependency versions
+    spigotVersion = '1.16.2-R0.1-20200827.170640-1'
+
+    coreVersion = '2.2.06'
+    node_api = '2.0.08'
+    node_library = '2.0.07'
+  }
+
+  repositories {
+    mavenCentral()
+    maven {
+      url System.getenv("SPACE_REPO")
+      credentials {
+        username = System.getenv("SPACE_USER")
+        password = System.getenv("SPACE_PASS")
+      }
     }
+  }
 
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+  dependencies {
+    compileOnly "org.spigot:paper:${spigotVersion}"
+    compileOnly "space.mcplay:core-build:${System.getProperty("coreVersion")}"
+    compileOnly "space.mcplay:core-statistics:${System.getProperty("coreVersion")}"
 
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-    }
+    compileOnly "space.mcplay:core-plugin:${System.getProperty("corePlugin")}"
 
-    dependencies {
-        compileOnly 'org.projectlombok:lombok:1.18.20'
-        annotationProcessor 'org.projectlombok:lombok:1.18.20'
-        implementation 'org.ocpsoft.prettytime:prettytime:5.0.1.Final'
-        compileOnly files('C:/Users/maxim/Desktop/Verany Season 2/Spigot/VeranyCore-Addon/addon-executor/build/libs/paper.jar')
-        compileOnly files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/VeranyCore-Addon/addon-parent-mc/build/libs/addon-parent-mc-2021.6.1.jar")
-        implementation files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/core-round-manager/round-parent/build/libs/round-parent-2021.3.1.jar");
-    }
+    compileOnly "team.dotspace:node-api:${node_api}"
+    compileOnly "team.dotspace:node-library:${node_library}"
+    compileOnly "team.dotspace:node-bridge:${node_library}"
+  }
 }
+
