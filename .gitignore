@@ -1,5 +1,14 @@
+# Project exclude paths
+gradlew.bat
+gradlew
+/gradle
 .gradle
-.idea
 gradle
+.idea
+.vscode
+.temp
+node_modules
+settings
+
 hubsystem-api/build
 hubsystem-parent/build
