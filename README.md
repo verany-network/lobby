@@ -22,12 +22,6 @@ gh repo clone verany-network/lobby
 ```
 
 ---
-## Deployments & Tests:
-Das Testen der Lobby erfolgt auf einem von uns dafür angelegten Mirror Server. Dort könnt ihr die Spigot API / Core voll ausschöpfen ohne euch Sorgen um die User auf unserem Produktions-Server machen zu müssen. Aufrufen könnt ihr diesen Service unter **[demo.verany.net](https://demo.verany.net/mc/lobby/)**. Bei einem Klick auf das entsprechende Projekt werdet ihr nach eurem Personal Development Key (PDK) gefragt. Dieser wurde euch bei eurer Teameinführung in dem Einführungsdokument übergeben. Dieser dient hier jetzt zur Identifizierung der Logins / Aktionen und somit auch als Passwort.
-
-Um das Projekt auf eurem Stand überhaupt online zu bekommen müsst ihr jetzt noch den entsprechenden GitHub Workflow ausführen. Eine Auflistung der Workflows und ihre Funktionen findet ihr im Navigationsbereich unter **[Actions](https://github.com/verany-network/lobby/actions)**.
-
----
 ## Branches:
 * `production`: Produktionsbuild (Wird automatisch auf die entsprechenden Dienste deployed)
 * `release/*`: Release Builds (z.B. `release/2021.7.4`, eine stabil laufende Version benannt nach dem Zeitpunkt)
