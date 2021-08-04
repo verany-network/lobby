@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 [![Discord](https://img.shields.io/discord/670667590812696623?color=fff&label=Discord&logo=discord&logoColor=fff)](https://discord.gg/Yn9Ws9w6d5)
 ![Twitter Follow](https://img.shields.io/twitter/follow/VeranyNET?color=919191&label=Folge%20%40VeranyNET&style=social)
 ![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCduDElXYi8zPjZMTIxCT45A?label=Abonniere%20VeranyNET&style=social)
@@ -31,3 +32,7 @@ gh repo clone verany-network/lobby
 ---
 ## Lizensierung:
 Niemand außer der Administration selbst und dem Nico Kempe Einzelunternehmen steht es zu den geschriebenen Code ohne Erlaubnis zu verwenden. Bei eigenem Einsatz in das Projekt gibt man automatisch alle Rechte an der aufgewendeten Arbeit ab.
+=======
+# lobbysystem-verany
+ 
+>>>>>>> Stashed changes

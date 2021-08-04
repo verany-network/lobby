@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 # Project exclude paths
 gradlew.bat
 gradlew
@@ -12,3 +13,10 @@ settings
 
 hubsystem-api/build
 hubsystem-parent/build
+=======
+lobby-api/target
+lobby-flagwars/target
+lobby-flagwars-api/target
+lobby-parent/target
+.idea
+>>>>>>> Stashed changes

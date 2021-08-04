@@ -1,0 +1,14 @@
+name: Verany-LobbySystem
+version: 2021.7.1
+api-version: 1.17
+authors:
+  - tylix
+main: net.verany.lobbysystem.LobbySystem
+
+commands:
+  setup:
+  build:
+
+depend:
+  - MC-Core-Executor
+  - CloudNet-Bridge
