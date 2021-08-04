@@ -2,7 +2,9 @@ package net.verany.lobbysystem.flagwars.region;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import net.verany.api.Verany;
+import net.verany.api.actionbar.DefaultActionbar;
 import net.verany.api.cuboid.Cuboid;
+import net.verany.api.player.IPlayerInfo;
 import net.verany.api.region.GameRegion;
 import net.verany.lobbysystem.flagwars.player.IFlagWarsPlayer;
 import net.verany.lobbysystem.flagwars.scoreboard.GameScoreboard;
@@ -25,12 +27,12 @@ public class FlagWarsRegion extends GameRegion {
         IFlagWarsPlayer flagWarsPlayer = Verany.getPlayer(player.getUniqueId(), IFlagWarsPlayer.class);
         flagWarsPlayer.setItems();
 
-        player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
         IHubScoreboard scoreboard = new GameScoreboard(player);
         scoreboard.load();
         hubPlayer.setScoreboard(scoreboard);
 
-        player.sendMessage("you entered flagwars");
+        IPlayerInfo playerInfo = Verany.getPlayer(player);
+        playerInfo.setActionbar(new DefaultActionbar(playerInfo.getKey("hub.flagwars.entered"), 2 * 1000));
 
         displayBorder(new ParticleBuilder(Particle.REDSTONE).color(Color.fromBGR(51, 102, 153)).receivers(player));
     }
@@ -41,6 +43,7 @@ public class FlagWarsRegion extends GameRegion {
         hubPlayer.setItems();
         hubPlayer.setScoreboard();
 
-        player.sendMessage("you left flagwars");
+        IPlayerInfo playerInfo = Verany.getPlayer(player);
+        playerInfo.setActionbar(new DefaultActionbar(playerInfo.getKey("hub.flagwars.left"), 2 * 1000));
     }
 }
