@@ -41,9 +41,6 @@ public class ActionbarTask extends AbstractTask {
     @Override
     public void run() {
 
-        World world = LobbySystem.INSTANCE.getLocationManager().getLocation("spawn").getWorld();
-        Verany.sync(LobbySystem.INSTANCE, () -> world.setTime(getWorldTime()));
-
         for (IPlayerInfo onlinePlayer : Verany.getOnlinePlayers()) {
             Player player = onlinePlayer.getPlayer();
             if (!player.isOnline()) continue;
@@ -162,11 +159,11 @@ public class ActionbarTask extends AbstractTask {
 
     }
 
-    private long getWorldTime() {
+    /*private long getWorldTime() {
         ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.now(), ZoneId.of("Europe/Berlin"));
         int secondsInDay = dateTime.getHour() * 3600 + dateTime.getMinute() * 60 + dateTime.getSecond();
         return overflow(18_000 + (int) (secondsInDay * SECONDS_TO_TICKS_FACTOR), 24_000);
-    }
+    }*/
 
     public int overflow(int value, int at) {
         while (value > at) {
