@@ -34,7 +34,7 @@ public class HubSwitcherInventory implements IHubInventory {
         this.inventory = InventoryBuilder.builder().size(9 * 3).title(playerInfo.getKey("hub.switcher.title")).onClick(event -> {
             if (!event.getCurrentItem().getType().equals(Material.GOLDEN_HELMET) && !event.getCurrentItem().getType().equals(Material.IRON_HELMET))
                 return;
-            String serverName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getLocalizedName().split(" ")[1]);
+            String serverName = ChatColor.stripColor(Verany.serializer.serialize(event.getCurrentItem().getItemMeta().displayName()).split(" ")[1]);
             if (serverName.startsWith("VIP") && !player.hasPermission("verany.vip")) return;
             playerInfo.playSound(Sound.ENTITY_PLAYER_LEVELUP, 1, 1.8F);
             playerInfo.sendOnServer(serverName);
@@ -52,8 +52,8 @@ public class HubSwitcherInventory implements IHubInventory {
             services.addAll(getSorted(task));
         for (int i = 0; i < services.size(); i++) {
             ServiceInfoSnapshot hub = services.get(i);
-            String name = hub.getName();
-            int online = 1;
+            String name = hub.getServiceId().getName();
+            int online = hub.getProperty(BridgeServiceProperty.ONLINE_COUNT).orElse(0);
             inventory.setItem(slots[i], new ItemBuilder(hub.getServiceId().getName().startsWith("VIP") ? Material.GOLDEN_HELMET : Material.IRON_HELMET).setGlow(name.equals(playerInfo.getServer())).addItemFlag(ItemFlag.values()).setDisplayName(playerInfo.getKey("hub.switcher.item.hub", new Placeholder("%server_name%", name))).addLoreArray(playerInfo.getKeyArray("hub.switcher.item.hub.lore", '~', new Placeholder("%online%", Verany.asDecimal(online)))).build());
         }
         for (int i = services.size(); i < slots.length; i++) {
