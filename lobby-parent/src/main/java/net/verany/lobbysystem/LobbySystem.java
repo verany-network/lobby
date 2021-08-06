@@ -11,10 +11,11 @@ import net.verany.api.module.VeranyPlugin;
 import net.verany.lobbysystem.commands.BuildCommand;
 import net.verany.lobbysystem.commands.SetupCommand;
 import net.verany.lobbysystem.flagwars.LobbyFlagWars;
+import net.verany.lobbysystem.flagwars.commands.StatsCommand;
 import net.verany.lobbysystem.flagwars.region.FlagWarsRegion;
+import net.verany.lobbysystem.game.AbstractLobbySystem;
 import net.verany.lobbysystem.game.HubManager;
 import net.verany.lobbysystem.game.IHubManager;
-import net.verany.lobbysystem.game.ILobbySystem;
 import net.verany.lobbysystem.game.actionbar.ActionbarTask;
 import net.verany.lobbysystem.game.bossbar.BossBarTask;
 import net.verany.lobbysystem.game.inventory.task.InventoryTask;
@@ -37,7 +38,7 @@ import java.util.concurrent.TimeUnit;
         version = "2021.7.1",
         authors = {"tylix"}
 )
-public class LobbySystem extends VeranyPlugin implements ILobbySystem {
+public class LobbySystem extends AbstractLobbySystem {
 
     public static LobbySystem INSTANCE;
 
@@ -73,7 +74,8 @@ public class LobbySystem extends VeranyPlugin implements ILobbySystem {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new DaytimeTask().buildTask(this), 10, 15);
         Verany.addTask(new ActionbarTask(750), new ScoreboardTask.ScoreboardSideNameTask(10 * 1000), new InventoryTask(1000), new OrbTask(50), new LevelTask(10 * 1000), new BossBarTask(50), new ScoreboardTask(1000), new ScoreboardTask.ScoreboardDisplayNameTask(150));
 
-        new LobbyFlagWars(this).onEnable();
+        LobbyFlagWars lobbyFlagWars = new LobbyFlagWars(this, iFlagWarsManager -> new StatsCommand(this, iFlagWarsManager.getRegion()));
+        lobbyFlagWars.onEnable();
 
         IngameConfig.PLAYER_COLLISION.setValue(false);
         IngameConfig.TAB_LIST.setValue(true);
