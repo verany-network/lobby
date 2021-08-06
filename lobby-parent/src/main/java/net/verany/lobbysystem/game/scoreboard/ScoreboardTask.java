@@ -7,6 +7,8 @@ import net.verany.lobbysystem.game.player.IHubPlayer;
 
 public class ScoreboardTask extends AbstractTask {
 
+    private static int currentSlot = 0;
+
     public ScoreboardTask(long waitTime) {
         super(waitTime);
     }
@@ -31,7 +33,10 @@ public class ScoreboardTask extends AbstractTask {
                 if (player.getScoreboard() == null) continue;
                 try {
                     //if (!Verany.getPlayer(player.getUniqueId()).getSettingValue(Settings.SCOREBOARD_ANIMATION)) continue;
-                    player.getScoreboard().setDisplayName();
+                    currentSlot++;
+                    if (currentSlot >= AbstractHubScoreboard.DISPLAY_NAME.length)
+                        currentSlot = 0;
+                    player.getScoreboard().setDisplayName(currentSlot);
                 } catch (Exception ignore) {
                 }
             }

@@ -9,7 +9,6 @@ import net.verany.api.player.stats.IStatsObject;
 import net.verany.lobbysystem.flagwars.VariantType;
 import net.verany.lobbysystem.flagwars.queue.QueueEntry;
 import net.verany.lobbysystem.flagwars.round.AbstractRound;
-import net.verany.lobbysystem.game.scoreboard.IHubScoreboard;
 
 import java.util.Map;
 import java.util.UUID;

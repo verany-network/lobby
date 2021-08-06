@@ -13,11 +13,12 @@ import net.verany.api.player.IPlayerInfo;
 import net.verany.api.skull.SkullBuilder;
 import net.verany.lobbysystem.LobbyKey;
 import net.verany.lobbysystem.LobbySystem;
+import net.verany.lobbysystem.game.BossBarSetting;
 import net.verany.lobbysystem.game.inventory.HubSwitcherInventory;
 import net.verany.lobbysystem.game.inventory.ProfileInventory;
 import net.verany.lobbysystem.game.inventory.TeleporterInventory;
+import net.verany.lobbysystem.game.scoreboard.AbstractHubScoreboard;
 import net.verany.lobbysystem.game.scoreboard.HubScoreboard;
-import net.verany.lobbysystem.game.scoreboard.IHubScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.boss.BossBar;
@@ -43,7 +44,7 @@ public class LobbyPlayer extends DatabaseLoader implements IHubPlayer {
     private Player player;
 
     private BossBar bossBar;
-    private IHubScoreboard scoreboard;
+    private AbstractHubScoreboard scoreboard;
 
     public LobbyPlayer(VeranyProject project) {
         super(project, "players");
@@ -55,12 +56,19 @@ public class LobbyPlayer extends DatabaseLoader implements IHubPlayer {
         this.playerInfo = Verany.getPlayer(uuid);
         this.player = Bukkit.getPlayer(uuid);
 
+        setDefaultBossBar();
+
         load(new LoadInfo<>("user_lobby", PlayerData.class, new PlayerData(uuid, VeranyLocation.toVeranyLocation(LobbySystem.INSTANCE.getLocationManager().getLocation("spawn")))));
     }
 
     @Override
     public void update() {
         save("user_lobby");
+    }
+
+    @Override
+    public void setDefaultBossBar() {
+        playerInfo.setTempSetting(BossBarSetting.MESSAGES, playerInfo.getKeyArray("hub.bossbars", '~'));
     }
 
     @Override
@@ -182,7 +190,7 @@ public class LobbyPlayer extends DatabaseLoader implements IHubPlayer {
 
     @Override
     public void setScoreboard() {
-        IHubScoreboard scoreboard = new HubScoreboard(player);
+        AbstractHubScoreboard scoreboard = new HubScoreboard(player);
         scoreboard.load();
         setScoreboard(scoreboard);
     }

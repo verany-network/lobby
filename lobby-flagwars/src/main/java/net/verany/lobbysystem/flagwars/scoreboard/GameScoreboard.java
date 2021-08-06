@@ -13,21 +13,18 @@ import net.verany.api.season.Season;
 import net.verany.lobbysystem.flagwars.LobbyFlagWars;
 import net.verany.lobbysystem.flagwars.player.IFlagWarsPlayer;
 import net.verany.lobbysystem.flagwars.player.stats.FlagWarsStats;
-import net.verany.lobbysystem.game.scoreboard.IHubScoreboard;
+import net.verany.lobbysystem.game.scoreboard.AbstractHubScoreboard;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
 
 @Getter
-public class GameScoreboard implements IHubScoreboard {
-
-    private final String[] displayName = {"$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$f§lV$s§lerany", "$f§lVe$s§lrany", "$f§lVer$s§lany", "$f§lVera$s§lny", "$f§lVeran$s§ly", "$f§lVerany", "$f§lVerany", "$f§lVerany", "$s§lVerany", "$s§lVerany", "$f§lVerany", "$f§lVerany", "$s§lVerany", "$s§lVerany", "$f§lVerany", "$f§lVerany"};
+public class GameScoreboard extends AbstractHubScoreboard {
 
     private final Player player;
     private final IPlayerInfo playerInfo;
     private IScoreboardBuilder scoreboardBuilder;
-    private int currentSlot = 0;
     private int currentSide;
 
     public GameScoreboard(Player player) {
@@ -39,7 +36,7 @@ public class GameScoreboard implements IHubScoreboard {
     public void load() {
         scoreboardBuilder = new ScoreboardBuilder(player);
         setScores();
-        setDisplayName();
+        setDisplayName(0);
     }
 
     @Override
@@ -89,15 +86,12 @@ public class GameScoreboard implements IHubScoreboard {
     }
 
     @Override
-    public void setDisplayName() {
-        currentSlot++;
-        if (currentSlot >= displayName.length)
-            currentSlot = 0;
-        String title = displayName[currentSlot];
+    public void setDisplayName(int currentSlot) {
+        String title = AbstractHubScoreboard.DISPLAY_NAME[currentSlot];
         title = title.replace("$f", ChatColor.valueOf(playerInfo.getPrefixPattern().getColor().firstColor()).toString());
         title = title.replace("$s", ChatColor.valueOf(playerInfo.getPrefixPattern().getColor().secondColor()).toString());
         if (scoreboardBuilder != null) {
-            String season = Season.getCurrentSeason().name();
+            String season = getNameOfEnum(Season.getCurrentSeason().name(), "");
             String year = new SimpleDateFormat("yyyy").format(System.currentTimeMillis());
             scoreboardBuilder.setTitle(playerInfo.getKey("flagwars.scoreboard.title", new Placeholder("%title%", title), new Placeholder("%season%", season), new Placeholder("%year%", year)));
         }
@@ -107,4 +101,14 @@ public class GameScoreboard implements IHubScoreboard {
     public void addCurrentSide() {
         currentSide++;
     }
+
+    public static String getNameOfEnum(String enumName, String color) {
+        String name;
+        StringBuilder nameBuilder = new StringBuilder();
+        for (String s : enumName.split("_"))
+            nameBuilder.append(color).append(s.split("")[0].toUpperCase()).append(s.substring(1).toLowerCase()).append(" ");
+        name = nameBuilder.toString();
+        return name;
+    }
+
 }

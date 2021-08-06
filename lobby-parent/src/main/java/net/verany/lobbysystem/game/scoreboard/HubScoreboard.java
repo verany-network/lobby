@@ -20,14 +20,11 @@ import org.bukkit.scoreboard.Team;
 import java.text.MessageFormat;
 import java.util.concurrent.TimeUnit;
 
-public class HubScoreboard implements IHubScoreboard {
-
-    private final String[] displayName = {"$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$s§lVerany", "$f§lV$s§lerany", "$f§lVe$s§lrany", "$f§lVer$s§lany", "$f§lVera$s§lny", "$f§lVeran$s§ly", "$f§lVerany", "$f§lVerany", "$f§lVerany", "$s§lVerany", "$s§lVerany", "$f§lVerany", "$f§lVerany", "$s§lVerany", "$s§lVerany", "$f§lVerany", "$f§lVerany"};
+public class HubScoreboard extends AbstractHubScoreboard {
 
     private final Player player;
     private final IPlayerInfo playerInfo;
     private IScoreboardBuilder scoreboardBuilder;
-    private int currentSlot = 0;
 
     public HubScoreboard(Player player) {
         this.player = player;
@@ -38,8 +35,7 @@ public class HubScoreboard implements IHubScoreboard {
     public void load() {
         scoreboardBuilder = new ScoreboardBuilder(player);
         setScores();
-        setDisplayName();
-        scoreboardBuilder.setTitle(displayName[0]);
+        setDisplayName(0);
     }
 
     @Override
@@ -91,11 +87,8 @@ public class HubScoreboard implements IHubScoreboard {
     }
 
     @Override
-    public void setDisplayName() {
-        currentSlot++;
-        if (currentSlot >= displayName.length)
-            currentSlot = 0;
-        String title = displayName[currentSlot];
+    public void setDisplayName(int currentSlot) {
+        String title = AbstractHubScoreboard.DISPLAY_NAME[currentSlot];
         title = title.replace("$f", ChatColor.valueOf(playerInfo.getPrefixPattern().getColor().firstColor()).toString());
         title = title.replace("$s", ChatColor.valueOf(playerInfo.getPrefixPattern().getColor().secondColor()).toString());
         if (scoreboardBuilder != null)

@@ -2,12 +2,14 @@ package net.verany.lobbysystem.game.player;
 
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.locationmanager.VeranyLocation;
-import net.verany.lobbysystem.game.scoreboard.IHubScoreboard;
+import net.verany.lobbysystem.game.scoreboard.AbstractHubScoreboard;
 import org.bukkit.boss.BossBar;
 
 import java.util.UUID;
 
 public interface IHubPlayer extends IDefault<UUID> {
+
+    void setDefaultBossBar();
 
     void setItems();
 
@@ -33,8 +35,8 @@ public interface IHubPlayer extends IDefault<UUID> {
 
     void setBossBar(BossBar bossBar);
 
-    IHubScoreboard getScoreboard();
+    AbstractHubScoreboard getScoreboard();
 
-    void setScoreboard(IHubScoreboard scoreboard);
+    void setScoreboard(AbstractHubScoreboard scoreboard);
 
 }
