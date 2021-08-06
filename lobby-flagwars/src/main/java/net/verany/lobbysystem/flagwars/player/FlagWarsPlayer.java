@@ -3,8 +3,11 @@ package net.verany.lobbysystem.flagwars.player;
 import lombok.Getter;
 import lombok.Setter;
 import net.verany.api.Verany;
+import net.verany.api.hotbar.HotbarItem;
+import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.module.VeranyProject;
+import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.permission.group.AbstractPermissionGroup;
 import net.verany.api.player.permission.group.PlaytimeGroup;
 import net.verany.api.player.stats.IStatsObject;
@@ -17,7 +20,9 @@ import net.verany.lobbysystem.flagwars.queue.QueueEntry;
 import net.verany.lobbysystem.flagwars.round.AbstractRound;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -29,6 +34,7 @@ public class FlagWarsPlayer extends DatabaseLoader implements IFlagWarsPlayer {
     private UUID uniqueId;
 
     private Player player;
+    private IPlayerInfo playerInfo;
     private IStatsObject statsObject;
 
     private QueueEntry request;
@@ -44,8 +50,9 @@ public class FlagWarsPlayer extends DatabaseLoader implements IFlagWarsPlayer {
         this.uniqueId = uuid;
 
         this.player = Bukkit.getPlayer(uuid);
+        this.playerInfo = Verany.getPlayer(player);
 
-        statsObject = new StatsObject(getProject());
+        statsObject = new StatsObject(getProject(), "flagwars");
         statsObject.load(uuid);
 
         load(new LoadInfo<>("users", PlayerData.class, new PlayerData(uuid, new HashMap<>())));
@@ -62,7 +69,6 @@ public class FlagWarsPlayer extends DatabaseLoader implements IFlagWarsPlayer {
             requestedRound.getPlayers().remove(uniqueId);
         }
 
-
         save("users");
     }
 
@@ -70,7 +76,19 @@ public class FlagWarsPlayer extends DatabaseLoader implements IFlagWarsPlayer {
     public void setItems() {
         player.getInventory().clear();
 
+        playerInfo.setItem(0, new HotbarItem(new ItemBuilder(Material.LIGHT_BLUE_BANNER).build(), player) {
+            @Override
+            public void onInteract(PlayerInteractEvent event) {
 
+            }
+        });
+
+        playerInfo.setItem(8, new HotbarItem(new ItemBuilder(Material.COMPARATOR), player) {
+            @Override
+            public void onInteract(PlayerInteractEvent event) {
+
+            }
+        });
     }
 
     @Override
@@ -113,11 +131,6 @@ public class FlagWarsPlayer extends DatabaseLoader implements IFlagWarsPlayer {
             return;
         }
         ranking = /*PlaytimeGroup.getGroupByTime(statsObject.getStatsValue(FlagWarsStats.ELO, start))*/PlaytimeGroup.COPPER_2;
-    }
-
-    @Override
-    public AbstractRound getRequestedRound() {
-        return null;
     }
 
     @Override
