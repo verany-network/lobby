@@ -7,6 +7,7 @@ import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.lobbysystem.LobbySystem;
 import net.verany.lobbysystem.flagwars.player.IFlagWarsPlayer;
+import net.verany.lobbysystem.game.BossBarSetting;
 import net.verany.lobbysystem.game.bossbar.BossBarTask;
 import net.verany.lobbysystem.game.player.IHubPlayer;
 import org.bukkit.Bukkit;
@@ -33,12 +34,12 @@ public class PlayerQuitListener extends AbstractListener {
             hubPlayer.getBossBar().removePlayer(player);
             hubPlayer.setBossBar(null);
             hubPlayer.update();
-            playerInfo.setTempSetting(BossBarTask.BossBarSetting.CURRENT_TEXT, 0);
-            playerInfo.setTempSetting(BossBarTask.BossBarSetting.CURRENT_TEXT_CHARACTER, 0);
-            playerInfo.setTempSetting(BossBarTask.BossBarSetting.CURRENT_MESSAGE, "");
-            playerInfo.setTempSetting(BossBarTask.BossBarSetting.LAST_COLOR, new StringBuilder());
-            playerInfo.setTempSetting(BossBarTask.BossBarSetting.BACK, false);
-            playerInfo.setTempSetting(BossBarTask.BossBarSetting.WAITING, 0L);
+            playerInfo.setTempSetting(BossBarSetting.CURRENT_TEXT, 0);
+            playerInfo.setTempSetting(BossBarSetting.CURRENT_TEXT_CHARACTER, 0);
+            playerInfo.setTempSetting(BossBarSetting.CURRENT_MESSAGE, "");
+            playerInfo.setTempSetting(BossBarSetting.LAST_COLOR, new StringBuilder());
+            playerInfo.setTempSetting(BossBarSetting.BACK, false);
+            playerInfo.setTempSetting(BossBarSetting.WAITING, 0L);
             Verany.removePlayer(player.getUniqueId(), IHubPlayer.class);
 
             IFlagWarsPlayer flagWarsPlayer = playerInfo.getPlayer(IFlagWarsPlayer.class);
