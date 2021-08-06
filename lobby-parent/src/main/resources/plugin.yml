@@ -8,6 +8,7 @@ main: net.verany.lobbysystem.LobbySystem
 commands:
   setup:
   build:
+  stats:
 
 depend:
   - MC-Core-Executor
