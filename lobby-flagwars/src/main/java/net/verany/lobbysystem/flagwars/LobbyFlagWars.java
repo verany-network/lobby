@@ -43,6 +43,7 @@ public class LobbyFlagWars implements IFlagWarsManager {
         this.lobbySystem = lobbySystem;
         this.locationManager = lobbySystem.getLocationManager();
         this.mapObject = new MapObject(lobbySystem);
+        this.mapObject.load();
         this.queueObject = new QueueObject(lobbySystem);
         this.initCommands = initCommands;
     }

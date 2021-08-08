@@ -16,12 +16,14 @@ import net.verany.lobbysystem.flagwars.LobbyFlagWars;
 import net.verany.lobbysystem.flagwars.Variant;
 import net.verany.lobbysystem.flagwars.VariantType;
 import net.verany.lobbysystem.flagwars.player.stats.FlagWarsStats;
+import net.verany.lobbysystem.flagwars.player.stats.RoundInfo;
 import net.verany.lobbysystem.flagwars.queue.QueueEntry;
 import net.verany.lobbysystem.flagwars.round.AbstractRound;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.HashMap;
@@ -68,6 +70,8 @@ public class FlagWarsPlayer extends DatabaseLoader implements IFlagWarsPlayer {
             if (requestedRound.getVariant().equals(Variant.TWOTIMESONE)) requestedRound.getTask().cancel();
             requestedRound.getPlayers().remove(uniqueId);
         }
+        if (LobbyFlagWars.INSTANCE.getQueueObject().isInQueue(uniqueId))
+            LobbyFlagWars.INSTANCE.getQueueObject().leaveQueue(uniqueId);
 
         save("users");
     }
@@ -78,8 +82,17 @@ public class FlagWarsPlayer extends DatabaseLoader implements IFlagWarsPlayer {
 
         playerInfo.setItem(0, new HotbarItem(new ItemBuilder(Material.LIGHT_BLUE_BANNER).build(), player) {
             @Override
-            public void onInteract(PlayerInteractEvent event) {
+            public void onInteract(PlayerInteractAtEntityEvent event) {
+                if (player.hasMetadata("cooldown")) {
+                    long time = player.getMetadata("cooldown").get(0).asLong();
+                    if (time >= System.currentTimeMillis()) return;
+                }
+                if (event.getRightClicked() instanceof Player target) {
+                    LobbyFlagWars.INSTANCE.getLobbySystem().setMetadata(player, "cooldown", System.currentTimeMillis() + 500);
 
+                    IPlayerInfo targetInfo = Verany.getPlayer(target);
+                    LobbyFlagWars.INSTANCE.getQueueObject().request(playerInfo, targetInfo);
+                }
             }
         });
 
@@ -135,16 +148,25 @@ public class FlagWarsPlayer extends DatabaseLoader implements IFlagWarsPlayer {
 
     @Override
     public <T> T getVotingValue(String key) {
-        return null;
+        if (getDataOptional(PlayerData.class).isEmpty()) return null;
+        return getDataOptional(PlayerData.class).get().getVotingValue(key);
     }
 
     @Override
     public <T> void setVotingValue(String key, T value) {
-
+        getDataOptional(PlayerData.class).ifPresent(playerData -> playerData.setVotingValue(key, value));
     }
 
     @Override
     public float getAverageWinChance(String map) {
-        return 0;
+        long season = LobbyFlagWars.INSTANCE.getCurrentSeasonStart();
+        int playedGames = 0;
+        int wins = 0;
+        for (RoundInfo statsDatum : statsObject.getStatsData(FlagWarsStats.FINISHED_GAME, season)) {
+            if (!statsDatum.getPlayedMap().equalsIgnoreCase(map)) continue;
+            if (statsDatum.isWinner(uniqueId)) wins++;
+            playedGames++;
+        }
+        return statsObject.getVictoryChance(playedGames, wins);
     }
 }
