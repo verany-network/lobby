@@ -7,6 +7,8 @@ import net.verany.api.command.CommandEntry;
 import net.verany.api.module.VeranyPlugin;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.api.player.permission.duration.AbstractGroupTime;
+import net.verany.api.player.permission.duration.GroupTime;
 import net.verany.api.player.stats.IStatsObject;
 import net.verany.api.player.stats.StatsObject;
 import net.verany.api.region.GameRegion;
@@ -44,10 +46,10 @@ public class StatsCommand extends AbstractCommand implements TabCompleter {
             }
 
             if (strings.length == 0) {
-                sendStats(player, playerInfo, IStatsObject.StatsTime.ALL_TIME);
+                sendStats(player, playerInfo, IStatsObject.StatsTime.ALL_TIME.getTime());
             } else if (strings.length == 1) {
                 if (isType(strings[0].toUpperCase())) {
-                    IStatsObject.StatsTime statsTime = getStatsTime(strings[0]);
+                    AbstractGroupTime.GroupDuration statsTime = getStatsTime(strings[0]);
                     if (statsTime == null) {
                         player.sendMessage("enter a real number!");
                         return;
@@ -56,7 +58,7 @@ public class StatsCommand extends AbstractCommand implements TabCompleter {
                     return;
                 }
                 Verany.PROFILE_OBJECT.getPlayer(strings[0], IPlayerInfo.class).ifPresentOrElse(iPlayerInfo -> {
-                    sendStats(player, iPlayerInfo, IStatsObject.StatsTime.ALL_TIME);
+                    sendStats(player, iPlayerInfo, IStatsObject.StatsTime.ALL_TIME.getTime());
                 }, () -> {
                     playerInfo.sendKey(playerInfo.getPrefix(plugin.getModule()), "core.rank.player_not_found", new Placeholder("%player%", strings[0]));
                 });
@@ -68,7 +70,7 @@ public class StatsCommand extends AbstractCommand implements TabCompleter {
                         playerInfo.sendKey(playerInfo.getPrefix(plugin.getModule()), "core.rank.map_not_found", new Placeholder("%map%", map));
                         return;
                     }
-                    sendStats(player, playerInfo, IStatsObject.StatsTime.ALL_TIME, mapData);
+                    sendStats(player, playerInfo, IStatsObject.StatsTime.ALL_TIME.getTime(), mapData);
                     return;
                 }
                 Verany.PROFILE_OBJECT.getPlayer(strings[0], IPlayerInfo.class).ifPresentOrElse(iPlayerInfo -> {
@@ -77,8 +79,7 @@ public class StatsCommand extends AbstractCommand implements TabCompleter {
                         player.sendMessage(help);
                         return;
                     }
-
-                    IStatsObject.StatsTime statsTime = getStatsTime(strings[1]);
+                    AbstractGroupTime.GroupDuration statsTime = getStatsTime(strings[1]);
                     if (statsTime == null) {
                         player.sendMessage("enter a real number!");
                         return;
@@ -95,7 +96,7 @@ public class StatsCommand extends AbstractCommand implements TabCompleter {
                         playerInfo.sendKey(playerInfo.getPrefix(plugin.getModule()), "core.rank.map_not_found", new Placeholder("%map%", map));
                         return;
                     }
-                    IStatsObject.StatsTime statsTime = getStatsTime(strings[2]);
+                    AbstractGroupTime.GroupDuration statsTime = getStatsTime(strings[2]);
                     if (statsTime == null) {
                         player.sendMessage("enter a real number!");
                         return;
@@ -109,7 +110,7 @@ public class StatsCommand extends AbstractCommand implements TabCompleter {
         });
     }
 
-    private void sendStats(Player player, IPlayerInfo target, IStatsObject.StatsTime statsTime, MapData mapData) {
+    private void sendStats(Player player, IPlayerInfo target, AbstractGroupTime.GroupDuration duration, MapData mapData) {
         IPlayerInfo playerInfo = Verany.getPlayer(player);
 
         IStatsObject statsObject;
@@ -120,8 +121,7 @@ public class StatsCommand extends AbstractCommand implements TabCompleter {
             statsObject.load(target.getUniqueId());
         }
 
-        if (statsTime.equals(IStatsObject.StatsTime.SEASON))
-            statsTime.setTime(System.currentTimeMillis() - LobbyFlagWars.INSTANCE.getCurrentSeasonStart());
+        long statsTime = duration.getMillis();
 
         int kills = 0;
         int deaths = 0;
@@ -156,12 +156,12 @@ public class StatsCommand extends AbstractCommand implements TabCompleter {
             return;
         }
 
-        playerInfo.sendKey(playerInfo.getPrefix("FlagWars"), "flagwars.stats.info_" + (player.getUniqueId().equals(target.getUniqueId()) ? "self" : "other") + ".map", new Placeholder("%stats_time%", playerInfo.getKey("core.stats_time." + statsTime.name().toLowerCase())), new Placeholder("%map%", mapData.getName()), new Placeholder("%name%", target.getNameWithColor()));
+        playerInfo.sendKey(playerInfo.getPrefix("FlagWars"), "flagwars.stats.info_" + (player.getUniqueId().equals(target.getUniqueId()) ? "self" : "other") + ".map", new Placeholder("%stats_time%", playerInfo.getKey("core.stats_time." + duration.getKey().toLowerCase())), new Placeholder("%map%", mapData.getName()), new Placeholder("%name%", target.getNameWithColor()));
         String[] message = playerInfo.getKeyArray("flagwars.stats.message", '~', placeholders);
         player.sendMessage(message);
     }
 
-    private void sendStats(Player player, IPlayerInfo target, IStatsObject.StatsTime statsTime) {
+    private void sendStats(Player player, IPlayerInfo target, AbstractGroupTime.GroupDuration duration) {
         IPlayerInfo playerInfo = Verany.getPlayer(player);
 
         IStatsObject statsObject;
@@ -172,8 +172,8 @@ public class StatsCommand extends AbstractCommand implements TabCompleter {
             statsObject.load(target.getUniqueId());
         }
 
-        if (statsTime.equals(IStatsObject.StatsTime.SEASON))
-            statsTime.setTime(System.currentTimeMillis() - LobbyFlagWars.INSTANCE.getCurrentSeasonStart());
+        long statsTime = System.currentTimeMillis() - duration.getMillis();
+        System.out.println(statsTime + " time");
 
         int kills = statsObject.getStatsValue(FlagWarsStats.KILLS, statsTime);
         int deaths = statsObject.getStatsValue(FlagWarsStats.DEATHS, statsTime);
@@ -199,7 +199,7 @@ public class StatsCommand extends AbstractCommand implements TabCompleter {
             return;
         }
 
-        playerInfo.sendKey(playerInfo.getPrefix("FlagWars"), "flagwars.stats.info_" + (player.getUniqueId().equals(target.getUniqueId()) ? "self" : "other"), new Placeholder("%stats_time%", playerInfo.getKey("core.stats_time." + statsTime.name().toLowerCase())), new Placeholder("%name%", target.getNameWithColor()));
+        playerInfo.sendKey(playerInfo.getPrefix("FlagWars"), "flagwars.stats.info_" + (player.getUniqueId().equals(target.getUniqueId()) ? "self" : "other"), new Placeholder("%stats_time%", playerInfo.getKey("core.stats_time." + duration.getKey().toLowerCase(), new Placeholder("%amount%", Verany.asDecimal(duration.getAmount())))), new Placeholder("%name%", target.getNameWithColor()));
         String[] message = playerInfo.getKeyArray("flagwars.stats.message", '~', placeholders);
         player.sendMessage(message);
     }
@@ -215,19 +215,19 @@ public class StatsCommand extends AbstractCommand implements TabCompleter {
         return toReturn;
     }
 
-    private IStatsObject.StatsTime getStatsTime(String s) {
+    private AbstractGroupTime.GroupDuration getStatsTime(String s) {
         String[] split = isSplit(s);
-        IStatsObject.StatsTime statsTime;
+        AbstractGroupTime.GroupDuration statsTime;
         if (split != null) {
-            statsTime = IStatsObject.StatsTime.valueOf(split[0].toUpperCase());
+            statsTime = IStatsObject.StatsTime.valueOf(split[0].toUpperCase()).getTime();
             try {
                 int amount = Integer.parseInt(split[1]);
-                statsTime.of(amount);
+                statsTime = new AbstractGroupTime.GroupDuration(amount, statsTime.getMillis() * amount, statsTime.getKey());
             } catch (NumberFormatException e) {
                 return null;
             }
         } else {
-            statsTime = IStatsObject.StatsTime.valueOf(s.toUpperCase());
+            statsTime = IStatsObject.StatsTime.valueOf(s.toUpperCase()).getTime();
         }
         return statsTime;
     }
